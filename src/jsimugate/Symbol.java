@@ -16,12 +16,13 @@ public class Symbol {
 	static final Stroke defaultStroke = new BasicStroke(3);
 	static final Stroke defaultHighlightStroke = new BasicStroke(10);
 	static final Color defaultHighlightColor = new Color(255,255,0,80);
+	static final Color defaultFillColor = new Color(200,200,200,245);
 	Symbol parent;
 	ArrayList<Symbol> children = new ArrayList<Symbol>();
 	Shape hitbox = defaultPath;
 	private Shape shape = defaultPath;
 	AffineTransform transform = new AffineTransform();
-	public Color color = Color.black, fill = Color.lightGray;
+	public Color color = Color.black, fill = defaultFillColor;
 	Stroke stroke = defaultStroke;
 	boolean selected=false;
 	boolean selecting=false;

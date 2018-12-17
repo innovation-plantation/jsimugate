@@ -10,6 +10,7 @@ interface SignalConstants {
 	enum Gauge {
 		THICK(new BasicStroke(7), new BasicStroke(9)), THIN(new BasicStroke(3), new BasicStroke(5));
 		Stroke fg, bg;
+		public static final Color defaultInsulationColor = new Color(0xFF, 0xFF, 0xFF, 0xC0);
 
 		Gauge(Stroke fgStroke, Stroke bgStroke) {
 			fg = fgStroke;
@@ -19,12 +20,15 @@ interface SignalConstants {
 };
 
 public enum Signal implements SignalConstants {
-
-	_U('U', new Color(0x00FFFF), Color.white, Gauge.THICK), _X('X', new Color(0xFFA000), Color.white, Gauge.THICK),
-	_0('0', new Color(0x404040), Color.white, Gauge.THICK), _1('1', new Color(0xC00000), Color.white, Gauge.THICK),
-	_Z('Z', new Color(0x8880FF), Color.white, Gauge.THIN), _W('W', new Color(0xFFa000), Color.white, Gauge.THIN),
-	_L('L', new Color(0x404040), Color.white, Gauge.THIN), _H('H', new Color(0xc00000), Color.white, Gauge.THIN),
-	_D('-', new Color(0x00FF00), Color.white, Gauge.THIN);
+	_U('U', new Color(0x00, 0xFF, 0xFF), Gauge.defaultInsulationColor, Gauge.THICK),
+	_X('X', new Color(0xFF, 0xA0, 0x00), Gauge.defaultInsulationColor, Gauge.THICK),
+	_0('0', new Color(0x40, 0x40, 0x40), Gauge.defaultInsulationColor, Gauge.THICK),
+	_1('1', new Color(0xC0, 0x00, 0x00), Gauge.defaultInsulationColor, Gauge.THICK),
+	_Z('Z', new Color(0x88, 0x80, 0xFF), Gauge.defaultInsulationColor, Gauge.THIN),
+	_W('W', new Color(0xFF, 0xa0, 0x00), Gauge.defaultInsulationColor, Gauge.THIN),
+	_L('L', new Color(0x40, 0x40, 0x40), Gauge.defaultInsulationColor, Gauge.THIN),
+	_H('H', new Color(0xC0, 0x00, 0x00), Gauge.defaultInsulationColor, Gauge.THIN),
+	_D('-', new Color(0x00, 0xFF, 0x00), Gauge.defaultInsulationColor, Gauge.THIN);
 
 	private char value;
 	private Color fgColor;

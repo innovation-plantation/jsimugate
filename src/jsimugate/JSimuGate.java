@@ -99,7 +99,10 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	}
 
 	/**
-	 * 
+	 * For now: There's no ESC functionality, and lassoing always adds to the selection.
+	 * This might be just fine. 
+     *
+	 * Ultimately, we'd like to try it this ways:
 	 * Press:: - No keys when starting: set selection - Ctrl or Shift: toggle
 	 * selection, but select again upon drag - Miss: start lasso Release:: - Add
 	 * lasso to selection Drag:: - If Lasso -- Shift or Ctrl+Shift: toggle selection
@@ -107,7 +110,6 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	 * hit when starting -- If nothing hit is selected, then select it -- If ctrl is
 	 * pressed create a selected copy, and unselect original -- Move, if shift then
 	 * constrained -- If ESC return to position
-	 * 
 	 */
 	@Override public void mousePressed(MouseEvent e) {
 		// if clicking on a selected part, don't unselect anything
