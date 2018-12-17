@@ -15,18 +15,20 @@ public class Symbol {
 	static final Shape defaultPath = new Rectangle2D.Double(-3, -3, 7, 7);
 	static final Stroke defaultStroke = new BasicStroke(3);
 	static final Stroke defaultHighlightStroke = new BasicStroke(10);
+	static final Color defaultHighlightColor = new Color(255,255,0,80);
 	Symbol parent;
 	ArrayList<Symbol> children = new ArrayList<Symbol>();
-	private Shape hitbox = defaultPath;
+	Shape hitbox = defaultPath;
 	private Shape shape = defaultPath;
 	AffineTransform transform = new AffineTransform();
 	public Color color = Color.black, fill = Color.lightGray;
 	Stroke stroke = defaultStroke;
 	boolean selected=false;
+	boolean selecting=false;
 	Stroke hilightStroke = defaultHighlightStroke;
-	Color highlightColor = Color.yellow;
+	Color highlightColor = defaultHighlightColor;
 
-	private AffineTransform gTransform=new AffineTransform();
+	AffineTransform gTransform=new AffineTransform();
 
 	public Symbol addChild(Symbol child) {
 		child.parent = this;
@@ -65,7 +67,7 @@ public class Symbol {
 	}
 
 	public void drawAtOrigin(Graphics2D g) {
-		if (selected) {
+		if (selected || selecting) {
 			g.setColor(highlightColor);
 			g.setStroke(hilightStroke);
 			g.draw(shape);
@@ -82,14 +84,12 @@ public class Symbol {
 	}
 	
 	public boolean at(Point2D xy) {
-		if (hitbox==null) return false;
-		try {
-			gTransform.createInverse().transform(xy, xy);
-			return hitbox.contains(xy);
-		} catch (NoninvertibleTransformException e) {
-			return false;
-		}
-				
+		return hitbox !=null && gTransform.createTransformedShape(hitbox).contains(xy);
+		// equivalent to checking if the hitbox contains the inverse gTransform of the point	
+	}
+	
+	public boolean at(Rectangle2D lasso) {
+		return hitbox !=null && gTransform.createTransformedShape(hitbox).intersects(lasso);
 	}
 
 	public void draw(Graphics2D g) {
