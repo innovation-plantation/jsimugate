@@ -11,6 +11,8 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -19,7 +21,7 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-public class JSimuGate extends Applet implements MouseListener, MouseMotionListener {
+public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener {
 	private static final long serialVersionUID = 1L;
 	Part parts[] = { new AndGate(50, 100), new XorGate(150, 50), new OrGate(225, 100), new AndGate(50, 300),
 			new XorGate(150, 250), new MajorityGate(225, 300)/* , new Part(50, 250) */ };
@@ -36,7 +38,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		updateImageSize();
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
-
+		this.addKeyListener(this);
 	}
 
 	private void updateImageSize() {
@@ -195,6 +197,28 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 
 	@Override public void mouseMoved(MouseEvent e) {
 		recentMouseEvent = e;
+	}
+
+	@Override public void keyPressed(KeyEvent e) {
+		switch(e.getKeyChar()) {
+		case '+':
+			for (Part part:parts) if (part.selected)part.increase();
+			break;
+		case '-':
+			for (Part part:parts) if (part.selected)part.decrease();
+			break;
+		}
+		repaint();
+	}
+
+	@Override public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
