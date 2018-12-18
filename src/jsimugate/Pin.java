@@ -7,35 +7,41 @@ import java.awt.geom.Point2D;
 
 public class Pin extends Symbol {
 
-	Shape line;
+	Shape line,shortLine,longLine;
 	Point2D control;
-	boolean invertible, inverted;
+	boolean inverted;
 	Inversion bubble;
 	Signal in_value = Signal._Z;
-	private Signal out_value=Signal._Z;
+	private Signal out_value = Signal._Z;
 
 	public Pin(double x, double y) {
 		super(x, y);
 	}
 
 	Pin right(double dx) {
-		control = new Point2D.Double(dx,0);
-		line = new Line2D.Double( - dx,0,0, 0);
-		addChild(bubble = new Inversion( 10 - dx, 0));
+		control = new Point2D.Double(dx, 0);
+		longLine = new Line2D.Double(-dx, 0, 0, 0);
+		shortLine = new Line2D.Double(23 - dx, 0, 0, 0);
+		line=longLine;
+		addChild(bubble = new Inversion(10 - dx, 0));
 		return this;
 	}
 
 	Pin left(double dx) {
-		control = new Point2D.Double(- dx,0);
-		line = new Line2D.Double(0, 0,  dx, 0);
-		addChild(bubble = new Inversion( dx - 10, 0));
+		control = new Point2D.Double(-dx, 0);
+		longLine = new Line2D.Double(0, 0, dx, 0);
+		shortLine = new Line2D.Double(0, 0, dx - 23, 0);
+		line=longLine;
+		addChild(bubble = new Inversion(dx - 10, 0));
 		return this;
 	}
 
 	Pin down(double dy) {
 		control = new Point2D.Double(0, dy);
-		line = new Line2D.Double(0, 0, 0, - dy);
-		addChild(bubble = new Inversion(0,  10 - dy));
+		longLine = new Line2D.Double(0, 0, 0, -dy);
+		shortLine = new Line2D.Double(0, 0, 0, 23 - dy);
+		line=longLine;
+		addChild(bubble = new Inversion(0, 10 - dy));
 		return this;
 	}
 
@@ -45,8 +51,8 @@ public class Pin extends Symbol {
 	}
 
 	void toggleInversion() {
-		if (invertible) {
-			inverted = !inverted;
+		if (bubble != null) {
+			line = (inverted = !inverted) ? shortLine : longLine;
 			bubble.setVisible(inverted);
 		}
 	}

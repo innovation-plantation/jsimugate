@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.KeyEvent;
@@ -59,7 +60,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 
 	public void paint(Graphics g1D) {
 		Graphics2D g = (Graphics2D) g1D;
-		
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		Net.operateAll();
 		
 		for (Part part : parts) part.operate();
@@ -92,10 +93,26 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 
 
 	@Override public void mouseClicked(MouseEvent e) {
+		// clicking on inverter should invert it
+		for (Part part:parts) {
+			System.out.println("_");
+			for (Pin pin:part.pins) {
+				if (pin.bubble!=null) {
+					if (pin.bubble.at(e.getPoint())) {
+						pin.toggleInversion();
+						repaint();
+						return;
+					}
+				}
+			}
+		}
+		
 		// clicking on nothing should deselect everything.
 		Part topHit = null;
 		for (Part part:parts) if (part.at(e.getPoint())) topHit=part;
 		if (topHit==null) for (Part part:parts) part.selected=part.selecting=false;
+		repaint();
+		
 		recentMouseEvent = e;
 	}
 
@@ -205,6 +222,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	}
 
 	@Override public void mouseMoved(MouseEvent e) {
+
 		recentMouseEvent = e;
 	}
 
