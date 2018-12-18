@@ -1,6 +1,7 @@
 package jsimugate;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -79,6 +80,12 @@ public class Net {
 		System.gc();
 	}
 	
+	/**
+	 * Returns the wire that connects the src and dst pins, ignores order of parameters
+	 * @param src one end of the connection,
+	 * @param dst other end of the connection
+	 * @return the wire
+	 */
 	public static Wire findWire(Pin src,Pin dst) {
 		for (Net net:nets) {
 			if (net.pins.contains(src)) {
@@ -92,5 +99,38 @@ public class Net {
 			}
 		}
 		return null; // src pin not connected to anything
+	}
+	
+	/**
+	 * Find all wires directly connected to the pin
+	 * @param pin
+	 * @return the set of wires connected to this pin
+	 */
+	public static Collection<Wire> directConnections(Pin pin) {
+		HashSet result=new HashSet();
+		for (Net net:nets) {
+			if (net.pins.contains(pin)) for (Wire wire:net.wires) {
+				if (wire.src==pin ) result.add(wire);
+			}
+			if (net.pins.contains(pin)) for (Wire wire:net.wires) {
+				if (wire.dst==pin ) result.add(wire);
+			}
+		}
+		return result;	
+	}
+	
+	/**
+	 * Resolve the output values from the parts of all connected signal values on the connected network of wires
+	 * Set all the wire values and pin input values accordingly.
+	 */
+	public void operate() {
+		Signal result = Signal._Z;
+		for (Pin pin:pins) result = Logic.resolve_tt[result.ordinal()][pin.getOutValue().ordinal()];		
+		for (Pin pin:pins) pin.in_value = result;	
+		for (Wire wire:wires) wire.value = result;
+	}
+	
+	public static void operateAll() {
+	    for (Net net:nets) net.operate();
 	}
 }

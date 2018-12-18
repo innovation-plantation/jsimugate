@@ -59,6 +59,9 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 
 	public void paint(Graphics g1D) {
 		Graphics2D g = (Graphics2D) g1D;
+		
+		Net.operateAll();
+		
 		for (Part part : parts) part.operate();
 
 		for (Symbol part : parts) part.draw(g);

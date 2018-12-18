@@ -42,7 +42,8 @@ public class Gate extends Part {
 		int n = inputs.size();
 		if (n < 1) return;
 		Pin victim = inputs.get(n - 1);
-		// TODO: if wires attached return now without removing victim.
+		// if wires attached return now without removing victim.
+		if (Net.directConnections(victim).size()>0) return;
 		reshape(n - 1);
 		inputs.remove(removePin(victim));
 		switch (n) {
@@ -69,8 +70,8 @@ public class Gate extends Part {
 
 	public void operate() {
 		Signal result = function();
-		for (Pin i : inputs) result = function(result, i.value);
-		output.value = result;
+		for (Pin i : inputs) result = function(result, i.in_value);
+		output.setOutValue(result);
 	}
 
 	public void increase() {
