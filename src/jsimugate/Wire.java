@@ -8,7 +8,6 @@ public class Wire {
 	Signal value = Signal._Z;
 	static final Point2D.Double origin = new Point2D.Double();
 	Pin src, dst;
-	//Net net;  // maintained and operated by Net
 
 	public Wire(Pin srcPin, Pin dstPin) {
 		src = srcPin;

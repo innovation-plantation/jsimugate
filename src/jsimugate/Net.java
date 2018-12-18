@@ -30,25 +30,20 @@ public class Net {
 				nets.add(srcNet);
 			}
 			srcNet.wires.add(wire);
-//			wire.net = srcNet;
-			return; // srcNet;
+			return; 
 		}
 		// if one is null, return the other one with the wire added
 		if (dstNet==null) {
 			srcNet.wires.add(wire);
-//			wire.net = srcNet;
-			return; // srcNet;
+			return;
 		}
 		if (srcNet==null) {
 			dstNet.wires.add(wire);
-//			wire.net=dstNet;
-			return; // dstNet;
+			return; 
 		}
 		// merge two nets
 		dstNet.pins.addAll(srcNet.pins);
 		dstNet.wires.addAll(srcNet.wires);
-//	    wire.net = dstNet; 
-	//	for (Wire w:srcNet.wires) w.net = dstNet;
 		nets.remove(srcNet);
 		// help out the garbage collector
 		srcNet.pins.clear();
