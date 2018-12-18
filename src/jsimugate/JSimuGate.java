@@ -28,8 +28,12 @@ import java.util.ArrayList;
 public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
 	Part parts[] = { new AndGate(50, 100), new XorGate(150, 50), new OrGate(225, 100), new AndGate(50, 300),
-			new XorGate(150, 250), new MajorityGate(225, 300) {{setOC(OC.NPN);}}/* , new Part(50, 250) */ };
-	ArrayList<Wire> wires= new ArrayList<Wire>();
+			new XorGate(150, 250), new MajorityGate(225, 300) {
+				{
+					setOC(OC.NPN);
+				}
+			}/* , new Part(50, 250) */ };
+	ArrayList<Wire> wires = new ArrayList<Wire>();
 	private Dimension size;
 	private Image image;
 	private Graphics graphics;
@@ -45,7 +49,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		this.addMouseMotionListener(this);
 		this.addKeyListener(this);
 		this.addComponentListener(this);
-		
+
 		wires.add(new Wire(parts[2].pins.get(1), parts[1].pins.get(0)));
 		wires.add(new Wire(parts[2].pins.get(2), parts[4].pins.get(0)));
 	}
@@ -66,12 +70,12 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		Graphics2D g = (Graphics2D) g1D;
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		Net.operateAll();
-		
+
 		for (Part part : parts) part.operate();
 
 		for (Symbol part : parts) part.draw(g);
-		
-		for (Wire wire:wires) wire.draw(g);
+
+		for (Wire wire : wires) wire.draw(g);
 
 		if (lasso != null) {
 			g.setColor(Color.blue);
@@ -95,13 +99,12 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		panel.init();
 	}
 
-
 	@Override public void mouseClicked(MouseEvent e) {
 		// clicking on inverter should invert it
-		for (Part part:parts) {
+		for (Part part : parts) {
 			System.out.println("_");
-			for (Pin pin:part.pins) {
-				if (pin.bubble!=null) {
+			for (Pin pin : part.pins) {
+				if (pin.bubble != null) {
 					if (pin.bubble.at(e.getPoint())) {
 						pin.toggleInversion();
 						repaint();
@@ -110,11 +113,11 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 				}
 			}
 		}
-		
+
 		// clicking on nothing should deselect everything.
 		Part topHit = null;
-		for (Part part:parts) if (part.at(e.getPoint())) topHit=part;
-		if (topHit==null) for (Part part:parts) part.selected=part.selecting=false;
+		for (Part part : parts) if (part.at(e.getPoint())) topHit = part;
+		if (topHit == null) for (Part part : parts) part.selected = part.selecting = false;
 		repaint();
 		recentMouseEvent = e;
 	}
@@ -128,25 +131,25 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	}
 
 	/**
-	 * For now: There's no ESC functionality, and lassoing always adds to the selection.
-	 * This might be just fine. 
-     *
-	 * Ultimately, we'd like to try it this ways:
-	 * Press:: - No keys when starting: set selection - Ctrl or Shift: toggle
-	 * selection, but select again upon drag - Miss: start lasso Release:: - Add
-	 * lasso to selection Drag:: - If Lasso -- Shift or Ctrl+Shift: toggle selection
-	 * -- Ctrl: add to selection -- No keys when starting: set selection - Else if
-	 * hit when starting -- If nothing hit is selected, then select it -- If ctrl is
-	 * pressed create a selected copy, and unselect original -- Move, if shift then
-	 * constrained -- If ESC return to position
+	 * For now: There's no ESC functionality, and lassoing always adds to the
+	 * selection. This might be just fine.
+	 *
+	 * Ultimately, we'd like to try it this ways: Press:: - No keys when starting:
+	 * set selection - Ctrl or Shift: toggle selection, but select again upon drag -
+	 * Miss: start lasso Release:: - Add lasso to selection Drag:: - If Lasso --
+	 * Shift or Ctrl+Shift: toggle selection -- Ctrl: add to selection -- No keys
+	 * when starting: set selection - Else if hit when starting -- If nothing hit is
+	 * selected, then select it -- If ctrl is pressed create a selected copy, and
+	 * unselect original -- Move, if shift then constrained -- If ESC return to
+	 * position
 	 */
 	@Override public void mousePressed(MouseEvent e) {
 		// if clicking on a selected part, don't unselect anything
 		Part topHit = null;
 		for (Part part : parts) if (part.at(e.getPoint())) topHit = part;
-		
-		if (topHit!=null) {
-			// if there was a hit with ctrl or shift down: toggle it		
+
+		if (topHit != null) {
+			// if there was a hit with ctrl or shift down: toggle it
 			if (e.isControlDown() || e.isShiftDown()) {
 				topHit.selected = !topHit.selected;
 			} else {
@@ -155,10 +158,11 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 					for (Part part : parts) part.selected = false;
 					topHit.selected = true;
 				}
-				// if clicked part is already selected, with no modifier keys, don't change the selection.
+				// if clicked part is already selected, with no modifier keys, don't change the
+				// selection.
 			}
 		}
-		
+
 		// if there's no hit, start dragging
 		if (topHit == null) {
 			// for no hits, begin lasso
@@ -223,17 +227,16 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	}
 
 	@Override public void mouseMoved(MouseEvent e) {
-
 		recentMouseEvent = e;
 	}
 
 	@Override public void keyPressed(KeyEvent e) {
-		switch(e.getKeyChar()) {
+		switch (e.getKeyChar()) {
 		case '+':
-			for (Part part:parts) if (part.selected)part.increase();
+			for (Part part : parts) if (part.selected) part.increase();
 			break;
 		case '-':
-			for (Part part:parts) if (part.selected)part.decrease();
+			for (Part part : parts) if (part.selected) part.decrease();
 			break;
 		}
 		repaint();

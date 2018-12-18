@@ -58,6 +58,7 @@ public class Pin extends Symbol {
 		if (bubble != null) {
 			line = (inverted = !inverted) ? shortLine : longLine;
 			bubble.setVisible(inverted);
+			parent.updateLabel();
 		}
 	}
 

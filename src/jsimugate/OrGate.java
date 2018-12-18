@@ -16,4 +16,8 @@ public class OrGate extends Gate {
 	public Signal function(Signal a, Signal b) {
 		return Logic.or_tt[a.ordinal()][b.ordinal()];
 	}
+	
+	public void updateLabel() {
+		label = output.inverted ? "NOR" : "OR";
+	}
 }

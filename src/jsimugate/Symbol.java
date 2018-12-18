@@ -92,6 +92,8 @@ public class Symbol {
 		}
 	}
 	
+	void updateLabel() { }
+	
 	public boolean at(Point2D xy) {
 		return hitbox !=null && gTransform.createTransformedShape(hitbox).contains(xy);
 		// equivalent to checking if the hitbox contains the inverse gTransform of the point	

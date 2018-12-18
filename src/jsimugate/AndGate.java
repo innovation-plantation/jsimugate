@@ -17,4 +17,8 @@ public class AndGate extends Gate {
 	public Signal function(Signal a, Signal b) {
 		return Logic.and_tt[a.ordinal()][b.ordinal()];
 	}
+	
+	public void updateLabel() {
+		label = output.inverted ? "NAND" : "AND";
+	}
 }

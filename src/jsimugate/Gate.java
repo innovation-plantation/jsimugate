@@ -36,6 +36,7 @@ public class Gate extends Part {
 			for (Pin i : inputs) i.translate(0, -10);
 			inputs.add(addPin(new Pin(-80, n * 10).left(40)));
 		}
+		updateLabel();
 	}
 
 	protected void removeInput() {
@@ -58,6 +59,7 @@ public class Gate extends Part {
 		default:
 			for (Pin i : inputs) i.translate(0, 10);
 		}
+		updateLabel();
 	}
 
 	public Signal function() {

@@ -33,4 +33,8 @@ public class MajorityGate extends Gate {
 		removeInput();
 		if (inputs.size()%2==0) removeInput();
 	}
+	
+	public void updateLabel() {
+		label = inputs.size()>1 ? "MAJ"+inputs.size() : output.inverted ? "NOT": null;
+	}
 }
