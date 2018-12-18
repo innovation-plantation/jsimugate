@@ -1,3 +1,8 @@
+
+
+// TODO: WIRES ONLY WORK PROPERLY FROM SRC TO DST, NOT THE OTHER WAY AROUND.
+
+
 package jsimugate;
 
 import java.applet.Applet;
@@ -22,6 +27,8 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
@@ -88,7 +95,6 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		if (protoWire != null) {
 			protoWire.value = protoWire.src.getOutValue();
 			protoWire.draw(g);
-			System.out.println(protoWire.src);
 		}
 	}
 
@@ -100,17 +106,25 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 				System.exit(0);
 			}
 		});
-		frame.setSize(500, 500);
+		frame.setSize(640, 480);
 		frame.add(panel);
 		frame.setVisible(true);
-		// frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+		Pattern wxh = Pattern.compile("([0-9]+)x([0-9]+)");
+		for (String s: args) {
+			Matcher match=wxh.matcher(s);
+			if (match.matches()) {
+				int x = Integer.parseInt(match.group(1));
+				int y = Integer.parseInt(match.group(2));
+				frame.setSize(x, y);
+			}
+			if (s.equals("--fullscreen")) frame.setExtendedState(Frame.MAXIMIZED_BOTH); 
+		}
 		panel.init();
 	}
 
 	@Override public void mouseClicked(MouseEvent e) {
 		// clicking on inverter should invert it
 		for (Part part : parts) {
-			System.out.println("_");
 			for (Pin pin : part.pins) {
 				if (pin.bubble != null) {
 					if (pin.bubble.at(e.getPoint())) {
@@ -160,6 +174,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 					protoWire = new Wire(pin, new Pin(e.getX(), e.getY()));
 					repaint();
 					recentMouseEvent = e;
+					return;
 				}
 			}
 		}
@@ -196,12 +211,24 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	@Override public void mouseReleased(MouseEvent e) {
 		// If landed on a pin, connect it
 		if (protoWire != null) {
+			Net.disconnect(protoWire);
 			for (Part part : parts) {
 				for (Pin pin : part.pins) {
 					if (pin.at(e.getPoint())) {
-						// connect
-						protoWire.to(pin);
-						wires.add(protoWire);
+						if (pin==protoWire.src) {
+							// Don't connect pin to self
+							break;
+						}
+						// connect or disconnect
+						Wire oldWire = Net.findWire(protoWire.src, pin);
+						if (oldWire!=null) {
+							System.out.println("FOUND "+oldWire+oldWire.src+oldWire.dst);
+							Net.disconnect(oldWire);
+							wires.remove(oldWire);
+						} else {
+							protoWire.to(pin);
+						    wires.add(protoWire);
+						}
 					}
 				}
 			}
@@ -288,7 +315,11 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 
 	@Override public void keyReleased(KeyEvent e) {}
 
-	@Override public void keyTyped(KeyEvent e) {}
+	@Override public void keyTyped(KeyEvent e) {
+		switch(e.getKeyChar()) {
+			case 'n':Net.dump(); break;
+		}
+	}
 
 	@Override public void componentHidden(ComponentEvent e) {}
 

@@ -11,8 +11,9 @@ public class Artwork {
 		GeneralPath shape = new GeneralPath();
 		shape.moveTo(-40, -40 - s);
 		shape.lineTo(0, -40 - s);
-		shape.curveTo(22, -40 - s, 40, -22, 40, 0);
-		shape.curveTo(40, 22, 22, 40 + s, 0, 40 + s);
+		shape.curveTo(22, -40 - s, 40, -22-s, 40, -s);
+		shape.lineTo(40, s);
+		shape.curveTo(40, 22+s, 22, 40 + s, 0, 40 + s);
 		shape.lineTo(-40, 40 + s);
 		shape.closePath();
 		return shape;
