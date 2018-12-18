@@ -12,6 +12,8 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -23,7 +25,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener {
+public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
 	Part parts[] = { new AndGate(50, 100), new XorGate(150, 50), new OrGate(225, 100), new AndGate(50, 300),
 			new XorGate(150, 250), new MajorityGate(225, 300) {{setOC(OC.NPN);}}/* , new Part(50, 250) */ };
@@ -42,6 +44,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.addKeyListener(this);
+		this.addComponentListener(this);
 		
 		wires.add(new Wire(parts[2].pins.get(1), parts[1].pins.get(0)));
 		wires.add(new Wire(parts[2].pins.get(2), parts[4].pins.get(0)));
@@ -113,17 +116,14 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		for (Part part:parts) if (part.at(e.getPoint())) topHit=part;
 		if (topHit==null) for (Part part:parts) part.selected=part.selecting=false;
 		repaint();
-		
 		recentMouseEvent = e;
 	}
 
 	@Override public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 		recentMouseEvent = e;
 	}
 
 	@Override public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 		recentMouseEvent = e;
 	}
 
@@ -239,14 +239,18 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		repaint();
 	}
 
-	@Override public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
+	@Override public void keyReleased(KeyEvent e) {}
+
+	@Override public void keyTyped(KeyEvent e) {}
+
+	@Override public void componentHidden(ComponentEvent e) {}
+
+	@Override public void componentMoved(ComponentEvent e) {}
+
+	@Override public void componentResized(ComponentEvent e) {
+		updateImageSize();
 	}
 
-	@Override public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	@Override public void componentShown(ComponentEvent e) {}
 
 }
