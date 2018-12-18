@@ -1,8 +1,3 @@
-
-
-// TODO: WIRES ONLY WORK PROPERLY FROM SRC TO DST, NOT THE OTHER WAY AROUND.
-
-
 package jsimugate;
 
 import java.applet.Applet;
