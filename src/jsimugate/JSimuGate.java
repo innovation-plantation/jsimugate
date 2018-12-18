@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener {
 	private static final long serialVersionUID = 1L;
 	Part parts[] = { new AndGate(50, 100), new XorGate(150, 50), new OrGate(225, 100), new AndGate(50, 300),
-			new XorGate(150, 250), new MajorityGate(225, 300)/* , new Part(50, 250) */ };
+			new XorGate(150, 250), new MajorityGate(225, 300) {{setOC(OC.NPN);}}/* , new Part(50, 250) */ };
 	ArrayList<Wire> wires= new ArrayList<Wire>();
 	private Dimension size;
 	private Image image;
@@ -43,6 +43,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		this.addMouseMotionListener(this);
 		this.addKeyListener(this);
 		
+		wires.add(new Wire(parts[2].pins.get(1), parts[1].pins.get(0)));
 		wires.add(new Wire(parts[2].pins.get(2), parts[4].pins.get(0)));
 	}
 

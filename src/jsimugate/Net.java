@@ -126,7 +126,7 @@ public class Net {
 	public void operate() {
 		Signal result = Signal._Z;
 		for (Pin pin:pins) result = Logic.resolve_tt[result.ordinal()][pin.getOutValue().ordinal()];		
-		for (Pin pin:pins) pin.in_value = result;	
+		for (Pin pin:pins) pin.setInValue(result);	
 		for (Wire wire:wires) wire.value = result;
 	}
 	

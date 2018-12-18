@@ -17,7 +17,7 @@ public class Gate extends Part {
 		selected=true;
 	}
 
-	private void addInput() {
+	protected void addInput() {
 		int n = inputs.size();
 		reshape(n + 1);
 		switch (n) {
@@ -38,7 +38,7 @@ public class Gate extends Part {
 		}
 	}
 
-	private void removeInput() {
+	protected void removeInput() {
 		int n = inputs.size();
 		if (n < 1) return;
 		Pin victim = inputs.get(n - 1);
@@ -70,7 +70,7 @@ public class Gate extends Part {
 
 	public void operate() {
 		Signal result = function();
-		for (Pin i : inputs) result = function(result, i.in_value);
+		for (Pin i : inputs) result = function(result, i.getInValue());
 		output.setOutValue(result);
 	}
 

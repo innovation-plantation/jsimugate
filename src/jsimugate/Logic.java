@@ -18,6 +18,9 @@ public class Logic {
 	public static final Signal buf_tt[] =
 			// U _ X _ 0 _ 1 _ Z _ W _ L _ H _ -
 			{ _U, _X, _0, _1, _X, _X, _0, _1, _X };
+	public static final Signal not_tt[] =
+			// U _ X _ 0 _ 1 _ Z _ W _ L _ H _ -
+			{ _U, _X, _1, _0, _X, _X, _1, _0, _X };
 
 	public static final Signal and_tt[][] = {
 			// U _ X _ 0 _ 1 _ Z _ W _ L _ H _ -

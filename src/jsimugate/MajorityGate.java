@@ -3,6 +3,7 @@ package jsimugate;
 public class MajorityGate extends Gate {
 	public MajorityGate(double x, double y) {
 		super(x, y);
+		removeInput();
 	}
 
 	public void reshape(int n) {
@@ -12,15 +13,24 @@ public class MajorityGate extends Gate {
 	public void operate() {
 		int hi = 0, lo = 0;
 		for (Pin i : inputs) {
-			if (i.in_value.bad) {
+			if (i.getInValue().bad) {
 				output.setOutValue(Signal._X);
 				return;
 			}
-			if (i.in_value.hi) hi++;
-			if (i.in_value.lo) lo++;
+			if (i.getInValue().hi) hi++;
+			if (i.getInValue().lo) lo++;
 		}
 		if (hi > lo) output.setOutValue(Signal._1);
 		else if (lo > hi) output.setOutValue(Signal._0);
 		else output.setOutValue(Signal._X);
+	}
+	public void increase() {
+		addInput();
+		if (inputs.size()%2==0) addInput();
+	}
+
+	public void decrease() {
+		removeInput();
+		if (inputs.size()%2==0) removeInput();
 	}
 }

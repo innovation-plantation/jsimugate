@@ -11,8 +11,8 @@ public class Pin extends Symbol {
 	Point2D control;
 	boolean inverted;
 	Inversion bubble;
-	Signal in_value = Signal._Z;
-	private Signal out_value = Signal._Z;
+	private Signal inValue = Signal._Z;
+	private Signal outValue = Signal._Z;
 
 	public Pin(double x, double y) {
 		super(x, y);
@@ -46,7 +46,11 @@ public class Pin extends Symbol {
 	}
 
 	public void drawAtOrigin(Graphics2D g) {
-		if (line != null) in_value.trace(g, line);
+		if (line != null) {
+			if (outValue!=Signal._Z) outValue.trace(g, line);
+			else inValue.trace(g, line);
+			
+		}
 		super.drawAtOrigin(g);
 	}
 
@@ -62,10 +66,18 @@ public class Pin extends Symbol {
 	}
 
 	Signal getOutValue() {
-		return out_value;
+		return outValue;
 	}
 
-	void setOutValue(Signal out_value) {
-		this.in_value = this.out_value = out_value;
+	void setOutValue(Signal newValue) {
+		this.setInValue(outValue = inverted?newValue.not():newValue);
+	}
+
+	Signal getInValue() {
+		return inverted?inValue.not():inValue;
+	}
+
+	void setInValue(Signal newValue) {
+		inValue = newValue;
 	}
 }

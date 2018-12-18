@@ -8,6 +8,15 @@ public class Part extends Symbol {
 
 	List<Pin> pins = new ArrayList<Pin>();
 
+	enum OC {
+		NPN("\u2390"), PNP("\u238F"),NONE;
+		String label;
+		OC() {}
+		OC(String label) {
+			this.label = label;
+		}
+	};
+
 	public Part(double x, double y) {
 		super(x, y);
 	}
@@ -25,6 +34,10 @@ public class Part extends Symbol {
 	}
 
 	public void reshape(int n) {}
+	
+	public void setOC(OC oc) {
+		sublabel = oc.label;
+	}
 
 	public void increase() {}
 

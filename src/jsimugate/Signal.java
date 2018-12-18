@@ -69,4 +69,8 @@ public enum Signal implements SignalConstants {
 		for (Signal signal : signals) result = result.resolve(signal);
 		return result;
 	}
+
+	public Signal not() {
+		return Logic.not_tt[ordinal()];
+	}
 }

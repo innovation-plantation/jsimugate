@@ -28,6 +28,7 @@ public class Symbol {
 	boolean selecting=false;
 	Stroke hilightStroke = defaultHighlightStroke;
 	Color highlightColor = defaultHighlightColor;
+	String label,sublabel;
 
 	AffineTransform gTransform=new AffineTransform();
 
@@ -81,6 +82,13 @@ public class Symbol {
 			g.setStroke(stroke);
 			g.setColor(color);
 			g.draw(shape);
+		}
+		if (label!=null) {
+			g.drawString(label, -25, sublabel==null?5:0);
+		}
+		if (sublabel!=null) {
+			g.scale(2.2, 2);
+			g.drawString(sublabel, -10, label==null?5:9);
 		}
 	}
 	
