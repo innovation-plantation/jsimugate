@@ -2,10 +2,11 @@ package jsimugate;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class Part extends Symbol {
 
-	Collection<Pin> pins = new ArrayList<Pin>();
+	List<Pin> pins = new ArrayList<Pin>();
 
 	public Part(double x, double y) {
 		super(x, y);

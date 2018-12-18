@@ -20,11 +20,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener {
 	private static final long serialVersionUID = 1L;
 	Part parts[] = { new AndGate(50, 100), new XorGate(150, 50), new OrGate(225, 100), new AndGate(50, 300),
 			new XorGate(150, 250), new MajorityGate(225, 300)/* , new Part(50, 250) */ };
+	ArrayList<Wire> wires= new ArrayList<Wire>();
 	private Dimension size;
 	private Image image;
 	private Graphics graphics;
@@ -39,6 +41,8 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.addKeyListener(this);
+		
+		wires.add(new Wire(parts[2].pins.get(2), parts[4].pins.get(0)));
 	}
 
 	private void updateImageSize() {
@@ -58,6 +62,8 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		for (Part part : parts) part.operate();
 
 		for (Symbol part : parts) part.draw(g);
+		
+		for (Wire wire:wires) wire.draw(g);
 
 		if (lasso != null) {
 			g.setColor(Color.blue);
