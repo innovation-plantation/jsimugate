@@ -9,7 +9,7 @@ public class Part extends Symbol {
 	List<Pin> pins = new ArrayList<Pin>();
 
 	enum Tech {
-		CMOS,
+		DEFAULT,
 		OC_NPN(Signal._1,Signal._Z,"\u2390"), 
 		OC_PNP(Signal._0,Signal._Z,"\u238F"),
 		TTL_NPN(Signal._1,Signal._H),
@@ -29,7 +29,7 @@ public class Part extends Symbol {
 		}
 		Tech() {}
 	};
-	Tech tech=Tech.CMOS;
+	Tech tech=Tech.DEFAULT;
 
 	public Part(double x, double y) {
 		super(x, y);
