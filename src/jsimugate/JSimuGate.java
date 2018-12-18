@@ -22,12 +22,15 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
-	Part parts[] = { new AndGate(50, 100), new XorGate(150, 50), new OrGate(225, 100) {
+	List<Part> parts=new ArrayList<Part>();
+	/*
+	[] = { new AndGate(50, 100), new XorGate(150, 50), new OrGate(225, 100) {
 		{
 			setTech(Tech.OC_PNP);
 		}
@@ -35,7 +38,8 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		{
 			setTech(Tech.OC_NPN);
 		}
-	}/* , new Part(50, 250) */ };
+	 , new Part(50, 250)  };
+	 */
 	ArrayList<Wire> wires = new ArrayList<Wire>();
 	private Dimension size;
 	private Image image;
@@ -54,8 +58,12 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		this.addKeyListener(this);
 		this.addComponentListener(this);
 
-		wires.add(new Wire(parts[2].pins.get(1), parts[1].pins.get(0)));
-		wires.add(new Wire(parts[2].pins.get(2), parts[4].pins.get(0)));
+		parts.add(new MajorityGate(100,100).not());
+		parts.add(new AndGate(120,120));
+		parts.add(new OrGate(140,140));
+		
+		//wires.add(new Wire(parts[2].pins.get(1), parts[1].pins.get(0)));
+		//wires.add(new Wire(parts[2].pins.get(2), parts[4].pins.get(0)));
 	}
 
 	private void updateImageSize() {
@@ -75,9 +83,14 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		Net.operateAll();
 
-		for (Part part : parts) part.operate();
+		for (Part part : parts) {
+			part.operate(); 
+			part.draw(g);
+			for (Pin pin:part.pins) {
+				pin.setInValue(Signal._Z);
+			}
+		}
 
-		for (Symbol part : parts) part.draw(g);
 
 		for (Wire wire : wires) wire.draw(g);
 
@@ -130,10 +143,22 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 				}
 			}
 		}
+		
 
-		// clicking on nothing should deselect everything.
+		// clicking on something or nothing?
 		Part topHit = null;
 		for (Part part : parts) if (part.at(e.getPoint())) topHit = part;
+
+		// RightClick? 
+		if (e.getButton()==MouseEvent.BUTTON3) {
+			if (topHit==null) {
+				parts.add(new AndGate(e.getX(),e.getY()));				
+			} else {
+				parts.set(parts.indexOf(topHit), topHit.convert());
+			}
+		}
+		
+		// clicking on nothing should deselect everything.
 		if (topHit == null) for (Part part : parts) part.selected = part.selecting = false;
 		repaint();
 		recentMouseEvent = e;

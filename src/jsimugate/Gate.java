@@ -16,7 +16,7 @@ public class Gate extends Part {
 		addInput();
 		selected=true;
 	}
-
+	
 	protected void addInput() {
 		int n = inputs.size();
 		reshape(n + 1);
@@ -82,5 +82,10 @@ public class Gate extends Part {
 
 	public void decrease() {
 		removeInput();
+	}
+	
+	public Gate not() {
+		output.toggleInversion();
+		return this;
 	}
 }

@@ -29,7 +29,7 @@ public class Part extends Symbol {
 		Tech() {}
 	};
 	Tech tech=Tech.DEFAULT;
-
+	
 	public Part(double x, double y) {
 		super(x, y);
 	}
@@ -58,5 +58,12 @@ public class Part extends Symbol {
 	public void decrease() {}
 
 	public void operate() {}
+
+	/** 
+	 * Convert to an equivalent symbol such by DeMorganizing
+	 */
+	public Part convert() {
+		return this;
+	}
 
 }

@@ -37,4 +37,9 @@ public class MajorityGate extends Gate {
 	public void updateLabel() {
 		label = inputs.size()>1 ? "MAJ"+inputs.size() : output.inverted ? "NOT": null;
 	}
+	
+	public Part convert() {
+		for (Pin pin:pins) pin.toggleInversion();
+		return this;
+	}
 }
