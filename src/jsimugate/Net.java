@@ -107,7 +107,7 @@ public class Net {
 	 * @return the set of wires connected to this pin
 	 */
 	public static Collection<Wire> directConnections(Pin pin) {
-		HashSet result=new HashSet();
+		HashSet<Wire> result=new HashSet<Wire>();
 		for (Net net:nets) {
 			if (net.pins.contains(pin)) for (Wire wire:net.wires) {
 				if (wire.src==pin ) result.add(wire);
