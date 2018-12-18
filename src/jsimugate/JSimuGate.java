@@ -27,10 +27,10 @@ import java.util.ArrayList;
 
 public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
-	Part parts[] = { new AndGate(50, 100), new XorGate(150, 50), new OrGate(225, 100), new AndGate(50, 300),
+	Part parts[] = { new AndGate(50, 100), new XorGate(150, 50), new OrGate(225, 100) {{setTech(Tech.OC_PNP);}}, new AndGate(50, 300),
 			new XorGate(150, 250), new MajorityGate(225, 300) {
 				{
-					setOC(OC.NPN);
+					setTech(Tech.OC_NPN);
 				}
 			}/* , new Part(50, 250) */ };
 	ArrayList<Wire> wires = new ArrayList<Wire>();

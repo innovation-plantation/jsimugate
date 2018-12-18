@@ -71,7 +71,10 @@ public class Pin extends Symbol {
 	}
 
 	void setOutValue(Signal newValue) {
-		this.setInValue(outValue = inverted?newValue.not():newValue);
+		outValue = inverted?newValue.not():newValue;
+	    Part.Tech tech = ((Part)parent).tech;
+	    if (outValue==tech.changeFrom) outValue=tech.changeTo;
+		this.setInValue(outValue);
 	}
 
 	Signal getInValue() {
