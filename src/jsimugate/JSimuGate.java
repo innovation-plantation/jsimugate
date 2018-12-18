@@ -25,12 +25,15 @@ import java.util.ArrayList;
 
 public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
-	Part parts[] = { new AndGate(50, 100), new XorGate(150, 50), new OrGate(225, 100) {{setTech(Tech.OC_PNP);}}, new AndGate(50, 300),
-			new XorGate(150, 250), new MajorityGate(225, 300) {
-				{
-					setTech(Tech.OC_NPN);
-				}
-			}/* , new Part(50, 250) */ };
+	Part parts[] = { new AndGate(50, 100), new XorGate(150, 50), new OrGate(225, 100) {
+		{
+			setTech(Tech.OC_PNP);
+		}
+	}, new AndGate(50, 300), new XorGate(150, 250), new MajorityGate(225, 300) {
+		{
+			setTech(Tech.OC_NPN);
+		}
+	}/* , new Part(50, 250) */ };
 	ArrayList<Wire> wires = new ArrayList<Wire>();
 	private Dimension size;
 	private Image image;
@@ -38,6 +41,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	private static final Stroke lassoStroke = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0,
 			new float[] { 9, 2 }, 0);
 	MouseEvent recentMouseEvent = null;
+	private Wire protoWire = null;
 	private static Point2D.Double lassoBegin = null;
 	private static Rectangle2D.Double lasso = null;
 
@@ -79,6 +83,12 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 			g.setColor(Color.blue);
 			g.setStroke(lassoStroke);
 			g.draw(lasso);
+		}
+
+		if (protoWire != null) {
+			protoWire.value = protoWire.src.getOutValue();
+			protoWire.draw(g);
+			System.out.println(protoWire.src);
 		}
 	}
 
@@ -142,6 +152,18 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	 * position
 	 */
 	@Override public void mousePressed(MouseEvent e) {
+
+		// first check for pins
+		for (Part part : parts) {
+			for (Pin pin : part.pins) {
+				if (pin.at(e.getPoint())) {
+					protoWire = new Wire(pin, new Pin(e.getX(), e.getY()));
+					repaint();
+					recentMouseEvent = e;
+				}
+			}
+		}
+
 		// if clicking on a selected part, don't unselect anything
 		Part topHit = null;
 		for (Part part : parts) if (part.at(e.getPoint())) topHit = part;
@@ -172,6 +194,23 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	}
 
 	@Override public void mouseReleased(MouseEvent e) {
+		// If landed on a pin, connect it
+		if (protoWire != null) {
+			for (Part part : parts) {
+				for (Pin pin : part.pins) {
+					if (pin.at(e.getPoint())) {
+						// connect
+						protoWire.to(pin);
+						wires.add(protoWire);
+					}
+				}
+			}
+			protoWire = null;
+			repaint();
+			recentMouseEvent = e;
+			return;
+		}
+
 		// Add whatever is in the lasso to the selection
 		for (Part part : parts) {
 			if (part.selecting) {
@@ -186,6 +225,13 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	}
 
 	@Override public void mouseDragged(MouseEvent e) {
+		if (protoWire != null) {
+			protoWire.dst.transform.setToTranslation(e.getX(), e.getY());
+			repaint();
+			recentMouseEvent = e;
+			return;
+		}
+
 		if (lasso != null) {
 			// Adjust the lasso rectangle. calculate new upper left corner, width, and
 			// height values.

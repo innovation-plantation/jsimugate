@@ -16,6 +16,8 @@ public class Pin extends Symbol {
 
 	public Pin(double x, double y) {
 		super(x, y);
+		if (parent==null) gTransform = transform;
+		hitbox = Artwork.bubbleShape();
 	}
 
 	Pin right(double dx) {
