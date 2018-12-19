@@ -19,16 +19,21 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jsimugate.Part.Tech;
+
 public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
-	List<Part> parts=new ArrayList<Part>();
+	List<Part> parts = new ArrayList<Part>();
 	ArrayList<Wire> wires = new ArrayList<Wire>();
 	private Dimension size;
 	private Image image;
@@ -46,17 +51,17 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		this.addKeyListener(this);
 		this.addComponentListener(this);
 
-		parts.add(new MajorityGate(100,100).not());
-		parts.add(new AndGate(120,120));
-		parts.add(new OrGate(140,140));
-		
+		parts.add(new MajorityGate(100, 50).not());
+		parts.add(new AndGate(100, 150));
+		parts.add(new OrGate(100, 250));
+		parts.add(new XorGate(100, 350));
 		updateImageSize();
 	}
 
 	private void updateImageSize() {
 		size = getSize();
 		image = createImage(size.width, size.height);
-		if (image!=null) graphics = image.getGraphics();
+		if (image != null) graphics = image.getGraphics();
 	}
 
 	public void update(Graphics g) {
@@ -71,13 +76,12 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		Net.operateAll();
 
 		for (Part part : parts) {
-			part.operate(); 
+			part.operate();
 			part.draw(g);
-			for (Pin pin:part.pins) {
+			for (Pin pin : part.pins) {
 				pin.setInValue(Signal._Z);
 			}
 		}
-
 
 		for (Wire wire : wires) wire.draw(g);
 
@@ -107,17 +111,27 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		frame.setVisible(true);
 
 		Pattern wxh = Pattern.compile("([0-9]+)x([0-9]+)");
-		for (String s: args) {
-			Matcher match=wxh.matcher(s);
+		for (String s : args) {
+			Matcher match = wxh.matcher(s);
 			if (match.matches()) {
 				int x = Integer.parseInt(match.group(1));
 				int y = Integer.parseInt(match.group(2));
 				frame.setSize(x, y);
 			}
-			if (s.equals("--fullscreen")) frame.setExtendedState(Frame.MAXIMIZED_BOTH); 
+			if (s.equals("--fullscreen")) frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		}
 
 	}
+
+	@Override public void componentHidden(ComponentEvent e) {}
+
+	@Override public void componentMoved(ComponentEvent e) {}
+
+	@Override public void componentResized(ComponentEvent e) {
+		updateImageSize();
+	}
+
+	@Override public void componentShown(ComponentEvent e) {}
 
 	@Override public void mouseClicked(MouseEvent e) {
 		// clicking on inverter should invert it
@@ -132,21 +146,20 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 				}
 			}
 		}
-		
 
 		// clicking on something or nothing?
 		Part topHit = null;
 		for (Part part : parts) if (part.at(e.getPoint())) topHit = part;
 
-		// RightClick? 
-		if (e.getButton()==MouseEvent.BUTTON3) {
-			if (topHit==null) {
-				parts.add(new AndGate(e.getX(),e.getY()));				
+		// RightClick?
+		if (e.getButton() == MouseEvent.BUTTON3) {
+			if (topHit == null) {
+				parts.add(new AndGate(e.getX(), e.getY()));
 			} else {
 				parts.set(parts.indexOf(topHit), topHit.convert());
 			}
 		}
-		
+
 		// clicking on nothing should deselect everything.
 		if (topHit == null) for (Part part : parts) part.selected = part.selecting = false;
 		repaint();
@@ -224,19 +237,19 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 			for (Part part : parts) {
 				for (Pin pin : part.pins) {
 					if (pin.at(e.getPoint())) {
-						if (pin==protoWire.src) {
+						if (pin == protoWire.src) {
 							// Don't connect pin to self
 							break;
 						}
 						// connect or disconnect
 						Wire oldWire = Net.findWire(protoWire.src, pin);
-						if (oldWire!=null) {
-							System.out.println("FOUND "+oldWire+oldWire.src+oldWire.dst);
+						if (oldWire != null) {
+							System.out.println("FOUND " + oldWire + oldWire.src + oldWire.dst);
 							Net.disconnect(oldWire);
 							wires.remove(oldWire);
 						} else {
 							protoWire.to(pin);
-						    wires.add(protoWire);
+							wires.add(protoWire);
 						}
 					}
 				}
@@ -325,19 +338,73 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	@Override public void keyReleased(KeyEvent e) {}
 
 	@Override public void keyTyped(KeyEvent e) {
-		switch(e.getKeyChar()) {
-			case 'n':Net.dump(); break;
+		switch (e.getKeyChar()) {
+		case 'n':
+			Net.dump();
+			break;
+		case ' ':
+			String s = toString();
+			System.out.println(s);
+			System.out.println("---");
+			fromString(s);
+		case 'r': 
+			Numbered.renumber();
+
 		}
 	}
 
-	@Override public void componentHidden(ComponentEvent e) {}
-
-	@Override public void componentMoved(ComponentEvent e) {}
-
-	@Override public void componentResized(ComponentEvent e) {
-		updateImageSize();
+	public String toString() {
+		String s = "";
+		for (Part part : parts) {
+			s += "PART:"+ part.transform.toString().split("Transform")[1] + part.sn() + "(" + part.pins.size() + " PINS:";
+            for (Pin pin:part.pins) {
+            	s += pin.inverted ? " +" : " -";
+            	s += pin.sn();
+            }
+			s += ") ";
+		    if (part.tech!=Tech.DEFAULT) s += part.tech;
+            s += "\n";
+		}
+		for (Wire wire:wires) {
+			s += "WIRE: " + wire.src.sn() + " - " + wire.dst.sn() + "\n";
+		}
+		return s;
 	}
-
-	@Override public void componentShown(ComponentEvent e) {}
-
+	
+	public void fromString(String s) {
+		final String t_rule = "\\[ *\\[ *([-0-9.]+) *, *([-0-9.]+) *, *([-0-9.]+) *\\] *, *\\[ *([-0-9.]+) *, *([-0-9.]+) *, *([-0-9.]+) *\\] *\\]";
+		final String part_prepins_rule = "PART: *"+t_rule+" *([A-Za-z_0-9]+)#([0-9]+)\\(([0-9]+) PINS:";
+		final String part_pins_rule = "( *([-+])(Pin)#([0-9]+) *)*";
+		final String part_rule = part_prepins_rule+part_pins_rule+"+\\)";
+		final Pattern part_pattern = Pattern.compile(part_rule);
+		final Pattern wire_pattern = Pattern.compile("WIRE: *Pin#([0-9]+) *- *Pin#([0-9]+)");
+		Scanner scan = new Scanner(s);
+		while (scan.hasNextLine()) {
+			if (scan.findInLine(part_pattern)!=null) {
+				MatchResult result = scan.match();
+				System.out.println("PART");
+				float m00 = Float.parseFloat(result.group(1));
+				float m10 = Float.parseFloat(result.group(2));
+				float m01 = Float.parseFloat(result.group(3));
+				float m11 = Float.parseFloat(result.group(4));
+				float m02 = Float.parseFloat(result.group(5));
+				float m12 = Float.parseFloat(result.group(6));
+				AffineTransform t = new AffineTransform(m00,m10,m01,m11,m02,m12);
+				String partName = result.group(7);
+				int partNumber = Integer.parseInt(result.group(8));
+				int pinCount = Integer.parseInt(result.group(9));
+				for (int i=10;i<=result.groupCount();i++) {
+				    System.out.println("  "+i+":"+result.group(i));	
+				}
+				scan.nextLine();
+			} else if (scan.findInLine(wire_pattern)!=null) {
+				MatchResult result = scan.match();
+				System.out.println("WIRE" + result.group(1) + " to " + result.group(2));
+				scan.nextLine();
+			} else {
+				System.err.println("No match reading data: " + scan.nextLine());
+			}
+		}
+		scan.close();
+	}
 }

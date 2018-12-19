@@ -19,4 +19,13 @@ public class XorGate extends Gate {
 	public void updateLabel() {
 		label = output.inverted ? "XNOR" : "XOR";
 	}
+	public Part convert() {
+		for (Pin pin:inputs) {
+			if (pin.inverted) {
+				pin.toggleInversion();
+				output.toggleInversion();
+			}
+		}
+		return this;
+	}
 }

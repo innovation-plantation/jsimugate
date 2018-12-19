@@ -9,8 +9,13 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class Symbol {
+
+public class Symbol extends Numbered {
 	static final Shape defaultPath = new Rectangle2D.Double(-3, -3, 7, 7);
 	static final Stroke defaultStroke = new BasicStroke(3);
 	static final Stroke defaultHighlightStroke = new BasicStroke(10);
