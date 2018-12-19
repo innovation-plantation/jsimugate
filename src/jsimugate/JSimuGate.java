@@ -405,20 +405,21 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 					Part newPart = (Part) Class.forName("jsimugate." + partName)
 							.getConstructor(double.class, double.class).newInstance(200, 200);
 					newPart.transform.setTransform(t);
-					if (newPart.pins.size() > pinCount) newPart.decrease();
-					else while (newPart.pins.size() < pinCount) newPart.increase();
+					while (newPart.pins.size() > pinCount) newPart.decrease();
+					while (newPart.pins.size() < pinCount) newPart.increase();
 					parts.add(newPart);
 					System.out.print(partName + partNumber + " with " + pinCount + " pins:");
 
-					int pinIndex = 0;
-					while (scan.findInLine(part_pin_pattern) != null) {
+					
+					for (int pinIndex = 0;scan.findInLine(part_pin_pattern) != null;pinIndex++) {
 						MatchResult pinResult = scan.match();
 						boolean invertPin = pinResult.group(1).equals("-");
-						if (invertPin) newPart.pins.get(pinIndex).toggleInversion();
 						int pinNumber = Integer.parseInt(pinResult.group(2));
 						if (invertPin) System.out.print(" NOT");
 						System.out.print(" pin" + pinNumber);
-						pinIndex++;
+						Pin pin = newPart.pins.get(pinIndex);
+						if (invertPin) pin.toggleInversion();
+						construction.put(pinNumber, pin);
 					}
 					scan.findInLine("\\) *([^ ]*)");
 					String techString=scan.match().group(1);
@@ -431,8 +432,11 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 				System.out.println(scan.nextLine());
 			} else if (scan.findInLine(wire_pattern) != null) {
 				MatchResult result = scan.match();
-				System.out.println("WIRE" + result.group(1) + " to " + result.group(2));
+				int a=Integer.parseInt(result.group(1));
+				int b=Integer.parseInt(result.group(2));
+				System.out.println("WIRE pin" + a + " to pin" + b);
 				scan.nextLine();
+				wires.add(new Wire(construction.get(a),construction.get(b)));
 			} else {
 				System.err.println("No match reading data: " + scan.nextLine());
 			}
