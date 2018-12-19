@@ -23,7 +23,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -155,6 +157,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		if (e.getButton() == MouseEvent.BUTTON3) {
 			if (topHit == null) {
 				parts.add(new AndGate(e.getX(), e.getY()));
+				parts.add(new AndGate(400, 400));
 			} else {
 				parts.set(parts.indexOf(topHit), topHit.convert());
 			}
@@ -347,7 +350,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 			System.out.println(s);
 			System.out.println("---");
 			fromString(s);
-		case 'r': 
+		case 'r':
 			Numbered.renumber();
 
 		}
@@ -356,48 +359,77 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	public String toString() {
 		String s = "";
 		for (Part part : parts) {
-			s += "PART:"+ part.transform.toString().split("Transform")[1] + part.sn() + "(" + part.pins.size() + " PINS:";
-            for (Pin pin:part.pins) {
-            	s += pin.inverted ? " +" : " -";
-            	s += pin.sn();
-            }
+			s += "PART:" + part.transform.toString().split("Transform")[1] + part.sn() + "(" + part.pins.size()
+					+ " PINS:";
+			for (Pin pin : part.pins) {
+				s += pin.inverted ? " -" : " +";
+				s += pin.sn();
+			}
 			s += ") ";
-		    if (part.tech!=Tech.DEFAULT) s += part.tech;
-            s += "\n";
+			if (part.tech != Tech.DEFAULT) s += part.tech;
+			s += "\n";
 		}
-		for (Wire wire:wires) {
+		for (Wire wire : wires) {
 			s += "WIRE: " + wire.src.sn() + " - " + wire.dst.sn() + "\n";
 		}
 		return s;
 	}
-	
+
 	public void fromString(String s) {
 		final String t_rule = "\\[ *\\[ *([-0-9.]+) *, *([-0-9.]+) *, *([-0-9.]+) *\\] *, *\\[ *([-0-9.]+) *, *([-0-9.]+) *, *([-0-9.]+) *\\] *\\]";
-		final String part_prepins_rule = "PART: *"+t_rule+" *([A-Za-z_0-9]+)#([0-9]+)\\(([0-9]+) PINS:";
-		final String part_pins_rule = "( *([-+])(Pin)#([0-9]+) *)*";
-		final String part_rule = part_prepins_rule+part_pins_rule+"+\\)";
-		final Pattern part_pattern = Pattern.compile(part_rule);
+		final String part_prepins_rule = "PART: *" + t_rule + " *([A-Za-z_0-9]+)#([0-9]+)\\(([0-9]+) PINS:";
+		final Pattern part_pin_pattern = Pattern.compile("([-+])Pin#([0-9]+)");
+		final Pattern part_pattern = Pattern.compile(part_prepins_rule);
 		final Pattern wire_pattern = Pattern.compile("WIRE: *Pin#([0-9]+) *- *Pin#([0-9]+)");
 		Scanner scan = new Scanner(s);
+		Map<Integer, Pin> construction = new HashMap<Integer, Pin>();
 		while (scan.hasNextLine()) {
-			if (scan.findInLine(part_pattern)!=null) {
+			if (scan.findInLine(part_pattern) != null) {
 				MatchResult result = scan.match();
-				System.out.println("PART");
+				System.out.print("PART AT");
 				float m00 = Float.parseFloat(result.group(1));
-				float m10 = Float.parseFloat(result.group(2));
-				float m01 = Float.parseFloat(result.group(3));
-				float m11 = Float.parseFloat(result.group(4));
-				float m02 = Float.parseFloat(result.group(5));
+				float m01 = Float.parseFloat(result.group(2));
+				float m02 = Float.parseFloat(result.group(3));
+				float m10 = Float.parseFloat(result.group(4));
+				float m11 = Float.parseFloat(result.group(5));
 				float m12 = Float.parseFloat(result.group(6));
-				AffineTransform t = new AffineTransform(m00,m10,m01,m11,m02,m12);
+				System.out.printf("\n%7.2f %7.2f %7.2f  ",m00,m01,m02);
+				System.out.printf("\n%7.2f %7.2f %7.2f  ",m10,m11,m12);
+				// Inconsistent order of parameters in AffineTransform toString and constructor!
+				AffineTransform t = new AffineTransform(m00, m10, m01, m11, m02 + 150, m12 + 50);
 				String partName = result.group(7);
 				int partNumber = Integer.parseInt(result.group(8));
 				int pinCount = Integer.parseInt(result.group(9));
-				for (int i=10;i<=result.groupCount();i++) {
-				    System.out.println("  "+i+":"+result.group(i));	
+				try {
+					System.out.println("jsimugate." + partName);
+					Part newPart = (Part) Class.forName("jsimugate." + partName)
+							.getConstructor(double.class, double.class).newInstance(200, 200);
+					newPart.transform.setTransform(t);
+					if (newPart.pins.size() > pinCount) newPart.decrease();
+					else while (newPart.pins.size() < pinCount) newPart.increase();
+					parts.add(newPart);
+					System.out.print(partName + partNumber + " with " + pinCount + " pins:");
+
+					int pinIndex = 0;
+					while (scan.findInLine(part_pin_pattern) != null) {
+						MatchResult pinResult = scan.match();
+						boolean invertPin = pinResult.group(1).equals("-");
+						if (invertPin) newPart.pins.get(pinIndex).toggleInversion();
+						int pinNumber = Integer.parseInt(pinResult.group(2));
+						if (invertPin) System.out.print(" NOT");
+						System.out.print(" pin" + pinNumber);
+						pinIndex++;
+					}
+					scan.findInLine("\\) *([^ ]*)");
+					String techString=scan.match().group(1);
+					Tech tech=Tech.DEFAULT;
+					if (!techString.isEmpty()) tech = Tech.valueOf(techString);
+					System.out.println(" TECH " + tech);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				scan.nextLine();
-			} else if (scan.findInLine(wire_pattern)!=null) {
+				System.out.println(scan.nextLine());
+			} else if (scan.findInLine(wire_pattern) != null) {
 				MatchResult result = scan.match();
 				System.out.println("WIRE" + result.group(1) + " to " + result.group(2));
 				scan.nextLine();
@@ -406,5 +438,6 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 			}
 		}
 		scan.close();
+		repaint();
 	}
 }

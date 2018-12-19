@@ -1,7 +1,7 @@
 package jsimugate;
 
 public class OrGate extends Gate {
-	public OrGate(float x, float y) {
+	public OrGate(double x, double y) {
 		super(x, y);
 	}
 
