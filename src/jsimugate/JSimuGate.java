@@ -29,17 +29,6 @@ import java.util.regex.Pattern;
 public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
 	List<Part> parts=new ArrayList<Part>();
-	/*
-	[] = { new AndGate(50, 100), new XorGate(150, 50), new OrGate(225, 100) {
-		{
-			setTech(Tech.OC_PNP);
-		}
-	}, new AndGate(50, 300), new XorGate(150, 250), new MajorityGate(225, 300) {
-		{
-			setTech(Tech.OC_NPN);
-		}
-	 , new Part(50, 250)  };
-	 */
 	ArrayList<Wire> wires = new ArrayList<Wire>();
 	private Dimension size;
 	private Image image;
@@ -52,7 +41,6 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	private static Rectangle2D.Double lasso = null;
 
 	public void init() {
-		updateImageSize();
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.addKeyListener(this);
@@ -62,14 +50,13 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		parts.add(new AndGate(120,120));
 		parts.add(new OrGate(140,140));
 		
-		//wires.add(new Wire(parts[2].pins.get(1), parts[1].pins.get(0)));
-		//wires.add(new Wire(parts[2].pins.get(2), parts[4].pins.get(0)));
+		updateImageSize();
 	}
 
 	private void updateImageSize() {
 		size = getSize();
 		image = createImage(size.width, size.height);
-		graphics = image.getGraphics();
+		if (image!=null) graphics = image.getGraphics();
 	}
 
 	public void update(Graphics g) {
@@ -116,7 +103,9 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		});
 		frame.setSize(640, 480);
 		frame.add(panel);
+		panel.init();
 		frame.setVisible(true);
+
 		Pattern wxh = Pattern.compile("([0-9]+)x([0-9]+)");
 		for (String s: args) {
 			Matcher match=wxh.matcher(s);
@@ -127,7 +116,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 			}
 			if (s.equals("--fullscreen")) frame.setExtendedState(Frame.MAXIMIZED_BOTH); 
 		}
-		panel.init();
+
 	}
 
 	@Override public void mouseClicked(MouseEvent e) {

@@ -30,7 +30,7 @@ public class MajorityGate extends Gate {
 	}
 
 	public void decrease() {
-		removeInput();
+		if (inputs.size()>1) removeInput();
 		if (inputs.size()%2==0) removeInput();
 	}
 	
