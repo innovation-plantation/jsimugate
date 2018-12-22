@@ -2,6 +2,7 @@ package jsimugate;
 
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
 
 public class Artwork {
 
@@ -11,9 +12,9 @@ public class Artwork {
 		GeneralPath shape = new GeneralPath();
 		shape.moveTo(-40, -40 - s);
 		shape.lineTo(0, -40 - s);
-		shape.curveTo(22, -40 - s, 40, -22-s, 40, -s);
+		shape.curveTo(22, -40 - s, 40, -22 - s, 40, -s);
 		shape.lineTo(40, s);
-		shape.curveTo(40, 22+s, 22, 40 + s, 0, 40 + s);
+		shape.curveTo(40, 22 + s, 22, 40 + s, 0, 40 + s);
 		shape.lineTo(-40, 40 + s);
 		shape.closePath();
 		return shape;
@@ -75,4 +76,35 @@ public class Artwork {
 		return new java.awt.geom.Ellipse2D.Double(-10, -10, 20, 20);
 	}
 
+	public static Shape diodeShape() {
+		GeneralPath shape = new GeneralPath();
+		shape.moveTo(4, 0);
+		shape.lineTo(4, 6);
+		shape.lineTo(7, 6);
+		shape.lineTo(7, -6);
+		shape.lineTo(4, -6);
+		shape.lineTo(4, 0);
+		shape.lineTo(-7, 6);
+		shape.lineTo(-7, -6);
+		shape.closePath();
+		return shape;
+	}
+
+	public static Shape zigzagShape() {
+		GeneralPath shape = new GeneralPath();
+		shape.moveTo(- 35, 0);
+		shape.lineTo(- 30,-5);
+		shape.lineTo(- 25, 5);
+		shape.lineTo(- 20,-5);
+		shape.lineTo(- 15, 5);
+		shape.lineTo(- 10,-5);
+		shape.lineTo(- 5,  5);
+		shape.lineTo(0, 0);
+		return shape;
+	}
+	
+	public static Shape sourceShape() {
+		return new Line2D.Double(-10, -15, 10, -25);
+	}
 }
+

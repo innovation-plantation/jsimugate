@@ -3,6 +3,8 @@ package jsimugate;
 import java.util.ArrayList;
 import java.util.List;
 
+import jsimugate.Part.Tech;
+
 public class Part extends Symbol implements Cloneable {
 
 	List<Pin> pins = new ArrayList<Pin>();
@@ -58,6 +60,20 @@ public class Part extends Symbol implements Cloneable {
 	public void decrease() {}
 
 	public void operate() {}
+
+	public String toString() {
+		String s="";
+		s += "PART:" + transform.toString().split("Transform")[1] + sn() + "(" + pins.size()
+				+ " PINS:";
+		for (Pin pin : pins) {
+			s += pin.inverted ? " -" : " +";
+			s += pin.sn();
+		}
+		s += ") ";
+		if (tech != Tech.DEFAULT) s += tech;
+		s += "\n";
+		return s;
+	}
 
 	/**
 	 * Convert to an equivalent symbol such by DeMorganizing

@@ -1,5 +1,7 @@
 package jsimugate;
 
+// TODO: deletions, insertion bins, file, menus, transforms, parts, ROM programmer
+
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
@@ -35,5 +37,8 @@ public class Wire {
 		line.moveTo(p0.getX(), p0.getY());
 		line.curveTo(p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY());
 		value.trace(g, line);
+	}
+	public String toString() {
+		return "WIRE: " + src.sn() + " - " + dst.sn() + "\n";
 	}
 }

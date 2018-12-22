@@ -20,11 +20,11 @@ public class Symbol extends Numbered {
 	Symbol parent;
 	ArrayList<Symbol> children = new ArrayList<Symbol>();
 	Shape hitbox = defaultPath;
-	private Shape shape = defaultPath;
+	protected Shape shape = defaultPath;
 	AffineTransform transform = new AffineTransform();
 	public Color color = Color.black, fill = defaultFillColor;
 	Stroke stroke = defaultStroke;
-	boolean selected=false;
+	private boolean selected=false;
 	boolean selecting=false;
 	Stroke hilightStroke = defaultHighlightStroke;
 	Color highlightColor = defaultHighlightColor;
@@ -68,8 +68,24 @@ public class Symbol extends Numbered {
 		transform.translate(xy.getX(), xy.getY());
 	}
 
+	void updateLabel() { }
+	
+	public boolean at(Point2D xy) {
+		return hitbox !=null && gTransform.createTransformedShape(hitbox).contains(xy);
+		// equivalent to checking if the hitbox contains the inverse gTransform of the point	
+	}
+	
+	public boolean at(Rectangle2D lasso) {
+		return hitbox !=null && gTransform.createTransformedShape(hitbox).intersects(lasso);
+	}
+
+	protected void drawChildren(Graphics2D g) {
+		for (Symbol child : children) child.draw(g);
+	}
+	
 	public void drawAtOrigin(Graphics2D g) {
-		if (selected || selecting) {
+		drawChildren(g);
+		if (isSelected() || selecting) {
 			g.setColor(highlightColor);
 			g.setStroke(hilightStroke);
 			g.draw(shape);
@@ -91,24 +107,20 @@ public class Symbol extends Numbered {
 			g.drawString(sublabel, -10, label==null?5:9);
 		}
 	}
-	
-	void updateLabel() { }
-	
-	public boolean at(Point2D xy) {
-		return hitbox !=null && gTransform.createTransformedShape(hitbox).contains(xy);
-		// equivalent to checking if the hitbox contains the inverse gTransform of the point	
-	}
-	
-	public boolean at(Rectangle2D lasso) {
-		return hitbox !=null && gTransform.createTransformedShape(hitbox).intersects(lasso);
-	}
 
 	public void draw(Graphics2D g) {
 		AffineTransform restore = g.getTransform();
 		g.transform(transform);
 		gTransform = g.getTransform();
-		for (Symbol child : children) child.draw(g);
 		drawAtOrigin(g);
 		g.setTransform(restore);
+	}
+
+	boolean isSelected() {
+		return selected;
+	}
+
+	void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 }

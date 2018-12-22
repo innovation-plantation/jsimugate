@@ -24,7 +24,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
@@ -35,8 +34,7 @@ import jsimugate.Part.Tech;
 
 public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
-	List<Part> parts = new ArrayList<Part>();
-	ArrayList<Wire> wires = new ArrayList<Wire>();
+	Circuit circuit = new Circuit(new ArrayList<Part>(), new ArrayList<PartsBin>(), new ArrayList<Wire>());
 	private Dimension size;
 	private Image image;
 	private Graphics graphics;
@@ -53,10 +51,10 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		this.addKeyListener(this);
 		this.addComponentListener(this);
 
-		parts.add(new MajorityGate(100, 50).not());
-		parts.add(new AndGate(100, 150));
-		parts.add(new OrGate(100, 250));
-		parts.add(new XorGate(100, 350));
+		circuit.bins.add(new PartsBin(100, 50, new MajorityGate(0, 0).not()));  
+		circuit.parts.add(new AndGate(100, 150));
+		circuit.parts.add(new OrGate(100, 250));
+		circuit.parts.add(new XorGate(100, 350));
 		updateImageSize();
 	}
 
@@ -77,7 +75,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		Net.operateAll();
 
-		for (Part part : parts) {
+		for (Part part : circuit.parts) {
 			part.operate();
 			part.draw(g);
 			for (Pin pin : part.pins) {
@@ -85,17 +83,23 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 			}
 		}
 
-		for (Wire wire : wires) wire.draw(g);
+		for (Wire wire : circuit.wires) wire.draw(g);
 
 		if (lasso != null) {
 			g.setColor(Color.blue);
+			Stroke restore = g.getStroke();
 			g.setStroke(lassoStroke);
 			g.draw(lasso);
+			g.setStroke(restore);
 		}
 
 		if (protoWire != null) {
 			protoWire.value = protoWire.src.getOutValue();
 			protoWire.draw(g);
+		}
+		
+		for (PartsBin bin:circuit.bins) {
+			bin.draw(g);
 		}
 	}
 
@@ -137,7 +141,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 
 	@Override public void mouseClicked(MouseEvent e) {
 		// clicking on inverter should invert it
-		for (Part part : parts) {
+		for (Part part : circuit.parts) {
 			for (Pin pin : part.pins) {
 				if (pin.bubble != null) {
 					if (pin.bubble.at(e.getPoint())) {
@@ -151,20 +155,20 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 
 		// clicking on something or nothing?
 		Part topHit = null;
-		for (Part part : parts) if (part.at(e.getPoint())) topHit = part;
+		for (Part part : circuit.parts) if (part.at(e.getPoint())) topHit = part;
 
 		// RightClick?
 		if (e.getButton() == MouseEvent.BUTTON3) {
 			if (topHit == null) {
-				parts.add(new AndGate(e.getX(), e.getY()));
-				parts.add(new AndGate(400, 400));
+				circuit.parts.add(new AndGate(e.getX(), e.getY()));
+				circuit.parts.add(new AndGate(400, 400));
 			} else {
-				parts.set(parts.indexOf(topHit), topHit.convert());
+				circuit.parts.set(circuit.parts.indexOf(topHit), topHit.convert());
 			}
 		}
 
 		// clicking on nothing should deselect everything.
-		if (topHit == null) for (Part part : parts) part.selected = part.selecting = false;
+		if (topHit == null) for (Part part : circuit.parts) part.setSelected(part.selecting = false);
 		repaint();
 		recentMouseEvent = e;
 	}
@@ -193,7 +197,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	@Override public void mousePressed(MouseEvent e) {
 
 		// first check for pins
-		for (Part part : parts) {
+		for (Part part : circuit.parts) {
 			for (Pin pin : part.pins) {
 				if (pin.at(e.getPoint())) {
 					protoWire = new Wire(pin, new Pin(e.getX(), e.getY()));
@@ -206,17 +210,17 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 
 		// if clicking on a selected part, don't unselect anything
 		Part topHit = null;
-		for (Part part : parts) if (part.at(e.getPoint())) topHit = part;
+		for (Part part : circuit.parts) if (part.at(e.getPoint())) topHit = part;
 
 		if (topHit != null) {
 			// if there was a hit with ctrl or shift down: toggle it
 			if (e.isControlDown() || e.isShiftDown()) {
-				topHit.selected = !topHit.selected;
+				topHit.setSelected(!topHit.isSelected());
 			} else {
-				if (!topHit.selected) {
+				if (!topHit.isSelected()) {
 					// pick only this part
-					for (Part part : parts) part.selected = false;
-					topHit.selected = true;
+					for (Part part : circuit.parts) part.setSelected(false);
+					topHit.setSelected(true);
 				}
 				// if clicked part is already selected, with no modifier keys, don't change the
 				// selection.
@@ -237,7 +241,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		// If landed on a pin, connect it
 		if (protoWire != null) {
 			Net.disconnect(protoWire);
-			for (Part part : parts) {
+			for (Part part : circuit.parts) {
 				for (Pin pin : part.pins) {
 					if (pin.at(e.getPoint())) {
 						if (pin == protoWire.src) {
@@ -249,10 +253,10 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 						if (oldWire != null) {
 							System.out.println("FOUND " + oldWire + oldWire.src + oldWire.dst);
 							Net.disconnect(oldWire);
-							wires.remove(oldWire);
+							circuit.wires.remove(oldWire);
 						} else {
 							protoWire.to(pin);
-							wires.add(protoWire);
+							circuit.wires.add(protoWire);
 						}
 					}
 				}
@@ -264,9 +268,9 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		}
 
 		// Add whatever is in the lasso to the selection
-		for (Part part : parts) {
+		for (Part part : circuit.parts) {
 			if (part.selecting) {
-				part.selected = true;
+				part.setSelected(true);
 				part.selecting = false;
 			}
 		}
@@ -301,7 +305,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 				lasso.y = lassoBegin.getY();
 				lasso.height = e.getY() - lassoBegin.getY();
 			}
-			for (Part part : parts) {
+			for (Part part : circuit.parts) {
 				part.selecting = part.at(lasso);
 			}
 		} else if (recentMouseEvent != null) {
@@ -310,13 +314,13 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 					&& !recentMouseEvent.isShiftDown()) {
 				// Add whatever is under the mouse to the selection unless CTRL or SHIFT was
 				// pressed
-				for (Part part : parts) {
-					if (part.at(recentMouseEvent.getPoint())) part.selected = true;
+				for (Part part : circuit.parts) {
+					if (part.at(recentMouseEvent.getPoint())) part.setSelected(true);
 				}
 			}
 			int dx = e.getX() - recentMouseEvent.getX();
 			int dy = e.getY() - recentMouseEvent.getY();
-			for (Part part : parts) if (part.selected) part.transform.translate(dx, dy);
+			for (Part part : circuit.parts) if (part.isSelected()) part.transform.translate(dx, dy);
 		}
 		repaint();
 		recentMouseEvent = e;
@@ -329,10 +333,10 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	@Override public void keyPressed(KeyEvent e) {
 		switch (e.getKeyChar()) {
 		case '+':
-			for (Part part : parts) if (part.selected) part.increase();
+			for (Part part : circuit.parts) if (part.isSelected()) part.increase();
 			break;
 		case '-':
-			for (Part part : parts) if (part.selected) part.decrease();
+			for (Part part : circuit.parts) if (part.isSelected()) part.decrease();
 			break;
 		}
 		repaint();
@@ -346,102 +350,13 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 			Net.dump();
 			break;
 		case ' ':
-			String s = toString();
-			System.out.println(s);
-			System.out.println("---");
-			fromString(s);
+			String s = circuit.toString();
+			circuit.fromString(s);
+			repaint();
 		case 'r':
 			Numbered.renumber();
 
 		}
 	}
 
-	public String toString() {
-		String s = "";
-		for (Part part : parts) {
-			s += "PART:" + part.transform.toString().split("Transform")[1] + part.sn() + "(" + part.pins.size()
-					+ " PINS:";
-			for (Pin pin : part.pins) {
-				s += pin.inverted ? " -" : " +";
-				s += pin.sn();
-			}
-			s += ") ";
-			if (part.tech != Tech.DEFAULT) s += part.tech;
-			s += "\n";
-		}
-		for (Wire wire : wires) {
-			s += "WIRE: " + wire.src.sn() + " - " + wire.dst.sn() + "\n";
-		}
-		return s;
-	}
-
-	public void fromString(String s) {
-		final String t_rule = "\\[ *\\[ *([-0-9.]+) *, *([-0-9.]+) *, *([-0-9.]+) *\\] *, *\\[ *([-0-9.]+) *, *([-0-9.]+) *, *([-0-9.]+) *\\] *\\]";
-		final String part_prepins_rule = "PART: *" + t_rule + " *([A-Za-z_0-9]+)#([0-9]+)\\(([0-9]+) PINS:";
-		final Pattern part_pin_pattern = Pattern.compile("([-+])Pin#([0-9]+)");
-		final Pattern part_pattern = Pattern.compile(part_prepins_rule);
-		final Pattern wire_pattern = Pattern.compile("WIRE: *Pin#([0-9]+) *- *Pin#([0-9]+)");
-		Scanner scan = new Scanner(s);
-		Map<Integer, Pin> construction = new HashMap<Integer, Pin>();
-		while (scan.hasNextLine()) {
-			if (scan.findInLine(part_pattern) != null) {
-				MatchResult result = scan.match();
-				System.out.print("PART AT");
-				float m00 = Float.parseFloat(result.group(1));
-				float m01 = Float.parseFloat(result.group(2));
-				float m02 = Float.parseFloat(result.group(3));
-				float m10 = Float.parseFloat(result.group(4));
-				float m11 = Float.parseFloat(result.group(5));
-				float m12 = Float.parseFloat(result.group(6));
-				System.out.printf("\n%7.2f %7.2f %7.2f  ",m00,m01,m02);
-				System.out.printf("\n%7.2f %7.2f %7.2f  ",m10,m11,m12);
-				// Inconsistent order of parameters in AffineTransform toString and constructor!
-				AffineTransform t = new AffineTransform(m00, m10, m01, m11, m02 + 150, m12 + 50);
-				String partName = result.group(7);
-				int partNumber = Integer.parseInt(result.group(8));
-				int pinCount = Integer.parseInt(result.group(9));
-				try {
-					System.out.println("jsimugate." + partName);
-					Part newPart = (Part) Class.forName("jsimugate." + partName)
-							.getConstructor(double.class, double.class).newInstance(200, 200);
-					newPart.transform.setTransform(t);
-					while (newPart.pins.size() > pinCount) newPart.decrease();
-					while (newPart.pins.size() < pinCount) newPart.increase();
-					parts.add(newPart);
-					System.out.print(partName + partNumber + " with " + pinCount + " pins:");
-
-					
-					for (int pinIndex = 0;scan.findInLine(part_pin_pattern) != null;pinIndex++) {
-						MatchResult pinResult = scan.match();
-						boolean invertPin = pinResult.group(1).equals("-");
-						int pinNumber = Integer.parseInt(pinResult.group(2));
-						if (invertPin) System.out.print(" NOT");
-						System.out.print(" pin" + pinNumber);
-						Pin pin = newPart.pins.get(pinIndex);
-						if (invertPin) pin.toggleInversion();
-						construction.put(pinNumber, pin);
-					}
-					scan.findInLine("\\) *([^ ]*)");
-					String techString=scan.match().group(1);
-					Tech tech=Tech.DEFAULT;
-					if (!techString.isEmpty()) tech = Tech.valueOf(techString);
-					System.out.println(" TECH " + tech);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				System.out.println(scan.nextLine());
-			} else if (scan.findInLine(wire_pattern) != null) {
-				MatchResult result = scan.match();
-				int a=Integer.parseInt(result.group(1));
-				int b=Integer.parseInt(result.group(2));
-				System.out.println("WIRE pin" + a + " to pin" + b);
-				scan.nextLine();
-				wires.add(new Wire(construction.get(a),construction.get(b)));
-			} else {
-				System.err.println("No match reading data: " + scan.nextLine());
-			}
-		}
-		scan.close();
-		repaint();
-	}
 }
