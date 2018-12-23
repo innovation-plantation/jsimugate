@@ -72,6 +72,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		circuit.bins.add(new PartsBin(100, 400, new XorGate(0, 0).not().asTech(Tech.OC)));
 
 		circuit.bins.add(new PartsBin(200, 50, new PullupResistor(0, 0)));
+		circuit.bins.add(new PartsBin(250, 50, new PulldownResistor(0, 0)));
 		updateImageSize();
 	}
 

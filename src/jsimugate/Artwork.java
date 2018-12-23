@@ -113,4 +113,13 @@ public class Artwork {
 		shape.lineTo(7, -20);
 		return shape;
 	}
+
+	public static Shape pulldownShape() {
+		GeneralPath shape = zigzagShape();
+		shape.moveTo(-7, 15);
+		shape.lineTo(0, 25);
+		shape.lineTo(7, 15);
+		shape.closePath();
+		return shape;
+	}
 }
