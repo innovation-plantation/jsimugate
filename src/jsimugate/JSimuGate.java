@@ -3,13 +3,20 @@ package jsimugate;
 import java.applet.Applet;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Menu;
+import java.awt.MenuItem;
+import java.awt.Panel;
+import java.awt.PopupMenu;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -25,6 +32,10 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import jsimugate.Part.Tech;
 
@@ -57,15 +68,15 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		circuit.bins.add(new PartsBin(100, 150, new OrGate(0, 0).not()));
 		circuit.bins.add(new PartsBin(100, 200, new XorGate(0, 0).not()));
 
-		circuit.bins.add(new PartsBin(50, 250, new MajorityGate(0, 0).not().asTech(Tech.OC_NPN)));
-		circuit.bins.add(new PartsBin(50, 300, new AndGate(0, 0).asTech(Tech.OC_NPN)));
-		circuit.bins.add(new PartsBin(50, 350, new OrGate(0, 0).asTech(Tech.OC_NPN)));
-		circuit.bins.add(new PartsBin(50, 400, new XorGate(0, 0).asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(50, 250, new MajorityGate(0, 0).not().asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(50, 300, new AndGate(0, 0).asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(50, 350, new OrGate(0, 0).asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(50, 400, new XorGate(0, 0).asTech(Tech.OC)));
 
-		circuit.bins.add(new PartsBin(100, 250, new MajorityGate(0, 0).asTech(Tech.OC_NPN)));
-		circuit.bins.add(new PartsBin(100, 300, new AndGate(0, 0).not().asTech(Tech.OC_NPN)));
-		circuit.bins.add(new PartsBin(100, 350, new OrGate(0, 0).not().asTech(Tech.OC_NPN)));
-		circuit.bins.add(new PartsBin(100, 400, new XorGate(0, 0).not().asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(100, 250, new MajorityGate(0, 0).asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(100, 300, new AndGate(0, 0).not().asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(100, 350, new OrGate(0, 0).not().asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(100, 400, new XorGate(0, 0).not().asTech(Tech.OC)));
 
 		updateImageSize();
 	}
@@ -171,11 +182,34 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 
 		// RightClick?
 		if (e.getButton() == MouseEvent.BUTTON3) {
-			if (topHit == null) {
-				circuit.parts.add(new AndGate(e.getX(), e.getY()));
-				circuit.parts.add(new AndGate(400, 400));
-			} else {
-				circuit.parts.set(circuit.parts.indexOf(topHit), topHit.convert());
+			if (topHit != null) {
+				Component painter = this;
+				Part part = topHit;
+				JPopupMenu menu = new javax.swing.JPopupMenu("Part Menu");
+				menu.add(new JMenuItem("Convert (DeMorgan)") {
+					{
+						addActionListener(e -> {
+							for (Part part:circuit.parts) {
+								if (part.isSelected()) circuit.parts.set(circuit.parts.indexOf(part), part.convert());
+							}
+							painter.repaint();
+						});
+					}
+				});
+				for (Tech tech : Tech.values()) {
+					menu.add(new JMenuItem(tech.description) {
+						{
+							addActionListener(e -> {
+								for (Part part:circuit.parts) {
+									if (part.isSelected()) circuit.parts.set(circuit.parts.indexOf(part), part.asTech(tech));
+								}
+								painter.repaint();
+							});
+						}
+					});
+				}
+
+				menu.show(this, e.getX(), e.getY());
 			}
 		}
 
@@ -207,22 +241,8 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	 * position
 	 */
 	@Override public void mousePressed(MouseEvent e) {
-		// first check for bins
-		for (PartsBin bin : circuit.bins) {
-			if (bin.at(e.getPoint())) {
-				for (Part part : circuit.parts) {
-					// unselect everything else
-					part.setSelected(false);
-				}
-				Part part = bin.produce(e.getX(), e.getY());
-				part.setSelected(true);
-				circuit.parts.add(part);
-				repaint();
-				return;
-			}
-		}
 
-		// next check for pins
+		// first check for pins
 		for (Part part : circuit.parts) {
 			for (Pin pin : part.pins) {
 				if (pin.at(e.getPoint())) {
@@ -237,6 +257,21 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		// if clicking on a selected part, don't unselect anything
 		Part topHit = null;
 		for (Part part : circuit.parts) if (part.at(e.getPoint())) topHit = part;
+
+		// if there's no hit, check for bins
+		if (topHit == null) for (PartsBin bin : circuit.bins) {
+			if (bin.at(e.getPoint())) {
+				for (Part part : circuit.parts) {
+					// unselect everything else
+					part.setSelected(false);
+				}
+				Part part = bin.produce(e.getX(), e.getY());
+				part.setSelected(true);
+				circuit.parts.add(part);
+				repaint();
+				return;
+			}
+		}
 
 		if (topHit != null) {
 			// if there was a hit with ctrl or shift down: toggle it
@@ -415,14 +450,14 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 			int step = 4;
 			switch (e.getKeyCode()) {
 			case KeyEvent.VK_UP:
-				for (Part part:circuit.parts) {
+				for (Part part : circuit.parts) {
 					if (part.isSelected()) {
 						part.transform.scale(1, -1);
 					}
 				}
 				break;
 			case KeyEvent.VK_DOWN:
-				for (Part part:circuit.parts) {
+				for (Part part : circuit.parts) {
 					if (part.isSelected()) {
 						part.transform.scale(-1, 1);
 					}
@@ -435,7 +470,8 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 				if (e.isShiftDown()) step /= 2;
 				for (Part part : circuit.parts) {
 					if (part.isSelected()) {
-						if (e.isAltDown()) part.transform.setToTranslation(part.transform.getTranslateX(), part.transform.getTranslateY());
+						if (e.isAltDown()) part.transform.setToTranslation(part.transform.getTranslateX(),
+								part.transform.getTranslateY());
 						else part.transform.rotate(Math.PI / step);
 					}
 				}

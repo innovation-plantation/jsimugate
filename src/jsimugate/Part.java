@@ -13,30 +13,35 @@ public class Part extends Symbol {
 	List<Pin> pins = new ArrayList<Pin>();
 
 	enum Tech {
-		DEFAULT, // strong 1 and 0 values
-		OC_NPN(Signal._1, Signal._Z, "\u2390"), // high impedance when 1
-		OC_PNP(Signal._0, Signal._Z, "\u238F"), // high impedance when 0
-		TTL_NPN(Signal._1, Signal._H), // weak when 1
-		TTL_PNP(Signal._0, Signal._L); // weak when 0
-		String label;
+		PUSH_PULL("Push-Pull (like CMOS)"), // strong 1 and 0 push-pull like values (typically CMOS)
+		TTL("Standard TTL (NPN)", Signal._1, Signal._H), // weak when 1 like standard TTL
+		OC("Standard Open Collector (NPN)", Signal._1, Signal._Z, "\u2390"), // floating when 1 like TTL OC
+		TTL_PNP("Nonstandard TTL (PNP)", Signal._0, Signal._L), // weak when 0 rare dual of standard TTL
+		OC_PNP("Nonstandard Open Collector (PNP)", Signal._0, Signal._Z, "\u238F"); // floating when 0 rare in some PLC
+		String mark;
 		Signal changeFrom = Signal._Z;
 		Signal changeTo = Signal._Z;
+		String description;
 
-		Tech(Signal changeFrom, Signal changeTo, String label) {
+		Tech(String description,Signal changeFrom, Signal changeTo, String mark) {
+			this.description = description;
 			this.changeFrom = changeFrom;
 			this.changeTo = changeTo;
-			this.label = label;
+			this.mark = mark;
 		}
 
-		Tech(Signal changeFrom, Signal changeTo) {
+		Tech(String description,Signal changeFrom, Signal changeTo) {
+			this.description = description;
 			this.changeFrom = changeFrom;
 			this.changeTo = changeTo;
 		}
 
-		Tech() {}
+		Tech(String description) {
+			this.description = description;
+		}
 	};
 
-	Tech tech = Tech.DEFAULT;
+	Tech tech = Tech.PUSH_PULL;
 
 	public Part(double x, double y) {
 		super(x, y);
@@ -58,7 +63,7 @@ public class Part extends Symbol {
 
 	public Part asTech(Tech technology) {
 		this.tech = technology;
-		sublabel = technology.label;
+		sublabel = technology.mark;
 		return this;
 	}
 
@@ -76,7 +81,7 @@ public class Part extends Symbol {
 			s += pin.sn();
 		}
 		s += ") ";
-		if (tech != Tech.DEFAULT) s += tech;
+		if (tech != Tech.PUSH_PULL) s += tech;
 		s += "\n";
 		return s;
 	}
@@ -137,7 +142,7 @@ public class Part extends Symbol {
 				}
 				scan.findInLine("\\) *([^ ]*)");
 				String techString = scan.match().group(1);
-				newPart.tech = Tech.DEFAULT;
+				newPart.tech = Tech.PUSH_PULL;
 				if (!techString.isEmpty()) newPart.asTech(Tech.valueOf(techString));
 				Log.println(" TECH is " + newPart.tech);
 			} catch (Exception e) {
