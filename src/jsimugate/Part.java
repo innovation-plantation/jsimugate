@@ -8,8 +8,6 @@ import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
-import jsimugate.Part.Tech;
-
 public class Part extends Symbol {
 
 	List<Pin> pins = new ArrayList<Pin>();
@@ -117,8 +115,7 @@ public class Part extends Symbol {
 				while (newPart.pins.size() < pinCount) newPart.increase();
 
 				Log.print(partName + partNumber + " with " + pinCount + " pins:");
-
-				
+			
 				for (int pinIndex = 0;scan.findInLine(part_pin_pattern) != null;pinIndex++) {
 					MatchResult pinResult = scan.match();
 					boolean invertPin = pinResult.group(1).equals("-");

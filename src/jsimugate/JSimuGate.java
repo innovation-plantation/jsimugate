@@ -275,10 +275,12 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		}
 
 		// Add whatever is in the lasso to the selection
-		for (Part part : circuit.parts) {
-			if (part.selecting) {
-				part.setSelected(true);
-				part.selecting = false;
+		if (lasso!=null) {
+			for (Part part : circuit.parts) {
+				if (part.selecting) {
+					part.setSelected(true);
+					part.selecting = false;
+				}
 			}
 		}
 		lasso = null;
