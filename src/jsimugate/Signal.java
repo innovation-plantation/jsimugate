@@ -50,6 +50,7 @@ public enum Signal implements SignalConstants {
 	}
 
 	void trace(Graphics2D g, Shape shape) {
+		Stroke restore = g.getStroke();
 		if (bgColor != null) {
 			g.setStroke(bgStroke);
 			g.setColor(bgColor);
@@ -58,6 +59,7 @@ public enum Signal implements SignalConstants {
 		g.setStroke(fgStroke);
 		g.setColor(fgColor);
 		g.draw(shape);
+		g.setStroke(restore);
 	}
 
 	public Signal resolve(Signal other) {

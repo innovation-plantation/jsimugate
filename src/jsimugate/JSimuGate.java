@@ -19,18 +19,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import jsimugate.Part.Tech;
 
 public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
@@ -52,9 +45,9 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		this.addComponentListener(this);
 
 		circuit.bins.add(new PartsBin(100, 50, new MajorityGate(0, 0).not()));
-		circuit.parts.add(new AndGate(100, 150));
-		circuit.parts.add(new OrGate(100, 250));
-		circuit.parts.add(new XorGate(100, 350));
+		circuit.bins.add(new PartsBin(100,100, new AndGate(0, 0)));
+		circuit.bins.add(new PartsBin(100,150,new OrGate(0, 0)));
+		circuit.bins.add(new PartsBin(100,200,new XorGate(0, 0)));
 		updateImageSize();
 	}
 
@@ -195,8 +188,22 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	 * position
 	 */
 	@Override public void mousePressed(MouseEvent e) {
-
-		// first check for pins
+		// first check for bins
+		for (PartsBin bin:circuit.bins) {
+			if (bin.at(e.getPoint())) {
+				for (Part part:circuit.parts) {
+					// unselect everything else
+					part.setSelected(false);
+				}
+				Part part = bin.produce(e.getX(), e.getY());
+				part.setSelected(true);
+				circuit.parts.add(part);
+				repaint();
+				return;
+			}
+		}
+		
+		// next check for pins
 		for (Part part : circuit.parts) {
 			for (Pin pin : part.pins) {
 				if (pin.at(e.getPoint())) {
@@ -251,7 +258,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 						// connect or disconnect
 						Wire oldWire = Net.findWire(protoWire.src, pin);
 						if (oldWire != null) {
-							System.out.println("FOUND " + oldWire + oldWire.src + oldWire.dst);
+							Log.println("FOUND " + oldWire + oldWire.src + oldWire.dst);
 							Net.disconnect(oldWire);
 							circuit.wires.remove(oldWire);
 						} else {
@@ -319,7 +326,9 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 						// Add whatever is under the mouse to the selection unless CTRL or SHIFT was
 						// pressed
 						for (Part part : circuit.parts) {
-							if (part.at(recentMouseEvent.getPoint())) part.setSelected(true);
+							if (part.at(recentMouseEvent.getPoint())) {
+								part.setSelected(true);
+							}
 						}
 					}
 				}
@@ -367,18 +376,14 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	@Override public void keyReleased(KeyEvent e) {}
 
 	@Override public void keyTyped(KeyEvent e) {
-		switch (e.getKeyChar()) {
-		case 'n':
-			Net.dump();
-			break;
-		case ' ':
-			String s = circuit.toString();
-			circuit.fromString(s);
-			repaint();
-		case 'r':
-			Numbered.renumber();
-
-		}
+//		switch (e.getKeyChar()) {
+//		case 'n':
+//			Net.dump();
+//			break;
+//		case 'r':
+//			Numbered.renumber();
+//		}
 	}
+	
 
 }

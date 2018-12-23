@@ -86,6 +86,7 @@ public class Symbol extends Numbered {
 	
 	public void drawAtOrigin(Graphics2D g) {
 		drawChildren(g);
+		Stroke restore=g.getStroke();
 		if (isSelected() || selecting) {
 			g.setColor(highlightColor);
 			g.setStroke(hilightStroke);
@@ -107,6 +108,7 @@ public class Symbol extends Numbered {
 			g.scale(2.2, 2);
 			g.drawString(sublabel, -10, label==null?5:9);
 		}
+		g.setStroke(restore);
 	}
 
 	public void draw(Graphics2D g) {

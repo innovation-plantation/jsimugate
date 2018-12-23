@@ -94,37 +94,37 @@ public class Part extends Symbol {
 		Part newPart = null;
 		if (scan.findInLine(part_pattern) != null) {
 			MatchResult result = scan.match();
-			log("PART AT");
+			Log.print("PART AT");
 			float m00 = Float.parseFloat(result.group(1));
 			float m01 = Float.parseFloat(result.group(2));
 			float m02 = Float.parseFloat(result.group(3));
 			float m10 = Float.parseFloat(result.group(4));
 			float m11 = Float.parseFloat(result.group(5));
 			float m12 = Float.parseFloat(result.group(6));
-			logf("\n%7.2f %7.2f %7.2f  ",m00,m01,m02);
-			logf("\n%7.2f %7.2f %7.2f  ",m10,m11,m12);
+			Log.printf("\n%7.2f %7.2f %7.2f  ",m00,m01,m02);
+			Log.printf("\n%7.2f %7.2f %7.2f  ",m10,m11,m12);
 			// Inconsistent order of parameters in AffineTransform toString and constructor!
 			AffineTransform t = new AffineTransform(m00, m10, m01, m11, m02, m12 );
 			String partName = result.group(7);
 			int partNumber = Integer.parseInt(result.group(8));
 			int pinCount = Integer.parseInt(result.group(9));
 			try {
-				logline("jsimugate." + partName);
+				Log.println("jsimugate." + partName);
 				newPart = (Part) Class.forName("jsimugate." + partName)
 						.getConstructor(double.class, double.class).newInstance(0, 0);
 				newPart.transform.setTransform(t);
 				while (newPart.pins.size() > pinCount) newPart.decrease();
 				while (newPart.pins.size() < pinCount) newPart.increase();
 
-				log(partName + partNumber + " with " + pinCount + " pins:");
+				Log.print(partName + partNumber + " with " + pinCount + " pins:");
 
 				
 				for (int pinIndex = 0;scan.findInLine(part_pin_pattern) != null;pinIndex++) {
 					MatchResult pinResult = scan.match();
 					boolean invertPin = pinResult.group(1).equals("-");
 					int pinNumber = Integer.parseInt(pinResult.group(2));
-					if (invertPin) log(" NOT");
-					log(" pin" + pinNumber);
+					if (invertPin) Log.print(" NOT");
+					Log.print(" pin" + pinNumber);
 					Pin pin = newPart.pins.get(pinIndex);
 					if (invertPin) pin.toggleInversion();
 					if (pinMap != null) pinMap.put(pinNumber, pin);
@@ -133,11 +133,11 @@ public class Part extends Symbol {
 				String techString=scan.match().group(1);
 				Tech tech=Tech.DEFAULT;
 				if (!techString.isEmpty()) tech = Tech.valueOf(techString);
-				logline(" TECH " + tech);
+				Log.println(" TECH " + tech);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			logline(scan.nextLine());
+			Log.println(scan.nextLine());
 		}
 		return newPart;
 	}

@@ -102,11 +102,11 @@ public class Net {
 				if (net.pins.contains(dst)) {
 					for (Wire wire : net.wires) {
 						if (wire.src == src && wire.dst == dst) {
-							System.out.println("SD "+src+" "+dst);
+							Log.println("SD "+src+" "+dst);
 							return wire;
 						}
 						if (wire.src == dst && wire.dst == src) {
-							System.out.println("DS "+src+" "+dst);
+							Log.println("DS "+src+" "+dst);
 							return wire;
 						}
 					}
@@ -154,15 +154,15 @@ public class Net {
 	}
 
 	public static void dump() {
-		System.out.println("Nets:" + nets.size());
+		Log.println("Nets:" + nets.size());
 		for (Net net : nets) {
-			System.out.println(" Net:" + net + "  Wires:" + net.wires.size() + "  Pins:" + net.pins.size());
-			System.out.print("  Pins:");
-			for (Pin pin : net.pins) System.out.print(" " + pin);
-			System.out.println();
-			System.out.print("  Wires:");
-			for (Wire wire : net.wires) System.out.print(" " + wire);
-			System.out.println();
+			Log.println(" Net:" + net + "  Wires:" + net.wires.size() + "  Pins:" + net.pins.size());
+			Log.print("  Pins:");
+			for (Pin pin : net.pins) Log.print(" " + pin);
+			Log.println();
+			Log.print("  Wires:");
+			for (Wire wire : net.wires) Log.print(" " + wire);
+			Log.println();
 		}
 	}
 }

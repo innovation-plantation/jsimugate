@@ -10,7 +10,7 @@ import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
-public class Wire extends Debuggable {
+public class Wire {
 	Signal value = Signal._Z;
 	static final Point2D.Double origin = new Point2D.Double();
 	Pin src, dst;
@@ -56,7 +56,7 @@ public class Wire extends Debuggable {
 		MatchResult result = scan.match();
 		int a = Integer.parseInt(result.group(1));
 		int b = Integer.parseInt(result.group(2));
-		logline("WIRE pin" + a + " to pin" + b);
+		Log.println("WIRE pin" + a + " to pin" + b);
 		scan.nextLine();
 		Pin pinA = pinMap.get(a);
 		Pin pinB = pinMap.get(b);
