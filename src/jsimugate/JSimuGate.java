@@ -19,6 +19,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -47,24 +48,24 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		this.addComponentListener(this);
 
 		circuit.bins.add(new PartsBin(50, 50, new MajorityGate(0, 0).not()));
-		circuit.bins.add(new PartsBin(50,100, new AndGate(0, 0)));
-		circuit.bins.add(new PartsBin(50,150,new OrGate(0, 0)));
-		circuit.bins.add(new PartsBin(50,200,new XorGate(0, 0)));
+		circuit.bins.add(new PartsBin(50, 100, new AndGate(0, 0)));
+		circuit.bins.add(new PartsBin(50, 150, new OrGate(0, 0)));
+		circuit.bins.add(new PartsBin(50, 200, new XorGate(0, 0)));
 
 		circuit.bins.add(new PartsBin(100, 50, new MajorityGate(0, 0)));
-		circuit.bins.add(new PartsBin(100,100, new AndGate(0, 0).not()));
-		circuit.bins.add(new PartsBin(100,150,new OrGate(0, 0).not()));
-		circuit.bins.add(new PartsBin(100,200,new XorGate(0, 0).not()));
+		circuit.bins.add(new PartsBin(100, 100, new AndGate(0, 0).not()));
+		circuit.bins.add(new PartsBin(100, 150, new OrGate(0, 0).not()));
+		circuit.bins.add(new PartsBin(100, 200, new XorGate(0, 0).not()));
 
-		circuit.bins.add(new PartsBin(50,250, new MajorityGate(0, 0).not().asTech(Tech.OC_NPN)));
-		circuit.bins.add(new PartsBin(50,300, new AndGate(0, 0).asTech(Tech.OC_NPN)));
-		circuit.bins.add(new PartsBin(50,350,new OrGate(0, 0).asTech(Tech.OC_NPN)));
-		circuit.bins.add(new PartsBin(50,400,new XorGate(0, 0).asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(50, 250, new MajorityGate(0, 0).not().asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(50, 300, new AndGate(0, 0).asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(50, 350, new OrGate(0, 0).asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(50, 400, new XorGate(0, 0).asTech(Tech.OC_NPN)));
 
-		circuit.bins.add(new PartsBin(100,250, new MajorityGate(0, 0).asTech(Tech.OC_NPN)));
-		circuit.bins.add(new PartsBin(100,300, new AndGate(0, 0).not().asTech(Tech.OC_NPN)));
-		circuit.bins.add(new PartsBin(100,350,new OrGate(0, 0).not().asTech(Tech.OC_NPN)));
-		circuit.bins.add(new PartsBin(100,400,new XorGate(0, 0).not().asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(100, 250, new MajorityGate(0, 0).asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(100, 300, new AndGate(0, 0).not().asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(100, 350, new OrGate(0, 0).not().asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(100, 400, new XorGate(0, 0).not().asTech(Tech.OC_NPN)));
 
 		updateImageSize();
 	}
@@ -207,9 +208,9 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	 */
 	@Override public void mousePressed(MouseEvent e) {
 		// first check for bins
-		for (PartsBin bin:circuit.bins) {
+		for (PartsBin bin : circuit.bins) {
 			if (bin.at(e.getPoint())) {
-				for (Part part:circuit.parts) {
+				for (Part part : circuit.parts) {
 					// unselect everything else
 					part.setSelected(false);
 				}
@@ -220,7 +221,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 				return;
 			}
 		}
-		
+
 		// next check for pins
 		for (Part part : circuit.parts) {
 			for (Pin pin : part.pins) {
@@ -293,7 +294,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		}
 
 		// Add whatever is in the lasso to the selection
-		if (lasso!=null) {
+		if (lasso != null) {
 			for (Part part : circuit.parts) {
 				if (part.selecting) {
 					part.setSelected(true);
@@ -306,12 +307,12 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 			recentMouseEvent = e;
 			return;
 		}
-		
-		for (PartsBin bin:circuit.bins) {
+
+		for (PartsBin bin : circuit.bins) {
 			if (bin.at(e.getPoint())) {
-				for (Part part:circuit.parts) {
-					if (part.isSelected()) for (Pin pin:part.pins) {
-						circuit.wires.removeIf(wire -> wire.src==pin || wire.dst==pin);
+				for (Part part : circuit.parts) {
+					if (part.isSelected()) for (Pin pin : part.pins) {
+						circuit.wires.removeIf(wire -> wire.src == pin || wire.dst == pin);
 					}
 				}
 				circuit.parts.removeIf(part -> part.isSelected());
@@ -353,8 +354,8 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 			// Not creating a lasso. Moving or Copying parts.
 
 			if (recentMouseEvent.getID() == MouseEvent.MOUSE_PRESSED) {
-				//if (!recentMouseEvent.isControlDown()) 
-				{ 
+				// if (!recentMouseEvent.isControlDown())
+				{
 					// Moving
 					if (!recentMouseEvent.isShiftDown()) {
 						// Add whatever is under the mouse to the selection unless CTRL or SHIFT was
@@ -366,8 +367,8 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 						}
 					}
 				}
-				//else 
-				if (recentMouseEvent.isControlDown()){ 
+				// else
+				if (recentMouseEvent.isControlDown()) {
 					// Copying
 					String string = "";
 					for (Part part : circuit.parts) {
@@ -379,13 +380,14 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 					}
 					for (Wire wire : circuit.wires) string += wire.toString();
 					circuit.fromString(string);
-					
-				} 
+
+				}
 			}
 
 			int dx = e.getX() - recentMouseEvent.getX();
 			int dy = e.getY() - recentMouseEvent.getY();
-			for (Part part : circuit.parts) if (part.isSelected()) part.transform.translate(dx, dy);
+			AffineTransform delta = AffineTransform.getTranslateInstance(dx, dy);
+			for (Part part : circuit.parts) if (part.isSelected()) part.transform.preConcatenate(delta);
 		}
 		repaint();
 		recentMouseEvent = e;
@@ -398,11 +400,47 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	@Override public void keyPressed(KeyEvent e) {
 		switch (e.getKeyChar()) {
 		case '+':
-			for (Part part : circuit.parts) if (part.isSelected()) part.increase();
+			for (Part part : circuit.parts) if (part.isSelected()) {
+				if (e.isAltDown()) part.transform.scale(2, 2);
+				else part.increase();
+			}
 			break;
 		case '-':
-			for (Part part : circuit.parts) if (part.isSelected()) part.decrease();
+			for (Part part : circuit.parts) if (part.isSelected()) {
+				if (e.isAltDown()) part.transform.scale(.5, .5);
+				else part.decrease();
+			}
 			break;
+		default:
+			int step = 4;
+			switch (e.getKeyCode()) {
+			case KeyEvent.VK_UP:
+				for (Part part:circuit.parts) {
+					if (part.isSelected()) {
+						part.transform.scale(1, -1);
+					}
+				}
+				break;
+			case KeyEvent.VK_DOWN:
+				for (Part part:circuit.parts) {
+					if (part.isSelected()) {
+						part.transform.scale(-1, 1);
+					}
+				}
+				break;
+			case KeyEvent.VK_LEFT:
+				step = -step; // fall-through
+			case KeyEvent.VK_RIGHT:
+				if (e.isControlDown()) step *= 3;
+				if (e.isShiftDown()) step /= 2;
+				for (Part part : circuit.parts) {
+					if (part.isSelected()) {
+						if (e.isAltDown()) part.transform.setToTranslation(part.transform.getTranslateX(), part.transform.getTranslateY());
+						else part.transform.rotate(Math.PI / step);
+					}
+				}
+				break;
+			}
 		}
 		repaint();
 	}
@@ -418,6 +456,5 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 //			Numbered.renumber();
 //		}
 	}
-	
 
 }
