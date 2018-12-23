@@ -10,7 +10,7 @@ public class Numbered {
 	static Pattern id_pattern = Pattern.compile("([A-Za-z0-9_.]+)@[0-9a-f]{8}");
 
 	public String sn(String name) {
-		String key=name+"^"+hashCode();
+		String key = name + "^" + hashCode();
 		if (idList.containsKey(key)) return idList.get(key);
 		for (int i = 1;; i++) {
 			String value = name + "#" + i;
@@ -19,15 +19,15 @@ public class Numbered {
 			return value;
 		}
 	}
-	
+
 	public String sn() {
 		return sn(getClass().getSimpleName());
 	}
-	
+
 	public String toString() {
 		return sn();
 	}
-	
+
 	public static void renumber() {
 		idList.clear();
 	}

@@ -18,7 +18,7 @@ public class Net {
 	 * @return the net that the wire should belong to.
 	 */
 	public static void connect(Wire wire) {
-		if (wire.src==null || wire.dst==null) return; // dummy wire
+		if (wire.src == null || wire.dst == null) return; // dummy wire
 		Net srcNet = null, dstNet = null;
 		for (Net net : nets) {
 			if (net.pins.contains(wire.src)) srcNet = net;
@@ -102,11 +102,11 @@ public class Net {
 				if (net.pins.contains(dst)) {
 					for (Wire wire : net.wires) {
 						if (wire.src == src && wire.dst == dst) {
-							Log.println("SD "+src+" "+dst);
+							Log.println("SD " + src + " " + dst);
 							return wire;
 						}
 						if (wire.src == dst && wire.dst == src) {
-							Log.println("DS "+src+" "+dst);
+							Log.println("DS " + src + " " + dst);
 							return wire;
 						}
 					}

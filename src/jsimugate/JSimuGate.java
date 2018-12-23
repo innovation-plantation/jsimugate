@@ -71,6 +71,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		circuit.bins.add(new PartsBin(100, 350, new OrGate(0, 0).not().asTech(Tech.OC)));
 		circuit.bins.add(new PartsBin(100, 400, new XorGate(0, 0).not().asTech(Tech.OC)));
 
+		circuit.bins.add(new PartsBin(200, 50, new PullupResistor(0, 0)));
 		updateImageSize();
 	}
 
@@ -181,7 +182,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 				menu.add(new JMenuItem("Convert (DeMorgan)") {
 					{
 						addActionListener(e -> {
-							for (Part part:circuit.parts) {
+							for (Part part : circuit.parts) {
 								if (part.isSelected()) circuit.parts.set(circuit.parts.indexOf(part), part.convert());
 							}
 							display.repaint();
@@ -192,8 +193,9 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 					menu.add(new JMenuItem(tech.description) {
 						{
 							addActionListener(e -> {
-								for (Part part:circuit.parts) {
-									if (part.isSelected()) circuit.parts.set(circuit.parts.indexOf(part), part.asTech(tech));
+								for (Part part : circuit.parts) {
+									if (part.isSelected())
+										circuit.parts.set(circuit.parts.indexOf(part), part.asTech(tech));
 								}
 								display.repaint();
 							});

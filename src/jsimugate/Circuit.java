@@ -38,7 +38,8 @@ public class Circuit {
 			}
 			Wire newWire = Wire.fromScanner(scan, pinMap);
 			if (newWire != null) {
-				// the other end of the wire doesn't exist because parts on one end are not being duplicated
+				// the other end of the wire doesn't exist because parts on one end are not
+				// being duplicated
 				if (newWire.src == null) continue;
 				if (newWire.dst == null) continue;
 				wires.add(newWire);

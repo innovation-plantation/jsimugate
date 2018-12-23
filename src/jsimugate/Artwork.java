@@ -6,7 +6,7 @@ import java.awt.geom.Line2D;
 
 public class Artwork {
 
-	public static Shape andShape(int size) {
+	public static GeneralPath andShape(int size) {
 		int s = 0;
 		if (size > 4) s = (size - 4) * 10;
 		GeneralPath shape = new GeneralPath();
@@ -20,7 +20,7 @@ public class Artwork {
 		return shape;
 	}
 
-	public static Shape orShape(int size) {
+	public static GeneralPath orShape(int size) {
 		int s = 0;
 		if (size > 3) s = (size - 3) * 10;
 		GeneralPath shape = new GeneralPath();
@@ -33,7 +33,7 @@ public class Artwork {
 		return shape;
 	}
 
-	public static Shape xorShape(int size) {
+	public static GeneralPath xorShape(int size) {
 		int s = 0;
 		if (size > 3) s = (size - 3) * 10;
 		GeneralPath shape = (GeneralPath) orShape(size);
@@ -49,7 +49,7 @@ public class Artwork {
 		return shape;
 	}
 
-	public static Shape triangleShape() {
+	public static GeneralPath triangleShape() {
 		GeneralPath shape = new GeneralPath();
 		shape.moveTo(-40, -40);
 		shape.lineTo(40, 0);
@@ -58,7 +58,7 @@ public class Artwork {
 		return shape;
 	}
 
-	public static Shape majorityShape(int size) {
+	public static GeneralPath majorityShape(int size) {
 		if (size < 2) return triangleShape();
 		int s = 0;
 		if (size > 4) s = (size - 4) * 10;
@@ -76,7 +76,7 @@ public class Artwork {
 		return new java.awt.geom.Ellipse2D.Double(-10, -10, 20, 20);
 	}
 
-	public static Shape diodeShape() {
+	public static GeneralPath diodeShape() {
 		GeneralPath shape = new GeneralPath();
 		shape.moveTo(4, 0);
 		shape.lineTo(4, 6);
@@ -90,21 +90,27 @@ public class Artwork {
 		return shape;
 	}
 
-	public static Shape zigzagShape() {
+	public static GeneralPath zigzagShape() {
 		GeneralPath shape = new GeneralPath();
-		shape.moveTo(- 35, 0);
-		shape.lineTo(- 30,-5);
-		shape.lineTo(- 25, 5);
-		shape.lineTo(- 20,-5);
-		shape.lineTo(- 15, 5);
-		shape.lineTo(- 10,-5);
-		shape.lineTo(- 5,  5);
-		shape.lineTo(0, 0);
+		shape.moveTo(0, -15);
+		shape.lineTo(4, -10);
+		shape.lineTo(-4, -6);
+		shape.lineTo(4, -2);
+		shape.lineTo(-4, 2);
+		shape.lineTo(4, 6);
+		shape.lineTo(-4, 10);
+		shape.lineTo(0, 15);;
 		return shape;
 	}
-	
+
 	public static Shape sourceShape() {
 		return new Line2D.Double(-10, -15, 10, -25);
 	}
-}
 
+	public static Shape pullupShape() {
+		GeneralPath shape = zigzagShape();
+		shape.moveTo(-7, -12);
+		shape.lineTo(7, -20);
+		return shape;
+	}
+}

@@ -24,22 +24,23 @@ public class MajorityGate extends Gate {
 		else if (lo > hi) output.setOutValue(Signal._0);
 		else output.setOutValue(Signal._X);
 	}
+
 	public void increase() {
 		addInput();
-		if (inputs.size()%2==0) addInput();
+		if (inputs.size() % 2 == 0) addInput();
 	}
 
 	public void decrease() {
-		if (inputs.size()>1) removeInput();
-		if (inputs.size()%2==0) removeInput();
+		if (inputs.size() > 1) removeInput();
+		if (inputs.size() % 2 == 0) removeInput();
 	}
-	
+
 	public void updateLabel() {
-		label = inputs.size()>1 ? "MAJ"+inputs.size() : output.inverted ? "NOT": null;
+		label = inputs.size() > 1 ? "MAJ" + inputs.size() : output.inverted ? "NOT" : null;
 	}
-	
+
 	public Part convert() {
-		for (Pin pin:pins) pin.toggleInversion();
+		for (Pin pin : pins) pin.toggleInversion();
 		return this;
 	}
 }

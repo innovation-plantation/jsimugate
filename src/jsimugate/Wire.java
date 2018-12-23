@@ -31,7 +31,7 @@ public class Wire {
 	}
 
 	public void draw(Graphics2D g) {
-		if (src==null || dst==null) return;
+		if (src == null || dst == null) return;
 		Point2D p0 = new Point2D.Double(), p1 = new Point2D.Double(); // src
 		Point2D p2 = new Point2D.Double(), p3 = new Point2D.Double(); // dst
 		src.gTransform.transform(origin, p0);
@@ -46,7 +46,7 @@ public class Wire {
 	}
 
 	public String toString() {
-		if (src==null) return "WIRE: "+src + " to "+dst;
+		if (src == null) return "WIRE: " + src + " to " + dst;
 		return "WIRE: " + src.sn() + " - " + dst.sn() + "\n";
 	}
 

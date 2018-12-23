@@ -14,7 +14,7 @@ public class PartsBin extends Part {
 		this.prototype = part;
 		this.setShape(new Rectangle2D.Double(-25, -25, 50, 50));
 		this.addChild(part);
-		this.fill = new Color(0x00,0xFF,0xFF,0x10);
+		this.fill = new Color(0x00, 0xFF, 0xFF, 0x10);
 		this.color = Color.gray;
 	}
 
@@ -29,11 +29,11 @@ public class PartsBin extends Part {
 		g.scale(3, 3);
 
 		Symbol child = children.get(0);
-		if (child != null && child.label!=null) g.drawString(child.label, -30, 30);
+		if (child != null && child.label != null) g.drawString(child.label, -30, 30);
 		g.setTransform(restore);
 	}
-	
-	public Part produce(double x,double y) {
+
+	public Part produce(double x, double y) {
 		return prototype.dup(x, y);
 	}
 }

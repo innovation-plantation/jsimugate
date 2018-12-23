@@ -2,6 +2,7 @@ package jsimugate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Gate extends Part {
 
@@ -16,7 +17,7 @@ public class Gate extends Part {
 		addInput();
 		setSelected(false);
 	}
-	
+
 	protected void addInput() {
 		int n = inputs.size();
 		reshape(n + 1);
@@ -44,7 +45,7 @@ public class Gate extends Part {
 		if (n < 1) return;
 		Pin victim = inputs.get(n - 1);
 		// if wires attached return now without removing victim.
-		if (Net.directConnections(victim).size()>0) return;
+		if (Net.directConnections(victim).size() > 0) return;
 		reshape(n - 1);
 		inputs.remove(removePin(victim));
 		switch (n) {
@@ -83,9 +84,31 @@ public class Gate extends Part {
 	public void decrease() {
 		removeInput();
 	}
-	
+
 	public Gate not() {
 		output.toggleInversion();
 		return this;
+	}
+
+	/**
+	 * Pilfer resources from this for that as with move semantics.
+	 * 
+	 * After return, caller is expected to use that instead of this, setting
+	 * whatever pointers used this to point to that instead.
+	 */
+	String opposite;
+
+	public Part convert() {
+		if (opposite == null) return super.convert();
+		String s = toString().replaceAll(this.getClass().getSimpleName(), opposite);
+
+		Gate that = (Gate) Part.fromScanner(new Scanner(s), null);
+		that.inputs = inputs;
+		that.output = output;
+		that.pins = pins;
+		that.children = children;
+		for (Symbol child : children) child.parent = that;
+		for (Pin pin : pins) pin.toggleInversion();
+		return that;
 	}
 }

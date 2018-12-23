@@ -7,7 +7,7 @@ import java.awt.geom.Point2D;
 
 public class Pin extends Symbol {
 
-	Shape line,shortLine,longLine;
+	Shape line, shortLine, longLine;
 	Point2D control;
 	boolean inverted;
 	Inversion bubble;
@@ -16,7 +16,7 @@ public class Pin extends Symbol {
 
 	public Pin(double x, double y) {
 		super(x, y);
-		if (parent==null) gTransform = transform;
+		if (parent == null) gTransform = transform;
 		hitbox = Artwork.bubbleShape();
 	}
 
@@ -24,7 +24,7 @@ public class Pin extends Symbol {
 		control = new Point2D.Double(dx, 0);
 		longLine = new Line2D.Double(-dx, 0, 0, 0);
 		shortLine = new Line2D.Double(23 - dx, 0, 0, 0);
-		line=longLine;
+		line = longLine;
 		addChild(bubble = new Inversion(10 - dx, 0));
 		return this;
 	}
@@ -33,7 +33,7 @@ public class Pin extends Symbol {
 		control = new Point2D.Double(-dx, 0);
 		longLine = new Line2D.Double(0, 0, dx, 0);
 		shortLine = new Line2D.Double(0, 0, dx - 23, 0);
-		line=longLine;
+		line = longLine;
 		addChild(bubble = new Inversion(dx - 10, 0));
 		return this;
 	}
@@ -42,17 +42,19 @@ public class Pin extends Symbol {
 		control = new Point2D.Double(0, dy);
 		longLine = new Line2D.Double(0, 0, 0, -dy);
 		shortLine = new Line2D.Double(0, 0, 0, 23 - dy);
-		line=longLine;
+		line = longLine;
 		addChild(bubble = new Inversion(0, 10 - dy));
 		return this;
 	}
 
 	public void drawAtOrigin(Graphics2D g) {
 		if (line != null) {
-			if (outValue!=Signal._Z) outValue.trace(g, line);
+			if (outValue != Signal._Z) outValue.trace(g, line);
 			else inValue.trace(g, line);
-			
+
 		}
+		this.fill = inValue.fgColor;
+		this.color = outValue.fgColor;
 		super.drawAtOrigin(g);
 	}
 
@@ -73,14 +75,14 @@ public class Pin extends Symbol {
 	}
 
 	void setOutValue(Signal newValue) {
-		outValue = inverted?newValue.not():newValue;
-	    Part.Tech tech = ((Part)parent).tech;
-	    if (outValue==tech.changeFrom) outValue=tech.changeTo;
+		outValue = inverted ? newValue.not() : newValue;
+		Part.Tech tech = ((Part) parent).tech;
+		if (outValue == tech.changeFrom) outValue = tech.changeTo;
 		this.setInValue(outValue);
 	}
 
 	Signal getInValue() {
-		return inverted?inValue.not():inValue;
+		return inverted ? inValue.not() : inValue;
 	}
 
 	void setInValue(Signal newValue) {

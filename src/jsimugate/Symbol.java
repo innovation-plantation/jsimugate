@@ -10,13 +10,12 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-
 public class Symbol extends Numbered {
 	static final Shape defaultPath = new Rectangle2D.Double(-3, -3, 7, 7);
 	static final Stroke defaultStroke = new BasicStroke(3);
 	static final Stroke defaultHighlightStroke = new BasicStroke(10);
-	static final Color defaultHighlightColor = new Color(255,255,0,80);
-	static final Color defaultFillColor = new Color(200,200,200,245);
+	static final Color defaultHighlightColor = new Color(255, 255, 0, 80);
+	static final Color defaultFillColor = new Color(200, 200, 200, 245);
 	Symbol parent;
 	ArrayList<Symbol> children = new ArrayList<Symbol>();
 	Shape hitbox = defaultPath;
@@ -24,14 +23,13 @@ public class Symbol extends Numbered {
 	AffineTransform transform = new AffineTransform();
 	public Color color = Color.black, fill = defaultFillColor;
 	Stroke stroke = defaultStroke;
-	private boolean selected=false;
-	boolean selecting=false;
+	private boolean selected = false;
+	boolean selecting = false;
 	Stroke hilightStroke = defaultHighlightStroke;
 	Color highlightColor = defaultHighlightColor;
-	String label,sublabel;
+	String label, sublabel;
 
-
-	AffineTransform gTransform=new AffineTransform();
+	AffineTransform gTransform = new AffineTransform();
 
 	public Symbol addChild(Symbol child) {
 		child.parent = this;
@@ -69,24 +67,25 @@ public class Symbol extends Numbered {
 		transform.translate(xy.getX(), xy.getY());
 	}
 
-	void updateLabel() { }
-	
+	void updateLabel() {}
+
 	public boolean at(Point2D xy) {
-		return hitbox !=null && gTransform.createTransformedShape(hitbox).contains(xy);
-		// equivalent to checking if the hitbox contains the inverse gTransform of the point	
+		return hitbox != null && gTransform.createTransformedShape(hitbox).contains(xy);
+		// equivalent to checking if the hitbox contains the inverse gTransform of the
+		// point
 	}
-	
+
 	public boolean at(Rectangle2D lasso) {
-		return hitbox !=null && gTransform.createTransformedShape(hitbox).intersects(lasso);
+		return hitbox != null && gTransform.createTransformedShape(hitbox).intersects(lasso);
 	}
 
 	protected void drawChildren(Graphics2D g) {
 		for (Symbol child : children) child.draw(g);
 	}
-	
+
 	public void drawAtOrigin(Graphics2D g) {
 		drawChildren(g);
-		Stroke restore=g.getStroke();
+		Stroke restore = g.getStroke();
 		if (isSelected() || selecting) {
 			g.setColor(highlightColor);
 			g.setStroke(hilightStroke);
@@ -101,12 +100,12 @@ public class Symbol extends Numbered {
 			g.setColor(color);
 			g.draw(shape);
 		}
-		if (label!=null) {
-			g.drawString(label, -25, sublabel==null?5:0);
+		if (label != null) {
+			g.drawString(label, -25, sublabel == null ? 5 : 0);
 		}
-		if (sublabel!=null) {
+		if (sublabel != null) {
 			g.scale(2.2, 2);
-			g.drawString(sublabel, -10, label==null?5:9);
+			g.drawString(sublabel, -10, label == null ? 5 : 9);
 		}
 		g.setStroke(restore);
 	}
@@ -126,6 +125,5 @@ public class Symbol extends Numbered {
 	void setSelected(boolean selected) {
 		this.selected = selected;
 	}
-
 
 }

@@ -5,6 +5,7 @@ import java.awt.Color;
 public class Inversion extends Symbol {
 
 	boolean inverted;
+
 	public Inversion(double x, double y) {
 		super(x, y);
 		setShape(Artwork.bubbleShape());

@@ -23,14 +23,14 @@ public class Part extends Symbol {
 		Signal changeTo = Signal._Z;
 		String description;
 
-		Tech(String description,Signal changeFrom, Signal changeTo, String mark) {
+		Tech(String description, Signal changeFrom, Signal changeTo, String mark) {
 			this.description = description;
 			this.changeFrom = changeFrom;
 			this.changeTo = changeTo;
 			this.mark = mark;
 		}
 
-		Tech(String description,Signal changeFrom, Signal changeTo) {
+		Tech(String description, Signal changeFrom, Signal changeTo) {
 			this.description = description;
 			this.changeFrom = changeFrom;
 			this.changeTo = changeTo;

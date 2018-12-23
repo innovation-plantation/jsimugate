@@ -31,10 +31,10 @@ public enum Signal implements SignalConstants {
 	_D('-', new Color(0x00, 0xFF, 0x00), Gauge.defaultInsulationColor, Gauge.THIN);
 
 	private char value;
-	private Color fgColor;
-	private Color bgColor;
-	private Stroke fgStroke;
-	private Stroke bgStroke;
+	Color fgColor;
+	Color bgColor;
+	Stroke fgStroke;
+	Stroke bgStroke;
 	final boolean hi, lo, good, bad;
 
 	Signal(char c, Color fgColor, Color bgColor, Gauge gauge) {
