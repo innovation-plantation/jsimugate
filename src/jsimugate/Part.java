@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import jsimugate.Part.Tech;
 
-public class Part extends Symbol implements Cloneable {
+public class Part extends Symbol {
 
 	List<Pin> pins = new ArrayList<Pin>();
 
@@ -104,14 +104,14 @@ public class Part extends Symbol implements Cloneable {
 			logf("\n%7.2f %7.2f %7.2f  ",m00,m01,m02);
 			logf("\n%7.2f %7.2f %7.2f  ",m10,m11,m12);
 			// Inconsistent order of parameters in AffineTransform toString and constructor!
-			AffineTransform t = new AffineTransform(m00, m10, m01, m11, m02 + 150, m12 + 50);
+			AffineTransform t = new AffineTransform(m00, m10, m01, m11, m02, m12 );
 			String partName = result.group(7);
 			int partNumber = Integer.parseInt(result.group(8));
 			int pinCount = Integer.parseInt(result.group(9));
 			try {
 				logline("jsimugate." + partName);
 				newPart = (Part) Class.forName("jsimugate." + partName)
-						.getConstructor(double.class, double.class).newInstance(200, 200);
+						.getConstructor(double.class, double.class).newInstance(0, 0);
 				newPart.transform.setTransform(t);
 				while (newPart.pins.size() > pinCount) newPart.decrease();
 				while (newPart.pins.size() < pinCount) newPart.increase();
@@ -127,7 +127,7 @@ public class Part extends Symbol implements Cloneable {
 					log(" pin" + pinNumber);
 					Pin pin = newPart.pins.get(pinIndex);
 					if (invertPin) pin.toggleInversion();
-					pinMap.put(pinNumber, pin);
+					if (pinMap != null) pinMap.put(pinNumber, pin);
 				}
 				scan.findInLine("\\) *([^ ]*)");
 				String techString=scan.match().group(1);
@@ -141,6 +141,7 @@ public class Part extends Symbol implements Cloneable {
 		}
 		return newPart;
 	}
+	
 	/**
 	 * Convert to an equivalent symbol such by DeMorganizing
 	 */
@@ -148,8 +149,10 @@ public class Part extends Symbol implements Cloneable {
 		return this;
 	}
 
-	public Part dup(int x, int y) {
-		return null;
+	public Part dup(double x, double y) {
+		Part result = Part.fromScanner(new Scanner(toString()),null);
+		result.transform.setToTranslation(x,y);
+		return result;
 	}
 
 }

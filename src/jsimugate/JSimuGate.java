@@ -51,7 +51,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		this.addKeyListener(this);
 		this.addComponentListener(this);
 
-		circuit.bins.add(new PartsBin(100, 50, new MajorityGate(0, 0).not()));  
+		circuit.bins.add(new PartsBin(100, 50, new MajorityGate(0, 0).not()));
 		circuit.parts.add(new AndGate(100, 150));
 		circuit.parts.add(new OrGate(100, 250));
 		circuit.parts.add(new XorGate(100, 350));
@@ -97,8 +97,8 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 			protoWire.value = protoWire.src.getOutValue();
 			protoWire.draw(g);
 		}
-		
-		for (PartsBin bin:circuit.bins) {
+
+		for (PartsBin bin : circuit.bins) {
 			bin.draw(g);
 		}
 	}
@@ -309,15 +309,37 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 				part.selecting = part.at(lasso);
 			}
 		} else if (recentMouseEvent != null) {
-			// Not creating a lasso. Moving parts.
-			if (recentMouseEvent.getID() == MouseEvent.MOUSE_PRESSED && !recentMouseEvent.isControlDown()
-					&& !recentMouseEvent.isShiftDown()) {
-				// Add whatever is under the mouse to the selection unless CTRL or SHIFT was
-				// pressed
-				for (Part part : circuit.parts) {
-					if (part.at(recentMouseEvent.getPoint())) part.setSelected(true);
+			// Not creating a lasso. Moving or Copying parts.
+
+			if (recentMouseEvent.getID() == MouseEvent.MOUSE_PRESSED) {
+				//if (!recentMouseEvent.isControlDown()) 
+				{ 
+					// Moving
+					if (!recentMouseEvent.isShiftDown()) {
+						// Add whatever is under the mouse to the selection unless CTRL or SHIFT was
+						// pressed
+						for (Part part : circuit.parts) {
+							if (part.at(recentMouseEvent.getPoint())) part.setSelected(true);
+						}
+					}
 				}
+				//else 
+				if (recentMouseEvent.isControlDown()){ 
+					// Copying
+					String string = "";
+					for (Part part : circuit.parts) {
+						if (part.isSelected()) {
+							string += part.toString();
+							if (recentMouseEvent.isShiftDown()) part.selecting = true;
+							part.setSelected(false);
+						}
+					}
+					for (Wire wire : circuit.wires) string += wire.toString();
+					circuit.fromString(string);
+					
+				} 
 			}
+
 			int dx = e.getX() - recentMouseEvent.getX();
 			int dy = e.getY() - recentMouseEvent.getY();
 			for (Part part : circuit.parts) if (part.isSelected()) part.transform.translate(dx, dy);

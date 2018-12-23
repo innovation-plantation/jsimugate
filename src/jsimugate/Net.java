@@ -18,6 +18,7 @@ public class Net {
 	 * @return the net that the wire should belong to.
 	 */
 	public static void connect(Wire wire) {
+		if (wire.src==null || wire.dst==null) return; // dummy wire
 		Net srcNet = null, dstNet = null;
 		for (Net net : nets) {
 			if (net.pins.contains(wire.src)) srcNet = net;

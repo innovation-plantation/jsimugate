@@ -31,6 +31,7 @@ public class Wire extends Debuggable {
 	}
 
 	public void draw(Graphics2D g) {
+		if (src==null || dst==null) return;
 		Point2D p0 = new Point2D.Double(), p1 = new Point2D.Double(); // src
 		Point2D p2 = new Point2D.Double(), p3 = new Point2D.Double(); // dst
 		src.gTransform.transform(origin, p0);
@@ -45,6 +46,7 @@ public class Wire extends Debuggable {
 	}
 
 	public String toString() {
+		if (src==null) return "WIRE: "+src + " to "+dst;
 		return "WIRE: " + src.sn() + " - " + dst.sn() + "\n";
 	}
 
@@ -56,6 +58,8 @@ public class Wire extends Debuggable {
 		int b = Integer.parseInt(result.group(2));
 		logline("WIRE pin" + a + " to pin" + b);
 		scan.nextLine();
-		return new Wire(pinMap.get(a), pinMap.get(b));
+		Pin pinA = pinMap.get(a);
+		Pin pinB = pinMap.get(b);
+		return new Wire(pinA, pinB);
 	}
 }
