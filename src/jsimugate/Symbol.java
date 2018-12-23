@@ -30,6 +30,7 @@ public class Symbol extends Numbered {
 	Color highlightColor = defaultHighlightColor;
 	String label,sublabel;
 
+
 	AffineTransform gTransform=new AffineTransform();
 
 	public Symbol addChild(Symbol child) {
@@ -123,4 +124,6 @@ public class Symbol extends Numbered {
 	void setSelected(boolean selected) {
 		this.selected = selected;
 	}
+
+
 }
