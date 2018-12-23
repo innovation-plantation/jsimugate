@@ -9,14 +9,8 @@ import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Menu;
-import java.awt.MenuItem;
-import java.awt.Panel;
-import java.awt.PopupMenu;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -33,7 +27,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -162,7 +155,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 
 	@Override public void componentShown(ComponentEvent e) {}
 
-	@Override public void mouseClicked(MouseEvent e) {
+	@SuppressWarnings("serial") @Override public void mouseClicked(MouseEvent e) {
 		// clicking on inverter should invert it
 		for (Part part : circuit.parts) {
 			for (Pin pin : part.pins) {
@@ -183,8 +176,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		// RightClick?
 		if (e.getButton() == MouseEvent.BUTTON3) {
 			if (topHit != null) {
-				Component painter = this;
-				Part part = topHit;
+				Component display = this;
 				JPopupMenu menu = new javax.swing.JPopupMenu("Part Menu");
 				menu.add(new JMenuItem("Convert (DeMorgan)") {
 					{
@@ -192,7 +184,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 							for (Part part:circuit.parts) {
 								if (part.isSelected()) circuit.parts.set(circuit.parts.indexOf(part), part.convert());
 							}
-							painter.repaint();
+							display.repaint();
 						});
 					}
 				});
@@ -203,7 +195,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 								for (Part part:circuit.parts) {
 									if (part.isSelected()) circuit.parts.set(circuit.parts.indexOf(part), part.asTech(tech));
 								}
-								painter.repaint();
+								display.repaint();
 							});
 						}
 					});
