@@ -300,9 +300,23 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 					part.selecting = false;
 				}
 			}
+			lasso = null;
+			lassoBegin = null;
+			repaint();
+			recentMouseEvent = e;
+			return;
 		}
-		lasso = null;
-		lassoBegin = null;
+		
+		for (PartsBin bin:circuit.bins) {
+			if (bin.at(e.getPoint())) {
+				for (Part part:circuit.parts) {
+					if (part.isSelected()) for (Pin pin:part.pins) {
+						circuit.wires.removeIf(wire -> wire.src==pin || wire.dst==pin);
+					}
+				}
+				circuit.parts.removeIf(part -> part.isSelected());
+			}
+		}
 		repaint();
 		recentMouseEvent = e;
 	}
