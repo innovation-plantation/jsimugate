@@ -27,7 +27,9 @@ public class PartsBin extends Part {
 		g.scale(.25, .25);
 		drawChildren(g);
 		g.scale(3, 3);
-		g.drawString(children.get(0).label, -30, 30);
+
+		Symbol child = children.get(0);
+		if (child != null && child.label!=null) g.drawString(child.label, -30, 30);
 		g.setTransform(restore);
 	}
 	

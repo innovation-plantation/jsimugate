@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jsimugate.Part.Tech;
+
 public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
 	Circuit circuit = new Circuit(new ArrayList<Part>(), new ArrayList<PartsBin>(), new ArrayList<Wire>());
@@ -44,10 +46,26 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		this.addKeyListener(this);
 		this.addComponentListener(this);
 
-		circuit.bins.add(new PartsBin(100, 50, new MajorityGate(0, 0).not()));
-		circuit.bins.add(new PartsBin(100,100, new AndGate(0, 0)));
-		circuit.bins.add(new PartsBin(100,150,new OrGate(0, 0)));
-		circuit.bins.add(new PartsBin(100,200,new XorGate(0, 0)));
+		circuit.bins.add(new PartsBin(50, 50, new MajorityGate(0, 0).not()));
+		circuit.bins.add(new PartsBin(50,100, new AndGate(0, 0)));
+		circuit.bins.add(new PartsBin(50,150,new OrGate(0, 0)));
+		circuit.bins.add(new PartsBin(50,200,new XorGate(0, 0)));
+
+		circuit.bins.add(new PartsBin(100, 50, new MajorityGate(0, 0)));
+		circuit.bins.add(new PartsBin(100,100, new AndGate(0, 0).not()));
+		circuit.bins.add(new PartsBin(100,150,new OrGate(0, 0).not()));
+		circuit.bins.add(new PartsBin(100,200,new XorGate(0, 0).not()));
+
+		circuit.bins.add(new PartsBin(50,250, new MajorityGate(0, 0).not().asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(50,300, new AndGate(0, 0).asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(50,350,new OrGate(0, 0).asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(50,400,new XorGate(0, 0).asTech(Tech.OC_NPN)));
+
+		circuit.bins.add(new PartsBin(100,250, new MajorityGate(0, 0).asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(100,300, new AndGate(0, 0).not().asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(100,350,new OrGate(0, 0).not().asTech(Tech.OC_NPN)));
+		circuit.bins.add(new PartsBin(100,400,new XorGate(0, 0).not().asTech(Tech.OC_NPN)));
+
 		updateImageSize();
 	}
 

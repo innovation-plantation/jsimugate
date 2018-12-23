@@ -1,7 +1,7 @@
 package jsimugate;
 
 public class Log {
-	public static boolean debug; // turns on System.out.print... for log... calls.
+	public static boolean debug=true; // turns on System.out.print... for log... calls.
 	
 	public static void println() {
 		if (debug) System.out.println();
