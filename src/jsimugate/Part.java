@@ -42,6 +42,7 @@ public class Part extends Symbol {
 	};
 
 	Tech tech = Tech.PUSH_PULL;
+
 	String name; // Displayed in parts bin if part has no label 
 	
 	public Part(double x, double y) {

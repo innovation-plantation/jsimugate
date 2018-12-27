@@ -2,6 +2,8 @@ package jsimugate;
 
 import java.awt.Color;
 
+import jsimugate.Part.Tech;
+
 public class PulldownResistor extends Part {
 
 	private Pin pin;
@@ -12,8 +14,16 @@ public class PulldownResistor extends Part {
 		this.hitbox = this.shape.getBounds2D();
 		this.color = Color.black;
 		this.fill = Color.black;
-		this.pin = this.addPin(new Pin(0, -25).down(-10));
+		this.pin = this.addPin(new Pin(0, -20));
 		this.name = "PULLDN";
+	}
+
+	/**
+	 * override to prevent changing from default
+	 */
+	public Part asTech(Tech tech) {
+		this.tech = Tech.PUSH_PULL;
+		return this;
 	}
 
 	public void operate() {

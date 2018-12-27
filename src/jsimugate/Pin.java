@@ -8,7 +8,7 @@ import java.awt.geom.Point2D;
 public class Pin extends Symbol {
 
 	Shape line, shortLine, longLine;
-	Point2D control;
+	Point2D control=new Point2D.Double();
 	boolean inverted;
 	Inversion bubble;
 	private Signal inValue = Signal._Z;

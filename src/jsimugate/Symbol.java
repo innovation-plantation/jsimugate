@@ -11,7 +11,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 public class Symbol extends Numbered {
-	static final Shape defaultPath = new Rectangle2D.Double(-3, -3, 7, 7);
+	static final Shape defaultPath = new Rectangle2D.Double(-4, -4, 8, 8);
 	static final Stroke defaultStroke = new BasicStroke(3);
 	static final Stroke defaultHighlightStroke = new BasicStroke(10);
 	static final Color defaultHighlightColor = new Color(255, 255, 0, 80);
