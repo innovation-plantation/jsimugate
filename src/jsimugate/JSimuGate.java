@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.Timer;
 
 import jsimugate.Part.Tech;
 
@@ -74,6 +75,11 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 		circuit.bins.add(new PartsBin(200, 50, new PullupResistor(0, 0)));
 		circuit.bins.add(new PartsBin(250, 50, new PulldownResistor(0, 0)));
 		updateImageSize();
+		new javax.swing.Timer(10, e -> {
+			Net.operateAll();
+			for (Part part : circuit.parts) part.operate();
+			repaint();
+		}).start();
 	}
 
 	private void updateImageSize() {
@@ -91,10 +97,10 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	public void paint(Graphics g1D) {
 		Graphics2D g = (Graphics2D) g1D;
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		Net.operateAll();
+		//Net.operateAll();
 
 		for (Part part : circuit.parts) {
-			part.operate();
+//			part.operate();
 			part.draw(g);
 			for (Pin pin : part.pins) {
 				pin.setInValue(Signal._Z);
