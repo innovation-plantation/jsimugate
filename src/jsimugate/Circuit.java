@@ -1,5 +1,8 @@
 package jsimugate;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,4 +52,21 @@ public class Circuit {
 		}
 		scan.close();
 	}
+	
+	public void render(Graphics2D g) {
+		for (Part part : parts) {
+			part.draw(g);
+			for (Pin pin : part.pins) {
+				pin.setInValue(Signal._Z);
+			}
+		}
+
+		for (Wire wire : wires) wire.draw(g);
+
+		for (PartsBin bin : bins) {
+			bin.draw(g);
+		}
+	}
+
+
 }

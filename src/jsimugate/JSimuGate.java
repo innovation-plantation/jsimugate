@@ -2,13 +2,18 @@ package jsimugate;
 
 import java.applet.Applet;
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.Panel;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.ComponentEvent;
@@ -27,13 +32,21 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.DefaultFocusManager;
+import javax.swing.JApplet;
+import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.Timer;
 
 import jsimugate.Part.Tech;
 
-public class JSimuGate extends Applet implements MouseListener, MouseMotionListener, KeyListener, ComponentListener {
+public class JSimuGate extends JPanel
+		implements MouseListener, MouseMotionListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
 	Circuit circuit = new Circuit(new ArrayList<Part>(), new ArrayList<PartsBin>(), new ArrayList<Wire>());
 	private Dimension size;
@@ -47,9 +60,65 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	private static Rectangle2D.Double lasso = null;
 
 	public void init() {
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
+			if (e.getID() == KeyEvent.KEY_PRESSED) switch (e.getKeyChar()) {
+			case 'n':
+				Net.dump();
+				break;
+			case 'r':
+				Numbered.renumber();
+			case 'w':
+				for (Wire wire : circuit.wires) System.out.println(wire);
+			case '+':
+				for (Part part : circuit.parts) if (part.isSelected()) {
+					if (e.isAltDown()) part.transform.scale(2, 2);
+					else part.increase();
+				}
+				break;
+			case '-':
+				for (Part part : circuit.parts) if (part.isSelected()) {
+					if (e.isAltDown()) part.transform.scale(.5, .5);
+					else part.decrease();
+				}
+				break;
+			default:
+				int step = 4;
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_UP:
+					for (Part part : circuit.parts) {
+						if (part.isSelected()) {
+							part.transform.scale(1, -1);
+						}
+					}
+					break;
+				case KeyEvent.VK_DOWN:
+					for (Part part : circuit.parts) {
+						if (part.isSelected()) {
+							part.transform.scale(-1, 1);
+						}
+					}
+					break;
+				case KeyEvent.VK_LEFT:
+					step = -step; // fall-through
+				case KeyEvent.VK_RIGHT:
+					if (e.isControlDown()) step *= 3;
+					if (e.isShiftDown()) step /= 2;
+					for (Part part : circuit.parts) {
+						if (part.isSelected()) {
+							if (e.isAltDown()) part.transform.setToTranslation(part.transform.getTranslateX(),
+									part.transform.getTranslateY());
+							else part.transform.rotate(Math.PI / step);
+						}
+					}
+					break;
+				}
+			}
+			repaint();
+			return false;
+		});
+
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
-		this.addKeyListener(this);
 		this.addComponentListener(this);
 
 		circuit.bins.add(new PartsBin(50, 50, new MajorityGate(0, 0).not()));
@@ -89,25 +158,20 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	}
 
 	public void update(Graphics g) {
+		paint(g);
+	}
+
+	public void paint(Graphics g) {
+		if (graphics == null) return;
 		graphics.clearRect(0, 0, size.width, size.height);
-		paint(graphics);
+		render((Graphics2D) graphics);
 		g.drawImage(image, 0, 0, this);
 	}
 
-	public void paint(Graphics g1D) {
-		Graphics2D g = (Graphics2D) g1D;
+	public void render(Graphics2D g) {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		//Net.operateAll();
 
-		for (Part part : circuit.parts) {
-//			part.operate();
-			part.draw(g);
-			for (Pin pin : part.pins) {
-				pin.setInValue(Signal._Z);
-			}
-		}
-
-		for (Wire wire : circuit.wires) wire.draw(g);
+		circuit.render(g);
 
 		if (lasso != null) {
 			g.setColor(Color.blue);
@@ -128,8 +192,8 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	}
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, SecurityException {
-		Applet panel = new JSimuGate();
-		Frame frame = new Frame("jSimuGate");
+		JSimuGate panel = new JSimuGate();
+		JFrame frame = new JFrame("jSimuGate");
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
@@ -430,69 +494,6 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 
 	@Override public void mouseMoved(MouseEvent e) {
 		recentMouseEvent = e;
-	}
-
-	@Override public void keyPressed(KeyEvent e) {
-		switch (e.getKeyChar()) {
-		case '+':
-			for (Part part : circuit.parts) if (part.isSelected()) {
-				if (e.isAltDown()) part.transform.scale(2, 2);
-				else part.increase();
-			}
-			break;
-		case '-':
-			for (Part part : circuit.parts) if (part.isSelected()) {
-				if (e.isAltDown()) part.transform.scale(.5, .5);
-				else part.decrease();
-			}
-			break;
-		default:
-			int step = 4;
-			switch (e.getKeyCode()) {
-			case KeyEvent.VK_UP:
-				for (Part part : circuit.parts) {
-					if (part.isSelected()) {
-						part.transform.scale(1, -1);
-					}
-				}
-				break;
-			case KeyEvent.VK_DOWN:
-				for (Part part : circuit.parts) {
-					if (part.isSelected()) {
-						part.transform.scale(-1, 1);
-					}
-				}
-				break;
-			case KeyEvent.VK_LEFT:
-				step = -step; // fall-through
-			case KeyEvent.VK_RIGHT:
-				if (e.isControlDown()) step *= 3;
-				if (e.isShiftDown()) step /= 2;
-				for (Part part : circuit.parts) {
-					if (part.isSelected()) {
-						if (e.isAltDown()) part.transform.setToTranslation(part.transform.getTranslateX(),
-								part.transform.getTranslateY());
-						else part.transform.rotate(Math.PI / step);
-					}
-				}
-				break;
-			}
-		}
-		repaint();
-	}
-
-	@Override public void keyReleased(KeyEvent e) {}
-
-	@Override public void keyTyped(KeyEvent e) {
-		switch (e.getKeyChar()) {
-		case 'n':
-			Net.dump();
-			break;
-		case 'r':
-			Numbered.renumber();
-		case 'w':
-			for (Wire wire:circuit.wires) System.out.println(wire);
-		}
 	}
 
 }
