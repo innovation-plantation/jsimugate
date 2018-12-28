@@ -50,6 +50,7 @@ public class Net {
 		// merge two nets
 		dstNet.pins.addAll(srcNet.pins);
 		dstNet.wires.addAll(srcNet.wires);
+		dstNet.wires.add(wire);
 		nets.remove(srcNet);
 		// help out the garbage collector
 		srcNet.pins.clear();
@@ -154,15 +155,15 @@ public class Net {
 	}
 
 	public static void dump() {
-		Log.println("Nets:" + nets.size());
+		System.out.println("Nets:" + nets.size());
 		for (Net net : nets) {
-			Log.println(" Net:" + net + "  Wires:" + net.wires.size() + "  Pins:" + net.pins.size());
-			Log.print("  Pins:");
-			for (Pin pin : net.pins) Log.print(" " + pin);
-			Log.println();
-			Log.print("  Wires:");
-			for (Wire wire : net.wires) Log.print(" " + wire);
-			Log.println();
+			System.out.println(" Net:" + net + "  Wires:" + net.wires.size() + "  Pins:" + net.pins.size());
+			System.out.print("  Pins:");
+			for (Pin pin : net.pins) System.out.print(" " + pin);
+			System.out.println();
+			System.out.print("  Wires:");
+			for (Wire wire : net.wires) System.out.print(" " + wire);
+			System.out.println();
 		}
 	}
 }

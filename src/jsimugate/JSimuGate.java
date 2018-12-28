@@ -317,8 +317,7 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 							Net.disconnect(oldWire);
 							circuit.wires.remove(oldWire);
 						} else {
-							protoWire.to(pin);
-							circuit.wires.add(protoWire);
+							circuit.wires.add(protoWire.to(pin));
 						}
 					}
 				}
@@ -485,13 +484,15 @@ public class JSimuGate extends Applet implements MouseListener, MouseMotionListe
 	@Override public void keyReleased(KeyEvent e) {}
 
 	@Override public void keyTyped(KeyEvent e) {
-//		switch (e.getKeyChar()) {
-//		case 'n':
-//			Net.dump();
-//			break;
-//		case 'r':
-//			Numbered.renumber();
-//		}
+		switch (e.getKeyChar()) {
+		case 'n':
+			Net.dump();
+			break;
+		case 'r':
+			Numbered.renumber();
+		case 'w':
+			for (Wire wire:circuit.wires) System.out.println(wire);
+		}
 	}
 
 }

@@ -19,9 +19,10 @@ public class Wire {
 		src = srcPin;
 	}
 
-	void to(Pin dstPin) {
+	Wire to(Pin dstPin) {
 		dst = dstPin;
 		Net.connect(this);
+		return this;
 	}
 
 	public Wire(Pin srcPin, Pin dstPin) {
