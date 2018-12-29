@@ -13,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.MenuBar;
 import java.awt.Panel;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
@@ -28,25 +29,32 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.DefaultFocusManager;
 import javax.swing.JApplet;
 import javax.swing.JDesktopPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.Timer;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import jsimugate.Part.Tech;
 
-public class JSimuGate extends JPanel
-		implements MouseListener, MouseMotionListener, ComponentListener {
+public class JSimuGate extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
 	Circuit circuit = new Circuit(new ArrayList<Part>(), new ArrayList<PartsBin>(), new ArrayList<Wire>());
 	private Dimension size;
@@ -191,6 +199,8 @@ public class JSimuGate extends JPanel
 		}
 	}
 
+	static File file = new File("circuit.logic");
+
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, SecurityException {
 		JSimuGate panel = new JSimuGate();
 		JFrame frame = new JFrame("jSimuGate");
@@ -202,6 +212,12 @@ public class JSimuGate extends JPanel
 		frame.setSize(640, 480);
 		frame.add(panel);
 		panel.init();
+		
+		JMenuBar bar = new JMenuBar();
+		JMenu fileMenu = createFileMenu(panel);
+		bar.add(fileMenu);
+		frame.setJMenuBar(bar);
+
 		frame.setVisible(true);
 
 		Pattern wxh = Pattern.compile("([0-9]+)x([0-9]+)");
@@ -215,6 +231,71 @@ public class JSimuGate extends JPanel
 			if (s.equals("--fullscreen")) frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		}
 
+	}
+
+	public static JMenu createFileMenu(JSimuGate panel) {
+
+		JMenu fileMenu = new JMenu("File");
+		JMenuItem menuItem;
+
+		menuItem = new JMenuItem("Open...");
+		menuItem.addActionListener(event -> {
+			JFileChooser choice = new JFileChooser(file);
+			choice.setFileFilter(new FileNameExtensionFilter("jSimuGate Circuits (.logic)", "logic"));
+			if (choice.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
+				if (choice.getSelectedFile().exists()) {
+					try {
+						Scanner scan = new Scanner(choice.getSelectedFile());
+						panel.circuit.fromScanner(scan);
+					} catch (FileNotFoundException ex) {
+						JOptionPane.showMessageDialog(panel, ex.getMessage());
+					}
+				} else {
+					JOptionPane.showMessageDialog(panel, "File "+file+" does not exist");
+				}
+			} ;
+		});
+		fileMenu.add(menuItem);
+
+		menuItem = new JMenuItem("Save as...");
+		menuItem.addActionListener(event -> {
+			JFileChooser choice = new JFileChooser(file);
+			choice.setFileFilter(new FileNameExtensionFilter("jSimuGate Circuits (.logic)", "logic"));
+			if (choice.showSaveDialog(panel) == JFileChooser.APPROVE_OPTION) {
+
+				if (choice.getSelectedFile().exists()) {
+					if (JOptionPane.showConfirmDialog(panel,
+							"Overwrite " + choice.getSelectedFile().getName() + "?") != JOptionPane.YES_OPTION)
+						return;
+					System.out.println("OVERWRITING");
+				}
+				file = choice.getSelectedFile();
+				System.out.println("Save as " + file.getAbsolutePath());
+				try {
+					PrintWriter printWriter = new PrintWriter(file.getAbsolutePath(), "UTF-8");
+					printWriter.write(panel.circuit.toString());
+					printWriter.close();
+				} catch (FileNotFoundException | UnsupportedEncodingException ex) {
+					JOptionPane.showMessageDialog(panel, ex.getMessage());
+				}
+			} ;
+		});
+		fileMenu.add(menuItem);
+
+		menuItem = new JMenuItem("Save");
+		menuItem.addActionListener(event -> {
+			System.out.println("Save" + file.getAbsolutePath());
+			try {
+				PrintWriter printWriter = new PrintWriter(file.getAbsolutePath(), "UTF-8");
+				printWriter.write(panel.circuit.toString());
+				printWriter.close();
+			} catch (FileNotFoundException | UnsupportedEncodingException ex) {
+				JOptionPane.showMessageDialog(panel, ex.getMessage());
+			}
+		});
+		fileMenu.add(menuItem);
+		
+		return fileMenu;
 	}
 
 	@Override public void componentHidden(ComponentEvent e) {}

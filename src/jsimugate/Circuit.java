@@ -29,8 +29,15 @@ public class Circuit {
 		return string;
 	}
 
+
 	public void fromString(String s) {
 		Scanner scan = new Scanner(s);
+		fromScanner(scan);
+		scan.close();
+	}
+
+	public void fromScanner(Scanner scan) {
+		for (Part part : parts) part.setSelected(false);
 		Map<Integer, Pin> pinMap = new HashMap<Integer, Pin>();
 		while (scan.hasNextLine()) {
 			Part newPart = Part.fromScanner(scan, pinMap);
@@ -50,7 +57,6 @@ public class Circuit {
 			}
 			System.err.println("No match reading data: " + scan.nextLine());
 		}
-		scan.close();
 	}
 	
 	public void render(Graphics2D g) {
