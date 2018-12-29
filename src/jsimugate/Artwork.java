@@ -125,10 +125,10 @@ public class Artwork {
 	}
 
 	public static Shape inConnectorShape() {
-		return new Polygon(new int[] { -40, 40, 50, 40, -40 }, new int[] { -10, -10, 0, 10, 10 }, 5);
+		return new Polygon(new int[] { -30, 45, 55, 45, -30 }, new int[] { -10, -10, 0, 10, 10 }, 5);
 	}
 
 	public static Shape outConnectorShape() {
-		return new Polygon(new int[] { 40, -40, -50, -40, 40 }, new int[] { 10, 10, 0, -10, -10 }, 5);
+		return new Polygon(new int[] { 45, -30, -40, -30, 45 }, new int[] { 10, 10, 0, -10, -10 }, 5);
 	}
 }

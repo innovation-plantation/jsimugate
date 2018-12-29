@@ -112,6 +112,7 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 					break;
 				}
 			}
+			for (Part part:circuit.parts) if (part.isSelected()) part.processChar(Character.toUpperCase(e.getKeyChar()));
 			repaint();
 			return false;
 		});
@@ -120,7 +121,8 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 		this.addMouseMotionListener(this);
 		this.addComponentListener(this);
 
-		circuit.bins.add(new PartsBin(200,50,new OutConnector(0,0)));
+		circuit.bins.add(new PartsBin(200,50,new InConnector(0,0)));
+		circuit.bins.add(new PartsBin(250,50,new OutConnector(0,0)));
 		
 		circuit.bins.add(new PartsBin(50, 50, new MajorityGate(0, 0).not()));
 		circuit.bins.add(new PartsBin(50, 100, new AndGate(0, 0)));
