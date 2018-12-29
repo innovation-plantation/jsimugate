@@ -59,6 +59,8 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 	public void init() {
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
 			if (e.getID() == KeyEvent.KEY_PRESSED) switch (e.getKeyChar()) {
+			case 'd':
+				Log.println(circuit.toString());
 			case 'n':
 				Net.dump();
 				break;
@@ -262,6 +264,7 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 				System.out.println("Save as " + file.getAbsolutePath());
 				try {
 					PrintWriter printWriter = new PrintWriter(file.getAbsolutePath(), "UTF-8");
+					Numbered.renumber();
 					printWriter.write(panel.circuit.toString());
 					printWriter.close();
 				} catch (FileNotFoundException | UnsupportedEncodingException ex) {
@@ -276,6 +279,7 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 			System.out.println("Save" + file.getAbsolutePath());
 			try {
 				PrintWriter printWriter = new PrintWriter(file.getAbsolutePath(), "UTF-8");
+				Numbered.renumber();
 				printWriter.write(panel.circuit.toString());
 				printWriter.close();
 			} catch (FileNotFoundException | UnsupportedEncodingException ex) {

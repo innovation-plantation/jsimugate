@@ -12,7 +12,7 @@ public class Numbered {
 	public String sn(String name) {
 		String key = name + "^" + hashCode();
 		if (idList.containsKey(key)) return idList.get(key);
-		for (int i = 1;; i++) {
+		for (int i = 0;; i++) {
 			String value = name + "#" + i;
 			if (idList.containsValue(value)) continue;
 			idList.put(key, value);
