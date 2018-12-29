@@ -494,6 +494,9 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 			if (bin.at(e.getPoint())) {
 				for (Part part : circuit.parts) {
 					if (part.isSelected()) for (Pin pin : part.pins) {
+						for (Wire wire:circuit.wires) {
+							if (wire.src == pin || wire.dst == pin) Net.disconnect(wire);
+						}
 						circuit.wires.removeIf(wire -> wire.src == pin || wire.dst == pin);
 					}
 				}
