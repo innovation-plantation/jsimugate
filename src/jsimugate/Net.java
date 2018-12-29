@@ -69,6 +69,8 @@ public class Net {
 	 */
 	public static void disconnect(Wire wire) {
 		// find the net with the wire
+		wire.src.setInValue(Signal._Z);
+		wire.dst.setInValue(Signal._Z);
 		Net net = null;
 		for (Net n : nets) if (n.wires.contains(wire)) {
 			net = n;

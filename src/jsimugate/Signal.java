@@ -30,7 +30,7 @@ public enum Signal implements SignalConstants {
 	_H('H', new Color(0xC0, 0x00, 0x00), Gauge.defaultInsulationColor, Gauge.THIN),
 	_D('-', new Color(0x00, 0xFF, 0x00), Gauge.defaultInsulationColor, Gauge.THIN);
 
-	private char value;
+	public char value;
 	Color fgColor;
 	Color bgColor;
 	Stroke fgStroke;
@@ -75,4 +75,9 @@ public enum Signal implements SignalConstants {
 	public Signal not() {
 		return Logic.not_tt[ordinal()];
 	}
+
+	public char getChar() {
+		return value;
+	}
+
 }

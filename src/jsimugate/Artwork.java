@@ -124,11 +124,11 @@ public class Artwork {
 		return shape;
 	}
 
-	public static Shape InPinShape() {
+	public static Shape inConnectorShape() {
 		return new Polygon(new int[] { -40, 40, 50, 40, -40 }, new int[] { -10, -10, 0, 10, 10 }, 5);
 	}
 
-	public static Shape OutPinShape() {
-		return new Polygon(new int[] { 40, -40, -50, -40, 40 }, new int[] { -0, 10, 0, -10, -10 }, 5);
+	public static Shape outConnectorShape() {
+		return new Polygon(new int[] { 40, -40, -50, -40, 40 }, new int[] { 10, 10, 0, -10, -10 }, 5);
 	}
 }
