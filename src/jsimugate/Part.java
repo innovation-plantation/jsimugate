@@ -49,6 +49,10 @@ public class Part extends Symbol {
 		super(x, y);
 	}
 
+	public Part() {
+		super();
+	}
+
 	public Pin addPin(Pin pin) {
 		pins.add(pin); // to be connected
 		addChild(pin); // to be drawn
@@ -74,7 +78,7 @@ public class Part extends Symbol {
 	public void decrease() {}
 
 	public void operate() {}
-	
+
 	public void processChar(char ch) {}
 
 	public String toString() {
@@ -126,8 +130,8 @@ public class Part extends Symbol {
 			int pinCount = Integer.parseInt(result.group(9));
 			try {
 				Log.println("jsimugate." + partName);
-				newPart = (Part) Class.forName("jsimugate." + partName).getConstructor(double.class, double.class)
-						.newInstance(0, 0);
+				newPart = (Part) Class.forName("jsimugate." + partName).getConstructor()
+						.newInstance();
 				newPart.transform.setTransform(t);
 				while (newPart.pins.size() > pinCount) newPart.decrease();
 				while (newPart.pins.size() < pinCount) newPart.increase();

@@ -63,6 +63,10 @@ public class Symbol extends Numbered {
 		transform.translate(x, y);
 	}
 
+	public Symbol() {
+
+	}
+
 	public Symbol(Point2D xy) {
 		transform.translate(xy.getX(), xy.getY());
 	}

@@ -2,11 +2,8 @@ package jsimugate;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
-
-import jsimugate.Part.Tech;
 
 /**
  * Bipolar Junction Transistors for digital switching circuits:

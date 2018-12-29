@@ -1,6 +1,10 @@
 package jsimugate;
 
 public class XorGate extends Gate {
+	public XorGate() {
+		this(0, 0);
+	}
+
 	public XorGate(double x, double y) {
 		super(x, y);
 	}

@@ -6,6 +6,10 @@ public class PulldownResistor extends Part {
 
 	private Pin pin;
 
+	public PulldownResistor() {
+		this(0, 0);
+	}
+
 	public PulldownResistor(double x, double y) {
 		super(x, y);
 		this.setShape(Artwork.pulldownShape());

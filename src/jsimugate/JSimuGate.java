@@ -121,35 +121,36 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 		this.addMouseMotionListener(this);
 		this.addComponentListener(this);
 
-		circuit.bins.add(new PartsBin(200,50,new InConnector(0,0)));
-		circuit.bins.add(new PartsBin(250,50,new OutConnector(0,0)));
+		circuit.bins.add(new PartsBin(200,50,new InConnector()));
+		circuit.bins.add(new PartsBin(250,50,new OutConnector()));
+		circuit.bins.add(new PartsBin(300,50,new Clk()));
 		
-		circuit.bins.add(new PartsBin(50, 50, new MajorityGate(0, 0).not()));
-		circuit.bins.add(new PartsBin(50, 100, new AndGate(0, 0)));
-		circuit.bins.add(new PartsBin(50, 150, new OrGate(0, 0)));
-		circuit.bins.add(new PartsBin(50, 200, new XorGate(0, 0)));
+		circuit.bins.add(new PartsBin(50, 50, new MajorityGate().not()));
+		circuit.bins.add(new PartsBin(50, 100, new AndGate()));
+		circuit.bins.add(new PartsBin(50, 150, new OrGate()));
+		circuit.bins.add(new PartsBin(50, 200, new XorGate()));
 
-		circuit.bins.add(new PartsBin(100, 50, new MajorityGate(0, 0)));
-		circuit.bins.add(new PartsBin(100, 100, new AndGate(0, 0).not()));
-		circuit.bins.add(new PartsBin(100, 150, new OrGate(0, 0).not()));
-		circuit.bins.add(new PartsBin(100, 200, new XorGate(0, 0).not()));
+		circuit.bins.add(new PartsBin(100, 50, new MajorityGate()));
+		circuit.bins.add(new PartsBin(100, 100, new AndGate().not()));
+		circuit.bins.add(new PartsBin(100, 150, new OrGate().not()));
+		circuit.bins.add(new PartsBin(100, 200, new XorGate().not()));
 
-		circuit.bins.add(new PartsBin(50, 250,new NPNTransistor(0,0)));
-		circuit.bins.add(new PartsBin(100, 250, new PullupResistor(0, 0)));
+		circuit.bins.add(new PartsBin(50, 250,new NPNTransistor()));
+		circuit.bins.add(new PartsBin(100, 250, new PullupResistor()));
 
-		circuit.bins.add(new PartsBin(50, 300, new MajorityGate(0, 0).not().asTech(Tech.OC)));
-		circuit.bins.add(new PartsBin(50, 350, new AndGate(0, 0).asTech(Tech.OC)));
-		circuit.bins.add(new PartsBin(50, 400, new OrGate(0, 0).asTech(Tech.OC)));
-		circuit.bins.add(new PartsBin(50, 450, new XorGate(0, 0).asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(50, 300, new MajorityGate().not().asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(50, 350, new AndGate().asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(50, 400, new OrGate().asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(50, 450, new XorGate().asTech(Tech.OC)));
 
-		circuit.bins.add(new PartsBin(100, 300, new MajorityGate(0, 0).asTech(Tech.OC)));
-		circuit.bins.add(new PartsBin(100, 350, new AndGate(0, 0).not().asTech(Tech.OC)));
-		circuit.bins.add(new PartsBin(100, 400, new OrGate(0, 0).not().asTech(Tech.OC)));
-		circuit.bins.add(new PartsBin(100, 450, new XorGate(0, 0).not().asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(100, 300, new MajorityGate().asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(100, 350, new AndGate().not().asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(100, 400, new OrGate().not().asTech(Tech.OC)));
+		circuit.bins.add(new PartsBin(100, 450, new XorGate().not().asTech(Tech.OC)));
 
 
-		circuit.bins.add(new PartsBin(50,500,new PNPTransistor(0,0)));
-		circuit.bins.add(new PartsBin(100, 500, new PulldownResistor(0, 0)));
+		circuit.bins.add(new PartsBin(50,500,new PNPTransistor()));
+		circuit.bins.add(new PartsBin(100, 500, new PulldownResistor()));
 		updateImageSize();
 		new javax.swing.Timer(10, e -> {
 			Net.operateAll();

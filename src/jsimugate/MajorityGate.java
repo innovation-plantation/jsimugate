@@ -1,6 +1,11 @@
 package jsimugate;
 
 public class MajorityGate extends Gate {
+
+	public MajorityGate() {
+		this(0, 0);
+	}
+
 	public MajorityGate(double x, double y) {
 		super(x, y);
 		removeInput();

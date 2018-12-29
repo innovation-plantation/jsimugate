@@ -2,6 +2,10 @@ package jsimugate;
 
 public class AndGate extends Gate {
 
+	public AndGate() {
+		this(0, 0);
+	}
+
 	public AndGate(double x, double y) {
 		super(x, y);
 		opposite = OrGate.class.getSimpleName();
