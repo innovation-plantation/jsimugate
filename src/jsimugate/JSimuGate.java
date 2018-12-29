@@ -1,26 +1,19 @@
 package jsimugate;
 
-import java.applet.Applet;
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.MenuBar;
-import java.awt.Panel;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -38,9 +31,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.DefaultFocusManager;
-import javax.swing.JApplet;
-import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -49,7 +39,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import jsimugate.Part.Tech;
@@ -212,7 +201,7 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 		frame.setSize(640, 480);
 		frame.add(panel);
 		panel.init();
-		
+
 		JMenuBar bar = new JMenuBar();
 		JMenu fileMenu = createFileMenu(panel);
 		bar.add(fileMenu);
@@ -251,7 +240,7 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 						JOptionPane.showMessageDialog(panel, ex.getMessage());
 					}
 				} else {
-					JOptionPane.showMessageDialog(panel, "File "+file+" does not exist");
+					JOptionPane.showMessageDialog(panel, "File " + file + " does not exist");
 				}
 			} ;
 		});
@@ -294,7 +283,7 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 			}
 		});
 		fileMenu.add(menuItem);
-		
+
 		return fileMenu;
 	}
 

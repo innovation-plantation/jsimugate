@@ -2,8 +2,6 @@ package jsimugate;
 
 import java.awt.Color;
 
-import jsimugate.Part.Tech;
-
 public class PulldownResistor extends Part {
 
 	private Pin pin;

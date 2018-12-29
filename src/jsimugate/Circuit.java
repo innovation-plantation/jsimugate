@@ -1,8 +1,6 @@
 package jsimugate;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +26,6 @@ public class Circuit {
 		for (Wire wire : wires) string += wire.toString();
 		return string;
 	}
-
 
 	public void fromString(String s) {
 		Scanner scan = new Scanner(s);
@@ -58,7 +55,7 @@ public class Circuit {
 			System.err.println("No match reading data: " + scan.nextLine());
 		}
 	}
-	
+
 	public void render(Graphics2D g) {
 		for (Part part : parts) {
 			part.draw(g);
@@ -73,6 +70,5 @@ public class Circuit {
 			bin.draw(g);
 		}
 	}
-
 
 }

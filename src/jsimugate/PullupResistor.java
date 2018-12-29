@@ -2,8 +2,6 @@ package jsimugate;
 
 import java.awt.Color;
 
-import jsimugate.Part.Tech;
-
 public class PullupResistor extends Part {
 
 	private Pin pin;
@@ -16,7 +14,7 @@ public class PullupResistor extends Part {
 		this.pin = this.addPin(new Pin(0, 20));
 		this.name = "PULLUP";
 	}
-	
+
 	/**
 	 * override to prevent changing from default
 	 */
@@ -24,6 +22,7 @@ public class PullupResistor extends Part {
 		this.tech = Tech.PUSH_PULL;
 		return this;
 	}
+
 	public void operate() {
 		this.pin.setOutValue(Signal._H);
 	}

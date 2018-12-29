@@ -123,16 +123,12 @@ public class Artwork {
 		shape.closePath();
 		return shape;
 	}
-	
+
 	public static Shape InPinShape() {
-		return new Polygon(
-				new int[] {-40,40,50,40,-40},
-				new int[] {-10,-10,0,10,10},5);
+		return new Polygon(new int[] { -40, 40, 50, 40, -40 }, new int[] { -10, -10, 0, 10, 10 }, 5);
 	}
-	
+
 	public static Shape OutPinShape() {
-		return new Polygon(
-				new int[] {40,-40,-50,-40,40},
-				new int[] {-0,10,0,-10,-10},5);
+		return new Polygon(new int[] { 40, -40, -50, -40, 40 }, new int[] { -0, 10, 0, -10, -10 }, 5);
 	}
 }

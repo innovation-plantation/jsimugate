@@ -28,11 +28,11 @@ public class PartsBin extends Part {
 		drawChildren(g);
 		g.scale(3, 3);
 
-		if (prototype!=null) {
+		if (prototype != null) {
 			String text = prototype.label;
-			if (text==null) text = prototype.name;
-			if (text!=null) {
-				g.setColor(color.blue);
+			if (text == null) text = prototype.name;
+			if (text != null) {
+				g.setColor(Color.blue);
 				g.drawString(text, -30, 30);
 			}
 		}
