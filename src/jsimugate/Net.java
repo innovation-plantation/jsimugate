@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Set;
 
 public class Net {
-	private Set<Pin> pins = new HashSet<Pin>();
-	private Set<Wire> wires = new HashSet<Wire>();
-	private static List<Net> nets = new ArrayList<Net>();
+	Set<Pin> pins = new HashSet<Pin>();
+	Set<Wire> wires = new HashSet<Wire>();
+	static List<Net> nets = new ArrayList<Net>();
 
 	/**
 	 * This should be called every time a wire is constructed
@@ -140,21 +140,18 @@ public class Net {
 		return result;
 	}
 
-	/**
-	 * Resolve the output values from the parts of all connected signal values on
-	 * the connected network of wires Set all the wire values and pin input values
-	 * accordingly.
-	 */
-	public void operate() {
-		Signal result = Signal._Z;
-		for (Pin pin : pins) result = Logic.resolve_tt[result.ordinal()][pin.getOutValue().ordinal()];
-		for (Pin pin : pins) pin.setInValue(result);
-		for (Wire wire : wires) wire.value = result;
-	}
+//	/**
+//	 * Resolve the output values from the parts of all connected signal values on
+//	 * the connected network of wires Set all the wire values and pin input values
+//	 * accordingly.
+//	 */
+//	public void operate() {
+//		Signal result = Signal._Z;
+//		for (Pin pin : pins) result = Logic.resolve_tt[result.ordinal()][pin.getOutValue().ordinal()];
+//		for (Wire wire : wires) wire.value = result;
+//	}
 
-	public static void operateAll() {
-		for (Net net : nets) net.operate();
-	}
+
 
 	public static void dump() {
 		System.out.println("Nets:" + nets.size());
@@ -168,4 +165,6 @@ public class Net {
 			System.out.println();
 		}
 	}
+
+
 }

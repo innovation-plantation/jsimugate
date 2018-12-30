@@ -9,8 +9,8 @@ public class OutConnector extends Part {
 
 	public OutConnector(double x, double y) {
 		super(x, y);
-		setShape(Artwork.outConnectorShape());
-		addPin(pin = new Pin(-80, 0).left(40));
+		setShape(Artwork.ConnectorShape());
+		addPin(pin = new Pin(-60, 0).left(30));
 		this.name = "OUTPUT";
 	}
 

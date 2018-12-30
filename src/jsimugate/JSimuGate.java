@@ -124,6 +124,7 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 		circuit.bins.add(new PartsBin(200,50,new InConnector()));
 		circuit.bins.add(new PartsBin(250,50,new OutConnector()));
 		circuit.bins.add(new PartsBin(300,50,new Clk()));
+		circuit.bins.add(new PartsBin(350,50,new Diode()));
 		
 		circuit.bins.add(new PartsBin(50, 50, new MajorityGate().not()));
 		circuit.bins.add(new PartsBin(50, 100, new AndGate()));
@@ -153,8 +154,25 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 		circuit.bins.add(new PartsBin(100, 500, new PulldownResistor()));
 		updateImageSize();
 		new javax.swing.Timer(10, e -> {
-			Net.operateAll();
-			for (Part part : circuit.parts) part.operate();
+			
+			for (Net net : Net.nets) {
+				Signal wire_value = Signal._Z;
+				for (Pin pin : net.pins) {
+					Signal pin_value = Signal._Z;
+					// for stability in circuits having diodes, exclude your own output from what you see on the wire.
+					for (Pin other : net.pins) {
+						if (pin!=other) {
+							pin_value = Logic.resolve_tt[pin_value.ordinal()][other.getOutValue().ordinal()];
+						}
+					}
+					pin.setInValue(pin_value);
+					wire_value = Logic.resolve_tt[wire_value.ordinal()][pin.getOutValue().ordinal()];
+				}
+				for (Wire wire : net.wires) wire.value = wire_value;
+			}
+			for (Part part : circuit.parts) {  // set output pin values from f(input pin values)
+				part.operate();
+			}
 			repaint();
 		}).start();
 	}

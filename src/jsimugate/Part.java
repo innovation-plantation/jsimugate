@@ -77,7 +77,9 @@ public class Part extends Symbol {
 
 	public void decrease() {}
 
+
 	public void operate() {}
+
 
 	public void processChar(char ch) {}
 

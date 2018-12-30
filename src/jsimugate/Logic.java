@@ -85,4 +85,52 @@ public class Logic {
 			{ _U, _X, _H, _Z, _Z, _X, _H, _Z, _X }, // H
 			{ _U, _X, _X, _Z, _Z, _X, _X, _Z, _X }, // -
 	};
+	public static final Signal anode_tt[][] = { // outputs lower of two inputs
+			// U _ X _ 0 _ 1 _ Z _ W _ L _ H _ - =C // A:
+			
+			{ _U, _U, _U, _0, _U, _U, _U, _U, _U }, // U
+			{ _U, _X, _X, _Z, _Z, _Z, _Z, _Z, _Z }, // X
+			{ _U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z }, // 0
+			{ _0, _X, _X, _Z, _Z, _Z, _Z, _Z, _Z }, // 1
+			{ _U, _X, _0, _Z, _Z, _W, _L, _Z, _Z }, // Z
+			{ _U, _X, _0, _Z, _Z, _W, _W, _Z, _Z }, // W
+			{ _U, _X, _0, _Z, _Z, _Z, _Z, _Z, _Z }, // L
+			{ _0, _X, _0, _Z, _Z, _W, _W, _Z, _Z }, // H
+		    { _U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z} // -
+
+			
+			
+//			{ _U, _U, _U, _Z, _Z, _W, _L, _Z, _Z }, // U
+//			{ _X, _X, _0, _X, _X, _X, _L, _X, _X }, // X
+//			{ _0, _0, _0, _0, _0, _0, _0, _0, _0 }, // 0
+//			{ _Z, _X, _0, _Z, _Z, _W, _L, _Z, _Z }, // 1
+//			{ _Z, _X, _0, _Z, _Z, _W, _L, _Z, _Z }, // Z
+//			{ _W, _X, _0, _W, _W, _W, _L, _W, _W }, // W
+//			{ _L, _L, _0, _L, _L, _L, _L, _L, _L }, // L
+//			{ _Z, _X, _0, _Z, _Z, _W, _L, _Z, _Z }, // H
+//			{ _Z, _X, _0, _Z, _Z, _W, _L, _Z, _Z } // -
+	};
+	public static final Signal cathode_tt[][] = { // outputs higher of two inputs
+			// U _ X _ 0 _ 1 _ Z _ W _ L _ H _ - =C // A:
+
+			{ _U, _U, _U, _0, _U, _U, _U, _U, _U }, // U
+			{ _U, _X, _X, _Z, _X, _X, _X, _X, _Z }, // X
+			{ _U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z }, // 0
+			{ _0, _X, _X, _Z, _1, _1, _1, _1, _Z }, // 1
+			{ _U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z }, // Z
+			{ _U, _Z, _Z, _Z, _W, _W, _W, _W, _Z }, // W
+			{ _U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z }, // L
+			{ _0, _Z, _Z, _Z, _H, _W, _W, _Z, _Z }, // H
+			{ _U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z } // -
+
+//			{ _Z, _X, _Z, _1, _Z, _W, _Z, _H, _Z }, // U
+//			{ _X, _X, _X, _1, _X, _X, _X, _H, _X }, // X
+//			{ _Z, _Z, _Z, _1, _Z, _W, _Z, _H, _Z }, // 0
+//			{ _1, _1, _1, _1, _1, _1, _1, _1, _1 }, // 1
+//			{ _Z, _X, _Z, _1, _Z, _W, _Z, _H, _Z }, // Z
+//			{ _W, _X, _W, _1, _W, _W, _W, _H, _W }, // W
+//			{ _Z, _X, _Z, _1, _Z, _W, _Z, _H, _Z }, // L
+//			{ _H, _H, _H, _1, _H, _H, _H, _H, _H }, // H
+//			{ _Z, _X, _Z, _1, _Z, _W, _Z, _H, _Z } // -
+	};
 }
