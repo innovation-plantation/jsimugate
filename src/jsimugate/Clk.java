@@ -8,6 +8,7 @@ public class Clk extends Part {
 	private Pin pin;
 	Signal value = Signal._0;
 	private javax.swing.Timer timer;
+	int hz=1,sec=1;
 
 	public Clk() {
 		super();
@@ -23,5 +24,23 @@ public class Clk extends Part {
 	public void operate() {
 		pin.setOutValue(value);
 	}
+	
+	public void adjustClock() {
+		timer.setDelay(500*sec/hz);
+		if (hz>sec) label = hz+" Hz";	
+		else if (sec>hz) label = sec+" sec";
+		else label="CLK";
+	}
+	
+	public void increase() {
+		if (sec>1) sec/=2;
+		else if (hz<64) hz*=2;
+		adjustClock();
+	}
 
+	public void decrease() {
+		if (hz>1) hz/=2;
+		else if (sec<64) sec*=2;
+		adjustClock();
+	}
 }
