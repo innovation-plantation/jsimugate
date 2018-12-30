@@ -151,8 +151,6 @@ public class Net {
 //		for (Wire wire : wires) wire.value = result;
 //	}
 
-
-
 	public static void dump() {
 		System.out.println("Nets:" + nets.size());
 		for (Net net : nets) {
@@ -165,6 +163,5 @@ public class Net {
 			System.out.println();
 		}
 	}
-
 
 }

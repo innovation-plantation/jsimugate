@@ -1,9 +1,11 @@
 package jsimugate;
 
+import java.awt.Color;
+
 public class InConnector extends Part {
 
 	Pin pin;
-	Signal value=Signal._Z;
+	Signal value = Signal._Z;
 
 	public InConnector() {
 		this(0, 0);
@@ -14,6 +16,7 @@ public class InConnector extends Part {
 		setShape(Artwork.ConnectorShape());
 		addPin(pin = new Pin(85, 0).right(30));
 		this.name = "INPUT";
+		fill = Color.white;
 	}
 
 	public void operate() {

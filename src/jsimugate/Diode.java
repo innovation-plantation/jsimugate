@@ -10,7 +10,8 @@ public class Diode extends Part {
 		this.shape = Artwork.diodeShape();
 		this.addPin(anode=new Pin(-20,0).left(10));
 		this.addPin(cathode=new Pin(20,0).right(10));
-		this.fill = Color.black;
+		this.fill = Color.red;
+		this.name="DIODE";
 	}
 	/**
 	 * override to prevent changing from default

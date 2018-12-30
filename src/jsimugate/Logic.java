@@ -87,7 +87,7 @@ public class Logic {
 	};
 	public static final Signal anode_tt[][] = { // outputs lower of two inputs
 			// U _ X _ 0 _ 1 _ Z _ W _ L _ H _ - =C // A:
-			
+
 			{ _U, _U, _U, _0, _U, _U, _U, _U, _U }, // U
 			{ _U, _X, _X, _Z, _Z, _Z, _Z, _Z, _Z }, // X
 			{ _U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z }, // 0
@@ -96,10 +96,8 @@ public class Logic {
 			{ _U, _X, _0, _Z, _Z, _W, _W, _Z, _Z }, // W
 			{ _U, _X, _0, _Z, _Z, _Z, _Z, _Z, _Z }, // L
 			{ _0, _X, _0, _Z, _Z, _W, _W, _Z, _Z }, // H
-		    { _U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z} // -
+			{ _U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z } // -
 
-			
-			
 //			{ _U, _U, _U, _Z, _Z, _W, _L, _Z, _Z }, // U
 //			{ _X, _X, _0, _X, _X, _X, _L, _X, _X }, // X
 //			{ _0, _0, _0, _0, _0, _0, _0, _0, _0 }, // 0

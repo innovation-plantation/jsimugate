@@ -77,9 +77,7 @@ public class Part extends Symbol {
 
 	public void decrease() {}
 
-
 	public void operate() {}
-
 
 	public void processChar(char ch) {}
 
@@ -132,8 +130,7 @@ public class Part extends Symbol {
 			int pinCount = Integer.parseInt(result.group(9));
 			try {
 				Log.println("jsimugate." + partName);
-				newPart = (Part) Class.forName("jsimugate." + partName).getConstructor()
-						.newInstance();
+				newPart = (Part) Class.forName("jsimugate." + partName).getConstructor().newInstance();
 				newPart.transform.setTransform(t);
 				while (newPart.pins.size() > pinCount) newPart.decrease();
 				while (newPart.pins.size() < pinCount) newPart.increase();
