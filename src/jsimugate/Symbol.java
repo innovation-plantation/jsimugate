@@ -51,13 +51,18 @@ public class Symbol extends Numbered {
 	 *              amount
 	 * @return self for chaining
 	 */
-	public Symbol setShape(Shape shape, int pad) {
+
+	public Symbol setShape(Shape shape, int padTop,int padRight,int padBottom, int padLeft) {
 		this.shape = shape;
 		Rectangle2D bounds = shape.getBounds2D();
-		bounds.setRect(bounds.getX() - pad, bounds.getY() - pad, bounds.getWidth() + pad + pad,
-				bounds.getHeight() + pad + pad);
+		bounds.setRect(bounds.getX() - padLeft, bounds.getY() - padTop, bounds.getWidth() + padLeft + padRight,
+				bounds.getHeight() + padTop + padBottom);
 		this.hitbox = bounds;
 		return this;
+	}
+	
+	public Symbol setShape(Shape shape, int pad) {
+		return setShape(shape,pad,pad,pad,pad);
 	}
 
 	public Symbol setShape(Shape shape) {

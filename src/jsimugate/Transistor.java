@@ -41,7 +41,7 @@ public class Transistor extends Discrete {
 
 	public Transistor(double x, double y) {
 		super(x, y);
-		this.setShape(circle);
+		this.setShape(circle,40,0,0,0);
 
 		this.c = this.addPin(new Pin(20, 40)); // output
 		this.b = this.addPin(new Pin(0, -20));
