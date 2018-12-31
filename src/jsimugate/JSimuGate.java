@@ -61,13 +61,16 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 			if (e.getID() == KeyEvent.KEY_PRESSED) switch (e.getKeyChar()) {
 			case 'd':
 				Log.println(circuit.toString());
+				break;
 			case 'n':
 				Net.dump();
 				break;
 			case 'r':
 				Numbered.renumber();
+				break;
 			case 'w':
 				for (Wire wire : circuit.wires) System.out.println(wire);
+				break;
 			case '+':
 				for (Part part : circuit.parts) if (part.isSelected()) {
 					if (e.isAltDown()) part.transform.scale(2, 2);
@@ -126,6 +129,8 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
 		circuit.bins.add(new PartsBin(250, 50, new OutConnector()));
 		circuit.bins.add(new PartsBin(300, 50, new Clk()));
 		circuit.bins.add(new PartsBin(350, 50, new Diode()));
+		circuit.bins.add(new PartsBin(400, 50, new VSource()));
+		circuit.bins.add(new PartsBin(450, 50, new VGround()));
 
 		circuit.bins.add(new PartsBin(50, 50, new MajorityGate().not()));
 		circuit.bins.add(new PartsBin(50, 100, new AndGate()));

@@ -104,10 +104,6 @@ public class Artwork {
 		return shape;
 	}
 
-	public static Shape sourceShape() {
-		return new Line2D.Double(-10, -15, 10, -25);
-	}
-
 	public static Shape pullupShape() {
 		GeneralPath shape = zigzagShape();
 		shape.moveTo(-7, -12);
@@ -126,5 +122,24 @@ public class Artwork {
 
 	public static Shape ConnectorShape() {
 		return new Polygon(new int[] { -30, 45, 55, 45, -30 }, new int[] { -10, -10, 0, 10, 10 }, 5);
+	}
+
+	public static Shape vGroundShape() {
+		GeneralPath shape = new GeneralPath();
+		shape.moveTo(-7, 15);
+		shape.lineTo(0, 25);
+		shape.lineTo(7, 15);
+		shape.closePath();
+		return shape;
+	}
+
+	public static Shape vSourceShape() {
+		GeneralPath shape = new GeneralPath();
+		shape.moveTo(-7, -12);
+		shape.lineTo(7, -20);
+		shape.lineTo(7, -15);
+		shape.lineTo(-7, -7);
+		shape.closePath();
+		return shape;
 	}
 }

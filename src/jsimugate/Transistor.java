@@ -14,7 +14,7 @@ import java.awt.geom.GeneralPath;
  * @author Ted
  *
  */
-public class Transistor extends Part {
+public class Transistor extends Discrete {
 
 	static final Ellipse2D circle = new Ellipse2D.Double(-15, 15, 30, 30);
 	static final GeneralPath resistor = Artwork.zigzagShape();
@@ -49,14 +49,6 @@ public class Transistor extends Part {
 
 		this.color = Color.black;
 		this.fill = Color.white;
-	}
-
-	/**
-	 * override to prevent changing from default
-	 */
-	public Part asTech(Tech tech) {
-		this.tech = Tech.PUSH_PULL;
-		return this;
 	}
 
 	public void drawAtOrigin(Graphics2D g) {

@@ -43,6 +43,23 @@ public class Symbol extends Numbered {
 		return this;
 	}
 
+	/**
+	 * Sets the hitbox to the padded bounding box
+	 * 
+	 * @param shape - new shape
+	 * @param pad   - hitbox bigger than bounding box in all directions by this
+	 *              amount
+	 * @return self for chaining
+	 */
+	public Symbol setShape(Shape shape, int pad) {
+		this.shape = shape;
+		Rectangle2D bounds = shape.getBounds2D();
+		bounds.setRect(bounds.getX() - pad, bounds.getY() - pad, bounds.getWidth() + pad + pad,
+				bounds.getHeight() + pad + pad);
+		this.hitbox = bounds;
+		return this;
+	}
+
 	public Symbol setShape(Shape shape) {
 		this.shape = shape;
 		this.hitbox = shape;

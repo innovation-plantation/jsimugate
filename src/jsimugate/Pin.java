@@ -21,29 +21,54 @@ public class Pin extends Symbol {
 	}
 
 	Pin right(double dx) {
+		return right(dx, true);
+	}
+
+	Pin left(double dx) {
+		return left(dx, true);
+	}
+
+	Pin down(double dx) {
+		return down(dx, true);
+	}
+
+	Pin up(double dx) {
+		return up(dx, true);
+	}
+
+	Pin right(double dx, boolean invertible) {
 		control = new Point2D.Double(dx, 0);
 		longLine = new Line2D.Double(-dx, 0, 0, 0);
 		shortLine = new Line2D.Double(23 - dx, 0, 0, 0);
 		line = longLine;
-		addChild(bubble = new Inversion(10 - dx, 0));
+		if (invertible) addChild(bubble = new Inversion(10 - dx, 0));
 		return this;
 	}
 
-	Pin left(double dx) {
+	Pin left(double dx, boolean invertible) {
 		control = new Point2D.Double(-dx, 0);
 		longLine = new Line2D.Double(0, 0, dx, 0);
 		shortLine = new Line2D.Double(0, 0, dx - 23, 0);
 		line = longLine;
-		addChild(bubble = new Inversion(dx - 10, 0));
+		if (invertible) addChild(bubble = new Inversion(dx - 10, 0));
 		return this;
 	}
 
-	Pin down(double dy) {
+	Pin down(double dy, boolean invertible) {
 		control = new Point2D.Double(0, dy);
 		longLine = new Line2D.Double(0, 0, 0, -dy);
 		shortLine = new Line2D.Double(0, 0, 0, 23 - dy);
 		line = longLine;
-		addChild(bubble = new Inversion(0, 10 - dy));
+		if (invertible) addChild(bubble = new Inversion(0, 10 - dy));
+		return this;
+	}
+
+	Pin up(double dy, boolean invertible) {
+		control = new Point2D.Double(0, -dy);
+		longLine = new Line2D.Double(0, 0, 0, dy);
+		shortLine = new Line2D.Double(0, 23 - dy, 0, 0);
+		line = longLine;
+		if (invertible) addChild(bubble = new Inversion(0, dy - 10));
 		return this;
 	}
 
