@@ -116,6 +116,8 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
         circuit.bins.add(new PartsBin(400, 50, new VSource()));
         circuit.bins.add(new PartsBin(450, 50, new VGround()));
 
+        circuit.bins.add(new PartsBin(500, 50, new Alu()));
+
         circuit.bins.add(new PartsBin(50, 50, new MajorityGate().not()));
         circuit.bins.add(new PartsBin(50, 100, new AndGate()));
         circuit.bins.add(new PartsBin(50, 150, new OrGate()));
