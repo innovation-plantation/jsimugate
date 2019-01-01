@@ -1,26 +1,31 @@
 package jsimugate;
 
-import java.awt.Color;
+import java.awt.*;
 
+/**
+ * Implementation of a pull-down reisistor component
+ */
 public class PulldownResistor extends Discrete {
 
-	private Pin pin;
+    private Pin pin;
 
-	public PulldownResistor() {
-		this(0, 0);
-	}
+    /**
+     * Create the component
+     */
+    public PulldownResistor() {
+        super();
+        this.setShape(Artwork.pulldownShape());
+        this.hitbox = this.shape.getBounds2D();
+        this.color = Color.black;
+        this.fill = Color.black;
+        this.pin = this.addPin(new Pin(0, -20));
+        this.name = "PULLDN";
+    }
 
-	public PulldownResistor(double x, double y) {
-		super(x, y);
-		this.setShape(Artwork.pulldownShape());
-		this.hitbox = this.shape.getBounds2D();
-		this.color = Color.black;
-		this.fill = Color.black;
-		this.pin = this.addPin(new Pin(0, -20));
-		this.name = "PULLDN";
-	}
-
-	public void operate() {
-		this.pin.setOutValue(Signal._L);
-	}
+    /**
+     * Set the value of the output pin
+     */
+    public void operate() {
+        this.pin.setOutValue(Signal._L);
+    }
 }

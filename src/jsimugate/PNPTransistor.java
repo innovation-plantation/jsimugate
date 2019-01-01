@@ -1,18 +1,21 @@
 package jsimugate;
 
-import java.awt.Color;
+import java.awt.*;
 
+/**
+ * Implementation of a PNP transistor. The emitter and base are inputs, and the collector is an output.
+ * If the emitter is higher than the base, then its output is delivered to the collector,
+ * otherwise the collector is not driven.
+ */
 public class PNPTransistor extends Transistor {
-
-	public PNPTransistor() {
-		this(0, 0);
-	}
-
-	public PNPTransistor(double x, double y) {
-		super(x, y);
-		this.arrow = pnp_arrow;
-		this.name = "PNP";
-		this.tt = Logic.pnp_tt;
-		this.color = Color.red;
-	}
+    /**
+     * Create the transistor as PNP type
+     */
+    public PNPTransistor() {
+        super();
+        this.arrow = pnp_arrow;
+        this.name = "PNP";
+        this.tt = Logic.pnp_tt;
+        this.color = Color.red;
+    }
 }

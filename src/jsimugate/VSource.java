@@ -1,24 +1,29 @@
 package jsimugate;
 
-import java.awt.Color;
+import java.awt.*;
 
+/**
+ * Implementation of a voltage-source component
+ */
 public class VSource extends Discrete {
-	private Pin pin;
+    private Pin pin;
 
-	public VSource() {
-		this(0, 0);
-	}
+    /**
+     * Create the component
+     */
+    public VSource() {
+        super();
+        this.setShape(Artwork.vSourceShape(), 10);
+        this.color = Color.red;
+        this.fill = Color.red;
+        this.pin = this.addPin(new Pin(0, 5).down(15, false));
+        this.name = "SOURCE";
+    }
 
-	public VSource(double x, double y) {
-		super(x, y);
-		this.setShape(Artwork.vSourceShape(),10);
-		this.color = Color.red;
-		this.fill = Color.red;
-		this.pin = this.addPin(new Pin(0, 5).down(15,false));
-		this.name = "SOURCE";
-	}
-
-	public void operate() {
-		this.pin.setOutValue(Signal._1);
-	}
+    /**
+     * Set the value of the output pin
+     */
+    public void operate() {
+        this.pin.setOutValue(Signal._1);
+    }
 }

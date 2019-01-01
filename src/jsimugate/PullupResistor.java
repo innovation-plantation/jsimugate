@@ -1,25 +1,30 @@
 package jsimugate;
 
-import java.awt.Color;
+import java.awt.*;
 
+/**
+ * Implementation of a pull-up reisistor component
+ */
 public class PullupResistor extends Discrete {
 
-	private Pin pin;
+    private Pin pin;
 
-	public PullupResistor() {
-		this(0, 0);
-	}
+    /**
+     * Create the component
+     */
+    public PullupResistor() {
+        super();
+        this.setShape(Artwork.pullupShape());
+        this.hitbox = this.shape.getBounds2D();
+        this.color = Color.red;
+        this.pin = this.addPin(new Pin(0, 20));
+        this.name = "PULLUP";
+    }
 
-	public PullupResistor(double x, double y) {
-		super(x, y);
-		this.setShape(Artwork.pullupShape());
-		this.hitbox = this.shape.getBounds2D();
-		this.color = Color.red;
-		this.pin = this.addPin(new Pin(0, 20));
-		this.name = "PULLUP";
-	}
-
-	public void operate() {
-		this.pin.setOutValue(Signal._H);
-	}
+    /**
+     * Set the value of the output pin
+     */
+    public void operate() {
+        this.pin.setOutValue(Signal._H);
+    }
 }
