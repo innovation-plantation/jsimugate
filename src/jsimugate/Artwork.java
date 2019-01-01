@@ -212,4 +212,21 @@ public class Artwork {
         shape.closePath();
         return shape;
     }
+
+    /**
+     * Shape of adder and ALU parts
+     * @return the shape
+     */
+    public static Shape adderShape() {
+        GeneralPath shape = new GeneralPath();
+        shape.moveTo(-40,0);
+        shape.lineTo(-50,-10);
+        shape.lineTo(-50,-170);
+        shape.lineTo(50,-120);
+        shape.lineTo(50,120);
+        shape.lineTo(-50,170);
+        shape.lineTo(-50,10);
+        shape.closePath();
+        return shape;
+    }
 }

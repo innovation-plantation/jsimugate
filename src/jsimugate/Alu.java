@@ -46,44 +46,45 @@ public class Alu extends Part {
 
     public Alu() {
         label="ALU";
+        setShape(Artwork.adderShape());
         aIn = new Pin[]{
-                addPin(new Pin(-70, -20).left(20)),
-                addPin(new Pin(-70, -40).left(20)),
-                addPin(new Pin(-70, -60).left(20)),
-                addPin(new Pin(-70, -80).left(20)),
-                addPin(new Pin(-70, -100).left(20)),
-                addPin(new Pin(-70, -120).left(20)),
-                addPin(new Pin(-70, -140).left(20)),
-                addPin(new Pin(-70, -160).left(20)),
+                addPin(new Pin(-80, -20).left(30)),
+                addPin(new Pin(-80, -40).left(30)),
+                addPin(new Pin(-80, -60).left(30)),
+                addPin(new Pin(-80, -80).left(30)),
+                addPin(new Pin(-80, -100).left(30)),
+                addPin(new Pin(-80, -120).left(30)),
+                addPin(new Pin(-80, -140).left(30)),
+                addPin(new Pin(-80, -160).left(30)),
         };
         bIn = new Pin[]{
-                addPin(new Pin(-70, 160).left(20)),
-                addPin(new Pin(-70, 140).left(20)),
-                addPin(new Pin(-70, 120).left(20)),
-                addPin(new Pin(-70, 100).left(20)),
-                addPin(new Pin(-70, 80).left(20)),
-                addPin(new Pin(-70, 60).left(20)),
-                addPin(new Pin(-70, 40).left(20)),
-                addPin(new Pin(-70, 20).left(20)),
+                addPin(new Pin(-80, 160).left(30)),
+                addPin(new Pin(-80, 140).left(30)),
+                addPin(new Pin(-80, 120).left(30)),
+                addPin(new Pin(-80, 100).left(30)),
+                addPin(new Pin(-80, 80).left(30)),
+                addPin(new Pin(-80, 60).left(30)),
+                addPin(new Pin(-80, 40).left(30)),
+                addPin(new Pin(-80, 20).left(30)),
         };
 
         fnIn = new Pin[]{
-                addPin(new Pin(-30, 180).down(20)),
-                addPin(new Pin(-10, 170).down(20)),
-                addPin(new Pin(10, 160).down(20)),
-                addPin(new Pin(30, 150).down(20)),
+                addPin(new Pin(-30, 190).down(30)),
+                addPin(new Pin(-10, 180).down(30)),
+                addPin(new Pin(10, 170).down(30)),
+                addPin(new Pin(30, 160).down(30)),
         };
         out = new Pin[] {
-                addPin(new Pin(70,80).right(20)),
-                addPin(new Pin(70,60).right(20)),
-                addPin(new Pin(70,40).right(20)),
-                addPin(new Pin(70,20).right(20)),
-                addPin(new Pin(70,0).right(20)),
-                addPin(new Pin(70,-20).right(20)),
-                addPin(new Pin(70,-40).right(20)),
-                addPin(new Pin(70,-60).right(20)),
+                addPin(new Pin(80,80).right(30)),
+                addPin(new Pin(80,60).right(30)),
+                addPin(new Pin(80,40).right(30)),
+                addPin(new Pin(80,20).right(30)),
+                addPin(new Pin(80,0).right(30)),
+                addPin(new Pin(80,-20).right(30)),
+                addPin(new Pin(80,-40).right(30)),
+                addPin(new Pin(80,-60).right(30)),
         };
-        cOut = addPin(new Pin(70,-100).right(20));
+        cOut = addPin(new Pin(80,-100).right(30));
     }
 
     public void operate() {
