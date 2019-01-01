@@ -33,6 +33,23 @@ public class Symbol extends Numbered {
     AffineTransform gTransform = new AffineTransform();
 
     /**
+     * Create a symbol at the origin.
+     */
+    public Symbol() {
+    }
+
+    /**
+     * Create a symbol at position x,y
+     *
+     * @param x
+     * @param y
+     */
+    public Symbol(double x, double y) {
+        super();
+        transform.setToTranslation(x, y);
+    }
+
+    /**
      * Add a child symbol to this one, so that whenever this is rendered, the child will be as well.
      *
      * @param child
@@ -100,6 +117,7 @@ public class Symbol extends Numbered {
         this.hitbox = shape;
         return this;
     }
+
 
     /**
      * Set the outline color of this symbol
