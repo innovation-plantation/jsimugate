@@ -97,20 +97,26 @@ public class Circuit {
             for (Net net : Net.nets) {
                 Signal wire_value = Signal._Z;
                 for (Pin pin : net.pins) {
-                    Signal pin_value = Signal._Z;
-                    // for stability in circuits having diodes, exclude your own output from what
-                    // you see on the wire. Order N^2, so avoid computation if not needed.
-                    if (pin.recovery) for (Pin other : net.pins) { // for diodes
-                        if (pin != other) {
-                            pin_value = Logic.resolve_tt[pin_value.ordinal()][other.getOutValue().ordinal()];
-                        }
-                    }
-                    pin.setInValue(pin_value);
                     wire_value = Logic.resolve_tt[wire_value.ordinal()][pin.getOutValue().ordinal()];
                 }
-                for (Pin pin : net.pins) { // for non-diodes. avoid n^2 computation.
-                    if (!pin.recovery) pin.setInValue(wire_value);
+                if (!net.recovery) { // for no-diodes on the net. avoid n^2 computation.
+                    for (Pin pin : net.pins) {
+                        pin.setInValue(wire_value);
+                    }
+                } else {  // Order N^2 computation is required here
+                    // for stability in circuits having diodes,
+                    // exclude your own output from what you see on the wire.
+                    for (Pin pin : net.pins) {
+                        Signal pin_value = Signal._Z;
+                        for (Pin other : net.pins) { // for diodes
+                            if (pin != other) {
+                                pin_value = Logic.resolve_tt[pin_value.ordinal()][other.getOutValue().ordinal()];
+                            }
+                        }
+                        pin.setInValue(pin_value);
+                    }
                 }
+
                 for (Wire wire : net.wires) wire.value = wire_value;
             }
             for (Part part : parts) { // set output pin values from f(input pin values)

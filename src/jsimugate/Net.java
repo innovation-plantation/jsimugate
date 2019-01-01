@@ -9,6 +9,7 @@ public class Net {
     Set<Pin> pins = new HashSet<Pin>();
     Set<Wire> wires = new HashSet<Wire>();
     static List<Net> nets = new ArrayList<Net>();
+    boolean recovery=false;
 
     /**
      * This should be called every time a wire is constructed
@@ -32,21 +33,25 @@ public class Net {
                 srcNet.pins.add(wire.dst);
                 nets.add(srcNet);
             }
+            srcNet.recovery |= wire.src.recovery || wire.dst.recovery;
             srcNet.wires.add(wire);
             return;
         }
         // if one is null, return the other one with the wire added
         if (dstNet == null) {
             srcNet.pins.add(wire.dst);
+            srcNet.recovery |= wire.src.recovery || wire.dst.recovery;
             srcNet.wires.add(wire);
             return;
         }
         if (srcNet == null) {
             dstNet.pins.add(wire.src);
+            dstNet.recovery |= wire.src.recovery || wire.dst.recovery;
             dstNet.wires.add(wire);
             return;
         }
         // merge two nets
+        dstNet.recovery |= srcNet.recovery;
         dstNet.pins.addAll(srcNet.pins);
         dstNet.wires.addAll(srcNet.wires);
         dstNet.wires.add(wire);

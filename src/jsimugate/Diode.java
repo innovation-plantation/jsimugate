@@ -16,6 +16,7 @@ public class Diode extends Discrete {
         this.shape = Artwork.diodeShape();
         this.addPin(anode = new Pin(-20, 0).left(10, false));
         this.addPin(cathode = new Pin(20, 0).right(10, false));
+        this.anode.recovery=this.cathode.recovery=true;
         this.fill = Color.red;
         this.name = "DIODE";
     }
