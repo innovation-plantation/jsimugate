@@ -83,6 +83,8 @@ public class Adder extends Part {
         g.drawString(Integer.toString(a),-40,-80);
         g.drawString(Integer.toString(b),-40,95);
         g.drawString(Integer.toString(result),30,15);
+        g.drawString("Cin="+cIn.getInValue().asBit(),10,115);
+        g.drawString("Cout="+cIn.getInValue().asBit(),0,-95);
     }
 }
 
