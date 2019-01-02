@@ -7,6 +7,7 @@ import java.awt.geom.Rectangle2D;
 public class PartsBin extends Part {
 
     private Part prototype;
+    double scale=.25;
 
     /**
      * A box containing a mini part emblem its name, from which new parts can be dragged and
@@ -22,6 +23,13 @@ public class PartsBin extends Part {
         this.prototype = part;
         this.setShape(new Rectangle2D.Double(-25, -25, 50, 50));
         this.addChild(part);
+        Rectangle bounds = part.hitbox.getBounds();
+        double w=bounds.width, h=bounds.height;
+        scale=.25;
+        if (h>100) scale/=3;
+        if (w<40) scale *=1.5;
+        //scale = Math.min(w,h);
+
         this.fill = new Color(0x00, 0xFF, 0xFF, 0x10);
         this.color = Color.gray;
     }
@@ -37,9 +45,12 @@ public class PartsBin extends Part {
         g.setColor(color);
         g.draw(shape);
         AffineTransform restore = g.getTransform();
-        g.scale(.25, .25);
+
+        g.scale(scale, scale);
+        g.translate(0,-10);
         drawChildren(g);
-        g.scale(3, 3);
+        g.setTransform(restore);
+        g.scale(.75, .75);
 
         if (prototype != null) {
             String text = prototype.label;
