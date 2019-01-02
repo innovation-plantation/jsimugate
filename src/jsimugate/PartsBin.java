@@ -4,14 +4,18 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
+/**
+ * Implementation of a parts bin: A box from which new parts can be dragged
+ * to be created and to which existing parts can be dropped to dispose of them.
+ * The box is labeled with a mini part symbol and its name
+ */
 public class PartsBin extends Part {
 
     private Part prototype;
     double scale=.25;
 
     /**
-     * A box containing a mini part emblem its name, from which new parts can be dragged and
-     * to which existing parts can be dropped to dispose of them.
+     * Create the parts bin labeled with the name and shape of the part.
      *
      * @param x    horizontal position of the bin
      * @param y    horizontal position of the bin
@@ -25,10 +29,9 @@ public class PartsBin extends Part {
         this.addChild(part);
         Rectangle bounds = part.hitbox.getBounds();
         double w=bounds.width, h=bounds.height;
-        scale=.25;
+        scale=.25; // this looks better than linear scaling because of aliasing.
         if (h>100) scale/=3;
         if (w<40) scale *=1.5;
-        //scale = Math.min(w,h);
 
         this.fill = new Color(0x00, 0xFF, 0xFF, 0x10);
         this.color = Color.gray;

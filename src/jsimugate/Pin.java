@@ -214,4 +214,25 @@ public class Pin extends Symbol {
     void setInValue(Signal newValue) {
         inValue = newValue;
     }
+
+    /**
+     * Read the binary value from the pins.
+     * Invalid bits are interpreted as zero.
+     * @param pins pins with a binary value
+     * @return the integer number converted from binary.
+     */
+    public static int pack(Pin[] pins) {
+        int result = 0;
+        for (int n = 0; n < pins.length; n++) result += pins[n].getInValue().asBit() << n;
+        return result;
+    }
+
+    /**
+     * Drive the pins with the binary value.
+     * @param pins pins to receive the binary value
+     * @param src the number to be converted to binary
+     */
+    public static void unpack(Pin[] pins, int src) {
+        for (int n = 0; n < pins.length; n++) pins[n].setOutValue(Signal.fromBit((src >> n) & 1));
+    }
 }
