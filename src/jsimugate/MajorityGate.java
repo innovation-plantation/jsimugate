@@ -1,7 +1,7 @@
 package jsimugate;
 
 /**
- * Implementation of a majority gate or not gate or buffer depending on the number of inputs and
+ * Implementation of a majority gate or not gate or buffer depending on the number of pins and
  * whether or not the output is inverted.
  */
 public class MajorityGate extends Gate {
@@ -15,20 +15,20 @@ public class MajorityGate extends Gate {
     }
 
     /**
-     * Set the shape of the part to a majority gate part shape for n inputs
+     * Set the shape of the part to a majority gate part shape for n pins
      *
-     * @param n number of inputs
+     * @param n number of pins
      */
     public void reshape(int n) {
         setShape(Artwork.majorityShape(n));
     }
 
     /**
-     * process the inputs and determine the output pin value.
+     * process the pins and determine the output pin value.
      */
     public void operate() {
         int hi = 0, lo = 0;
-        for (Pin i : inputs) {
+        for (Pin i : inputs.pins) {
             if (i.getInValue().bad) {
                 output.setOutValue(Signal._X);
                 return;

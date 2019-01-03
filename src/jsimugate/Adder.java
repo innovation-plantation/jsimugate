@@ -9,7 +9,7 @@ public class Adder extends Part {
     Pin bIn[];
     Pin out[];
     Pin cOut,cIn;
-    int a,b,result;
+    int a,b,result; // numerical values for pin groups
 
     public Adder() {
         label = "ADDER";

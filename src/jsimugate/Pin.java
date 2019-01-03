@@ -175,8 +175,9 @@ public class Pin extends Symbol {
      * @param x horizontal distance
      * @param y vertical distance
      */
-    public void translate(double x, double y) {
+    public Pin translate(double x, double y) {
         transform.translate(x, y);
+        return this;
     }
 
     /**

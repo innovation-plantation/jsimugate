@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Abstraction of a gate, which is a part with multiple inputs and a single output.
+ * Abstraction of a gate, which is a part with multiple pins and a single output.
  */
 public class Gate extends Part {
 
-    List<Pin> inputs = new ArrayList<Pin>();
+    //List<Pin> inputs = new ArrayList<Pin>();
+    PinGroup inputs=new PinGroup(true);
     Pin output;
 
     /**
@@ -25,54 +26,24 @@ public class Gate extends Part {
     }
 
     /**
-     * Add an input pin to the gate, shifting the other inputs over as necessary to make room
+     * Add a pin to the gate
      */
     protected void addInput() {
-        int n = inputs.size();
-        reshape(n + 1);
-        switch (n) {
-            case 0:
-                inputs.add(addPin(new Pin(-80, 0).left(40)));
-                break;
-            case 1:
-                inputs.get(0).transform.translate(0, -20);
-                inputs.add(addPin(new Pin(-80, 20).left(40)));
-                break;
-            case 2:
-                inputs.get(1).transform.translate(0, -20);
-                inputs.add(addPin(new Pin(-80, 20).left(40)));
-                break;
-            default:
-                for (Pin i : inputs) i.translate(0, -10);
-                inputs.add(addPin(new Pin(-80, n * 10).left(40)));
-        }
+        Pin pin=inputs.addPinVertically().translate(-70,0).left(30);
+        addPin(pin);
+        reshape(inputs.size());
         updateLabel();
     }
 
     /**
-     * Remove the last pin if it's not connected to anything
+     * Remove the most recently added pin if it's not connected to anything
      */
     protected void removeInput() {
-        int n = inputs.size();
-        if (n < 1) return;
-        Pin victim = inputs.get(n - 1);
-        // if wires attached return now without removing victim.
-        if (Net.directConnections(victim).size() > 0) return;
-        reshape(n - 1);
-        inputs.remove(removePin(victim));
-        switch (n) {
-            case 1:
-                break;
-            case 2:
-                inputs.get(0).transform.translate(0, 20);
-                break;
-            case 3:
-                inputs.get(1).transform.translate(0, 20);
-                break;
-            default:
-                for (Pin i : inputs) i.translate(0, 10);
+        Pin pin=inputs.removePinVertically();
+        if (pin!=null) {
+            removePin(pin);
+            reshape(inputs.size());
         }
-        updateLabel();
     }
 
     /**
@@ -99,7 +70,7 @@ public class Gate extends Part {
      */
     public void operate() {
         Signal result = function();
-        for (Pin i : inputs) result = function(result, i.getInValue());
+        for (Pin i : inputs.pins) result = function(result, i.getInValue());
         output.setOutValue(result);
     }
 
@@ -140,7 +111,6 @@ public class Gate extends Part {
         String s = toString().replaceAll(this.getClass().getSimpleName(), opposite);
 
         Gate that = (Gate) Part.fromScanner(new Scanner(s), null);
-        that.inputs = inputs;
         that.output = output;
         that.pins = pins;
         that.children = children;

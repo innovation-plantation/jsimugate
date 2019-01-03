@@ -48,12 +48,12 @@ public class XorGate extends Gate {
     }
 
     /**
-     * Eliminate inversons on inputs, if odd number of inversions on inputs, transfer inversion to output pin
+     * Eliminate inversons on pins, if odd number of inversions on pins, transfer inversion to output pin
      *
      * @return self for chaining.
      */
     public Part convert() {
-        for (Pin pin : inputs) {
+        for (Pin pin : inputs.pins) {
             if (pin.inverted) {
                 pin.toggleInversion();
                 output.toggleInversion();

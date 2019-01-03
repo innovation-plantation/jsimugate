@@ -101,13 +101,13 @@ public class Part extends Symbol {
     }
 
     /**
-     * Increase something about the part such as clock rate or number of inputs.
+     * Increase something about the part such as clock rate or number of pins.
      */
     public void increase() {
     }
 
     /**
-     * Decrease something about the part such as clock rate or number of inputs.
+     * Decrease something about the part such as clock rate or number of pins.
      */
     public void decrease() {
     }

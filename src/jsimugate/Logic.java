@@ -80,7 +80,7 @@ public class Logic {
             {_U, _X, _X, _X, _X, _X, _X, _X, _X} // -
     };
     /**
-     * npn-transistor collector output for emitter and base inputs
+     * npn-transistor collector output for emitter and base pins
      */
     public static final Signal[][] npn_tt = {
             // U _ X _ 0 _ 1 _ Z _ W _ L _ H _ - =B // E:
@@ -96,7 +96,7 @@ public class Logic {
     };
 
     /**
-     * pnp-transistor collector output for emitter and base inputs
+     * pnp-transistor collector output for emitter and base pins
      */
     public static final Signal[][] pnp_tt = {
             // U _ X _ 0 _ 1 _ Z _ W _ L _ H _ - =B // E:
@@ -111,9 +111,9 @@ public class Logic {
             {_U, _X, _X, _Z, _Z, _X, _X, _Z, _X}, // -
     };
     /**
-     * anode output for anode and cathode inputs on s fiofr
+     * anode output for anode and cathode pins on s fiofr
      */
-    public static final Signal[][] anode_tt = { // outputs lower of two inputs
+    public static final Signal[][] anode_tt = { // outputs lower of two pins
             // U _ X _ 0 _ 1 _ Z _ W _ L _ H _ - =C // A:
 
             {_U, _U, _U, _0, _U, _U, _U, _U, _U}, // U
@@ -128,9 +128,9 @@ public class Logic {
 
     };
     /**
-     * cathode output for anode and cathode inputs on s fiofr
+     * cathode output for anode and cathode pins on s fiofr
      */
-    public static final Signal[][] cathode_tt = { // outputs higher of two inputs
+    public static final Signal[][] cathode_tt = { // outputs higher of two pins
             // U _ X _ 0 _ 1 _ Z _ W _ L _ H _ - =C // A:
 
             {_U, _U, _U, _0, _U, _U, _U, _U, _U}, // U

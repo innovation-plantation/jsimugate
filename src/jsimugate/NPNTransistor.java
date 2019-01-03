@@ -1,7 +1,7 @@
 package jsimugate;
 
 /**
- * Implementation of an NPN transistor. The emitter and base are inputs, and the collector is an output.
+ * Implementation of an NPN transistor. The emitter and base are pins, and the collector is an output.
  * If the emitter is lower than the base, then its output is delivered to the collector,
  * otherwise the collector is not driven.
  */
