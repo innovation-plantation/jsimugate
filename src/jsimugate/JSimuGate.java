@@ -2,6 +2,7 @@ package jsimugate;
 
 import jsimugate.Part.Tech;
 
+import javax.print.DocFlavor;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -9,10 +10,9 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 /**
  * User interface for circuit simulation. This could be an Applet by changing JPanel to JApplet or Applet, etc.
  */
-public class JSimuGate extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
+public class JSimuGate extends Panel implements MouseListener, MouseMotionListener, ComponentListener {
     private static final long serialVersionUID = 1L;
     Circuit circuit = new Circuit();
     private Dimension size;
@@ -156,6 +156,8 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
      */
     private void updateImageSize() {
         size = getSize();
+        if (size.width<1) size.width=1;
+        if (size.height<1) size.height=1;
         image = createImage(size.width, size.height);
         if (image != null) graphics = image.getGraphics();
     }
@@ -207,7 +209,6 @@ public class JSimuGate extends JPanel implements MouseListener, MouseMotionListe
             bin.draw(g);
         }
     }
-
 
     /**
      * Start the circuit simulation program

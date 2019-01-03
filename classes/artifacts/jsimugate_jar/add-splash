@@ -1,0 +1,8 @@
+#!/bin/bash
+tmp_splash_manifest_line=`mktemp`
+echo >$tmp_splash_manifest_line SplashScreen-Image: innovation-plantation.png
+jar ufm jsimugate.jar $tmp_splash_manifest_line innovation-plantation.png
+rm $tmp_splash_manifest_line
+cp jsimugate.jar ../../..
+
+
