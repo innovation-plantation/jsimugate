@@ -5,45 +5,22 @@ import java.awt.*;
  * Implementation of an adder with carry out
  */
 public class Adder extends Part {
-    Pin aIn[];
-    Pin bIn[];
-    Pin out[];
+    PinGroup aIn=new PinGroup();
+    PinGroup bIn=new PinGroup();
+    PinGroup out=new PinGroup();
     Pin cOut,cIn;
     int a,b,result; // numerical values for pin groups
 
     public Adder() {
         label = "ADDER";
         setShape(Artwork.adderShape());
-        aIn = new Pin[]{
-                addPin(new Pin(-80, -20).left(30)),
-                addPin(new Pin(-80, -40).left(30)),
-                addPin(new Pin(-80, -60).left(30)),
-                addPin(new Pin(-80, -80).left(30)),
-                addPin(new Pin(-80, -100).left(30)),
-                addPin(new Pin(-80, -120).left(30)),
-                addPin(new Pin(-80, -140).left(30)),
-                addPin(new Pin(-80, -160).left(30)),
+
+        for (int i=0;i<8;i++) {
+            addPin(aIn.addPinVertically().translate(-80, -90).left(30));
+            addPin(bIn.addPinVertically().translate(-80, 90).left(30));
+            addPin(out.addPinVertically().translate(80, 10).right(30));
         };
-        bIn = new Pin[]{
-                addPin(new Pin(-80, 160).left(30)),
-                addPin(new Pin(-80, 140).left(30)),
-                addPin(new Pin(-80, 120).left(30)),
-                addPin(new Pin(-80, 100).left(30)),
-                addPin(new Pin(-80, 80).left(30)),
-                addPin(new Pin(-80, 60).left(30)),
-                addPin(new Pin(-80, 40).left(30)),
-                addPin(new Pin(-80, 20).left(30)),
-        };
-        out = new Pin[]{
-                addPin(new Pin(80, 80).right(30)),
-                addPin(new Pin(80, 60).right(30)),
-                addPin(new Pin(80, 40).right(30)),
-                addPin(new Pin(80, 20).right(30)),
-                addPin(new Pin(80, 0).right(30)),
-                addPin(new Pin(80, -20).right(30)),
-                addPin(new Pin(80, -40).right(30)),
-                addPin(new Pin(80, -60).right(30)),
-        };
+
         cOut = addPin(new Pin(80, -100).right(30));
         cIn = addPin(new Pin(30, 160).down(30));
     }
@@ -52,15 +29,15 @@ public class Adder extends Part {
      * Get the values of A and B from input pins
      */
     public void getAB() {
-        a = Pin.pack(aIn);
-        b = Pin.pack(bIn);
+        a = aIn.getValue();
+        b = bIn.getValue();
     }
 
     /**
      * Set the result output pins from the result
      */
     public void putResult() {
-        Pin.unpack(out, result);
+        out.setValue(result);
     }
     /**
      * Perform the addition

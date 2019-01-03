@@ -27,12 +27,12 @@ public class Alu extends Adder {
         SHL(true, (a, b) -> a << 1), //////// 0 0 0 0
         RLC(true, (a, b) -> (a << 1) | 1), // 0 0 0 1
         SHR(true, (a, b) -> a >> 1), //////// 0 0 1 0
-        NEG(true, (a, b) -> -a), //////////// 0 1 0 1
+        NOT(false, (a, b) -> ~a), /////////// 0 0 1 1
 
         INC(true, (a, b) -> a + 1), ///////// 0 1 0 0
-        NOT(false, (a, b) -> ~a), /////////// 0 0 1 1
+        NEG(true, (a, b) -> -a), //////////// 0 1 0 1
         DEC(true, (a, b) -> a - 1), ///////// 0 1 1 0
-        XFER(false, (a, b) -> a), /////////// 0 1 1 1
+        XFER(false, (a, b) -> a), /////////// 1 1 1
         ;
 
         private final IntBinaryOperator fn;
@@ -60,7 +60,7 @@ public class Alu extends Adder {
     public Alu() {
         label = "ALU";
         fnIn = new Pin[]{
-                cIn,
+                addPin(new Pin(30, 160).down(30)),
                 addPin(new Pin(10, 170).down(30)),
                 addPin(new Pin(-10, 180).down(30)),
                 addPin(new Pin(-30, 190).down(30)),
