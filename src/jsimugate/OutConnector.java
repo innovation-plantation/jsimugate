@@ -5,7 +5,7 @@ import java.awt.*;
 /**
  * Implementation of an input pin connector
  */
-public class OutConnector extends Part {
+public class OutConnector extends Discrete {
     Pin pin;
 
     /**
