@@ -16,6 +16,7 @@ public class PullupResistor extends Discrete {
     public PullupResistor() {
         super();
         this.setShape(Artwork.pullupShape());
+        this.hitbox = this.shape.getBounds2D();
         this.pin = this.addPin(new Pin(0, 20));
         this.name = "PULLUP";
         setValue(Signal._H);
