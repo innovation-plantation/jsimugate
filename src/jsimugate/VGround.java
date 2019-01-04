@@ -15,7 +15,7 @@ public class VGround extends Discrete {
         super();
         this.setShape(Artwork.vGroundShape(), 10);
         this.color = Color.black;
-        this.fill = Color.black;
+        this.fill = null;
         this.pin = this.addPin(new Pin(0, 0).up(15, false));
         this.name = "GND";
     }

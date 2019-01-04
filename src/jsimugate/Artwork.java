@@ -168,6 +168,11 @@ public class Artwork {
      */
     public static Shape pulldownShape() {
         GeneralPath shape = zigzagShape();
+        shape.moveTo(-5,17);
+        shape.lineTo(5,17);
+        shape.moveTo(6,16);
+        shape.lineTo(-6,16);
+        shape.closePath();
         shape.moveTo(-7, 15);
         shape.lineTo(0, 25);
         shape.lineTo(7, 15);
