@@ -151,17 +151,17 @@ public class Logic {
     public static final Signal[][] anode_tt = { // outputs lower of two pins
             // U _X _ 0 _ 1 _ Z _ W _ L _ H _ - _ M _ F _ T=C // A:
             {_U, _U, _U, _U, _U, _U, _U, _U, _U, _U, _U, _U}, // U
-            {_U, _W, _W, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // X
+            {_U, _Z, _W, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // X
             {_U, _Z, _0, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // 0
-            {_U, _W, _X, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // 1
-            {_U, _W, _0, _Z, _Z, _W, _L, _Z, _Z, _Z, _Z, _Z}, // Z
-            {_U, _W, _0, _Z, _Z, _W, _L, _Z, _Z, _Z, _Z, _Z}, // W
+            {_U, _Z, _X, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // 1
+            {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _Z, _Z}, // Z
+            {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _Z, _Z}, // W
             {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _Z, _Z}, // L
-            {_U, _W, _0, _Z, _Z, _W, _W, _Z, _Z, _Z, _Z, _Z}, // H
-            {_U, _W, _0, _Z, _Z, _W, _L, _Z, _Z, _M, _F, _Z}, // -
-            {_U, _W, _0, _Z, _Z, _W, _L, _Z, _Z, _M, _F, _Z}, // M
-            {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _Z, _Z}, // F
-            {_U, _W, _0, _Z, _Z, _W, _L, _Z, _Z, _M, _F, _Z}, // T
+            {_U, _Z, _0, _Z, _Z, _Z, _W, _Z, _Z, _Z, _Z, _Z}, // H
+            {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _F, _Z}, // -
+            {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _F, _Z}, // M
+            {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _F, _Z}, // F
+            {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _M, _Z}, // T
 
     };
     /**
@@ -171,16 +171,16 @@ public class Logic {
     public static final Signal[][] cathode_tt = { // outputs higher of two pins
             // U _X _ 0 _ 1 _ Z _ W _ L _ H _ - _ M _ F _ T=C // A:
             {_U, _U, _U, _U, _U, _U, _U, _U, _U, _U, _U, _U}, // U
-            {_U, _W, _W, _Z, _W, _W, _W, _Z, _W, _W, _W, _Z}, // X
+            {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // X
             {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // 0
             {_U, _W, _X, _1, _1, _1, _1, _1, _1, _1, _1, _1}, // 1
             {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // Z
-            {_U, _Z, _Z, _Z, _W, _W, _W, _Z, _W, _W, _W, _Z}, // W
+            {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // W
             {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // L
             {_U, _Z, _Z, _Z, _H, _H, _W, _H, _H, _H, _H, _H}, // H
             {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // -
-            {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _M, _M, _M, _Z}, // M
+            {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // M
             {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // F
-            {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _T, _T, _T, _Z}, // T
+            {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _T, _T, _M, _T}, // T
     };
 }

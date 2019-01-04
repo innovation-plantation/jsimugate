@@ -43,6 +43,7 @@ public class Gate extends Part {
         if (pin!=null) {
             removePin(pin);
             reshape(inputs.size());
+            updateLabel();
         }
     }
 
