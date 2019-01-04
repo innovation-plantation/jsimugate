@@ -1,4 +1,6 @@
 #!/bin/bash
+# to be run in the folder containing jsimugate.jar and the innovation-plantation.png image
+# The resulting jar will be copied to a higher level directory, 3 levels above.
 tmp_splash_manifest_line=`mktemp`
 echo >$tmp_splash_manifest_line SplashScreen-Image: innovation-plantation.png
 jar ufm jsimugate.jar $tmp_splash_manifest_line innovation-plantation.png
