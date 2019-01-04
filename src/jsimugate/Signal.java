@@ -9,7 +9,9 @@ import java.awt.*;
 interface SignalConstants {
     enum Gauge {
         THICK(new BasicStroke(7), new BasicStroke(9)),  // thick wire for strong signals
-        THIN(new BasicStroke(3), new BasicStroke(5));   // thin wire for weak signals
+        MEDIUM(new BasicStroke(5), new BasicStroke(7)),  // medium wire for medium strength signals
+        THIN(new BasicStroke(3), new BasicStroke(5)),   // thin wire for weak signals
+        FINE(new BasicStroke(1), new BasicStroke(3));   // thin wire for weak signals
         Stroke fg, bg;
         public static final Color defaultInsulationColor = new Color(0xFF, 0xFF, 0xFF, 0xC0);
         // other insulation colors could be defined here and used for various signals
@@ -36,7 +38,12 @@ public enum Signal implements SignalConstants {
     _W('W', new Color(0xFF, 0xa0, 0x00), Gauge.defaultInsulationColor, Gauge.THIN),
     _L('L', new Color(0x40, 0x40, 0x40), Gauge.defaultInsulationColor, Gauge.THIN),
     _H('H', new Color(0xC0, 0x00, 0x00), Gauge.defaultInsulationColor, Gauge.THIN),
-    _D('-', new Color(0x00, 0xFF, 0x00), Gauge.defaultInsulationColor, Gauge.THIN);
+    _D('-', new Color(0x00, 0xFF, 0x00), Gauge.defaultInsulationColor, Gauge.THIN),
+    // non-standard beyond this point
+    _M('M', new Color(0xFF, 0xa0, 0x00), Gauge.defaultInsulationColor, Gauge.FINE),
+    _F('F', new Color(0x40, 0x40, 0x40), Gauge.defaultInsulationColor, Gauge.FINE),
+    _T('T', new Color(0xC0, 0x00, 0x00), Gauge.defaultInsulationColor, Gauge.FINE),
+    ; // could add Y N P (yes, no, probably) with Gauge MEDUIM if logic between X and W were needed.
 
     public char value;
     Color fgColor;
@@ -60,8 +67,8 @@ public enum Signal implements SignalConstants {
         this.bgColor = bgColor;
         this.fgStroke = gauge.fg;
         this.bgStroke = gauge.bg;
-        this.hi = value == '1' || value == 'H';
-        this.lo = value == '0' || value == 'L';
+        this.hi = value == '1' || value == 'H' || value == 'T'; // Y
+        this.lo = value == '0' || value == 'L' || value == 'F'; // N
         this.good = hi || lo;
         this.bad = !good;
     }
