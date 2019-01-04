@@ -13,7 +13,7 @@ public class Diode extends Discrete {
      * (current flows left to right)
      */
     public Diode() {
-        this.setShape(Artwork.diodeShape(),20,20,20,20);
+        this.setShape(Artwork.diodeShape(),10,12,10,5);
         this.addPin(anode = new Pin(-20, 0).left(10, false));
         this.addPin(cathode = new Pin(20, 0).right(10, false));
         this.anode.recovery=this.cathode.recovery=true;

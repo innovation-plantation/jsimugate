@@ -117,7 +117,7 @@ public class Logic {
             // U _ X _ 0 _ 1 _ Z _ W _ L _ H _ - =C // A:
 
             {_U, _U, _U, _0, _U, _U, _U, _U, _U}, // U
-            {_U, _X, _X, _Z, _Z, _Z, _Z, _Z, _Z}, // X
+            {_U, _W, _X, _Z, _Z, _Z, _Z, _Z, _Z}, // X
             {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // 0
             {_0, _X, _X, _Z, _Z, _Z, _Z, _Z, _Z}, // 1
             {_U, _X, _0, _Z, _Z, _W, _L, _Z, _Z}, // Z
@@ -134,7 +134,7 @@ public class Logic {
             // U _ X _ 0 _ 1 _ Z _ W _ L _ H _ - =C // A:
 
             {_U, _U, _U, _0, _U, _U, _U, _U, _U}, // U
-            {_U, _X, _X, _Z, _X, _X, _X, _X, _Z}, // X
+            {_U, _W, _X, _Z, _X, _X, _X, _X, _Z}, // X
             {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // 0
             {_0, _X, _X, _Z, _1, _1, _1, _1, _Z}, // 1
             {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // Z
