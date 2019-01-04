@@ -1,6 +1,7 @@
 package jsimugate;
 
 import java.awt.geom.Rectangle2D;
+import java.util.Scanner;
 
 /**
  * Implementation of clock that toggles on and off at 1Hz rate or as adjusted by
@@ -65,5 +66,29 @@ public class Clk extends Part {
         if (hz > 1) hz /= 2;
         else if (sec < 64) sec *= 2;
         adjustClock();
+    }
+
+    /**
+     * deserialize
+     * @param details formatted like 0Hz or 0Sec if value>1
+     */
+    public void setDetails(String details) {
+        Scanner scanner = new Scanner(details);
+        if (scanner.hasNextInt()) {
+            int value = scanner.nextInt();
+            if (scanner.hasNext("Hz")) hz = value;
+            else if (scanner.hasNext("sec")) sec = value;
+            Log.println("ms:"+500 * sec / hz);
+            adjustClock();
+        }
+    }
+    /**
+     * deserialize
+     * @return details formatted like 0Hz or 0Sec if value>1
+     */
+    public String getDetails() {
+        if (hz>1) return hz+" Hz";
+        else if (sec>1) return sec+" sec";
+        else return super.getDetails();
     }
 }

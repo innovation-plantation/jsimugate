@@ -140,7 +140,7 @@ public class Part extends Symbol {
         }
         s += ") ";
         if (tech != Tech.PUSH_PULL) s += tech;
-        s += "\n";
+        s += ";" + getDetails() + "\n";
         return s;
     }
 
@@ -197,7 +197,7 @@ public class Part extends Symbol {
                     if (invertPin) pin.toggleInversion();
                     if (pinMap != null) pinMap.put(pinNumber, pin);
                 }
-                scan.findInLine("\\) *([^ ]*)");
+                scan.findInLine("\\) *([^;]*) *;? *");
                 String techString = scan.match().group(1);
                 newPart.tech = Tech.PUSH_PULL;
                 if (!techString.isEmpty()) newPart.asTech(Tech.valueOf(techString));
@@ -205,11 +205,27 @@ public class Part extends Symbol {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Log.println(scan.nextLine());
+            String details = scan.nextLine();
+            newPart.setDetails(details);
+            Log.println(details);
         }
         return newPart;
     }
 
+    /**
+     * Override setDetails and getDetails to serialize and desertailze extra information about the part
+     * beyond its transform, type, pins, and technology.
+     *
+     * @param details
+     */
+    public void setDetails(String details) {}
+    /**
+     * Override setDetails and getDetails to serialize and desertailze extra information about the part
+     * beyond its transform, type, pins, and technology.
+     *
+     * @return details
+     */
+    public String getDetails() { return "";}
     /**
      * Convert to an equivalent symbol such by DeMorganizing
      */

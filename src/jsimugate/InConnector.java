@@ -1,6 +1,7 @@
 package jsimugate;
 
 import java.awt.*;
+import java.util.Scanner;
 
 /**
  * Implementation of an input pin connector
@@ -48,5 +49,24 @@ public class InConnector extends Discrete {
      */
     public void operate() {
         pin.setOutValue(value);
+    }
+    /**
+     * deserialize
+     * @param details formatted like 0Hz or 0Sec if value>1
+     */
+    public void setDetails(String details) {
+        Scanner scanner = new Scanner(details);
+        if (scanner.hasNext()) {
+            setValue(Signal.valueOf(scanner.next()));
+            Log.println(this.value.toString());
+        }
+    }
+    /**
+     * deserialize
+     * @return details formatted like 0Hz or 0Sec if value>1
+     */
+    public String getDetails() {
+        if (value!=Signal._Z)  return value.toString();
+        else return super.getDetails();
     }
 }
