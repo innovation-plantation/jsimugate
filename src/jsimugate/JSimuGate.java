@@ -2,7 +2,6 @@ package jsimugate;
 
 import jsimugate.Part.Tech;
 
-import javax.print.DocFlavor;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -10,9 +9,10 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -109,43 +109,32 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         this.addMouseMotionListener(this);
         this.addComponentListener(this);
 
-        circuit.bins.add(new PartsBin(200, 50, new InConnector()));
-        circuit.bins.add(new PartsBin(250, 50, new OutConnector()));
-        circuit.bins.add(new PartsBin(300, 50, new Clk()));
-        circuit.bins.add(new PartsBin(350, 50, new Diode()));
-        circuit.bins.add(new PartsBin(400, 50, new VSource()));
-        circuit.bins.add(new PartsBin(450, 50, new VGround()));
-        circuit.bins.add(new PartsBin(500, 50, new Alu()));
-        circuit.bins.add(new PartsBin(550, 50, new Adder()));
+        int xPos=50,yPos=50;
+        for (Part part : new Part[]{
+                new InConnector(),new OutConnector(), null,
+                new OrGate(),new AndGate(),
+                new XorGate(),new MajorityGate().not(),
+                null,
+                new Bus(), new PullupResistor(),
+                new VGround(), new NPNTransistor(), null,
 
-        circuit.bins.add(new PartsBin(600, 50, new Box()));
+                new PulldownResistor(),new Diode(),
+                new PNPTransistor(), new VSource(), null,
+                new Adder(), new Alu(), null,
+                new Clk(), null,
 
+        }) {
+            if (part==null) {
+                yPos += 10;
+                continue;
+            }
+            circuit.bins.add(new PartsBin(xPos,yPos,part));
+            xPos += 50;
+            if (xPos>100) {
+                xPos=50; yPos += 50;
+            }
+        }
 
-        circuit.bins.add(new PartsBin(50, 50, new MajorityGate().not()));
-        circuit.bins.add(new PartsBin(50, 100, new AndGate()));
-        circuit.bins.add(new PartsBin(50, 150, new OrGate()));
-        circuit.bins.add(new PartsBin(50, 200, new XorGate()));
-
-        circuit.bins.add(new PartsBin(100, 50, new MajorityGate()));
-        circuit.bins.add(new PartsBin(100, 100, new AndGate().not()));
-        circuit.bins.add(new PartsBin(100, 150, new OrGate().not()));
-        circuit.bins.add(new PartsBin(100, 200, new XorGate().not()));
-
-        circuit.bins.add(new PartsBin(50, 250, new NPNTransistor()));
-        circuit.bins.add(new PartsBin(100, 250, new PullupResistor()));
-
-        circuit.bins.add(new PartsBin(50, 300, new MajorityGate().not().asTech(Tech.OC)));
-        circuit.bins.add(new PartsBin(50, 350, new AndGate().asTech(Tech.OC)));
-        circuit.bins.add(new PartsBin(50, 400, new OrGate().asTech(Tech.OC)));
-        circuit.bins.add(new PartsBin(50, 450, new XorGate().asTech(Tech.OC)));
-
-        circuit.bins.add(new PartsBin(100, 300, new MajorityGate().asTech(Tech.OC)));
-        circuit.bins.add(new PartsBin(100, 350, new AndGate().not().asTech(Tech.OC)));
-        circuit.bins.add(new PartsBin(100, 400, new OrGate().not().asTech(Tech.OC)));
-        circuit.bins.add(new PartsBin(100, 450, new XorGate().not().asTech(Tech.OC)));
-
-        circuit.bins.add(new PartsBin(50, 500, new PNPTransistor()));
-        circuit.bins.add(new PartsBin(100, 500, new PulldownResistor()));
         updateImageSize();
         circuit.startup(() -> repaint()); // repaint this component whenever the circuit is updated
     }
@@ -156,8 +145,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
      */
     private void updateImageSize() {
         size = getSize();
-        if (size.width<1) size.width=1;
-        if (size.height<1) size.height=1;
+        if (size.width < 1) size.width = 1;
+        if (size.height < 1) size.height = 1;
         image = createImage(size.width, size.height);
         if (image != null) graphics = image.getGraphics();
     }

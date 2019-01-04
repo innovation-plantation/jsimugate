@@ -49,7 +49,7 @@ public class Alu extends Adder {
     }
 
 
-    Pin fnIn[];
+    PinGroup fnIn = new PinGroup();
     Signal old_c = Signal._0;
     int fn;
 
@@ -59,12 +59,10 @@ public class Alu extends Adder {
      */
     public Alu() {
         label = "ALU";
-        fnIn = new Pin[]{
-                cIn, // Carry: and, or, adc, sbb, rlc, not, neg, xfer
-                addPin(new Pin(10, 170).down(30)), // Alternate: xor, or, sub, sbb, shr, not, dec,xfer
-                addPin(new Pin(-10, 180).down(30)), // Math: add, adc, sub, sbb; inc, neg, dec, xfer
-                addPin(new Pin(-30, 190).down(30)), // Unary: shl, rlc, shr, not, inc, neg, dec, xfer
-        };
+        fnIn.addPinHorizontally(cIn.translate(-25,0)); // Carry: and, or, adc, sbb, rlc, not, neg, xfer
+        addPin(fnIn.addPinHorizontally(new Pin(-5, 170).down(30))); // Alternate: xor, or, sub, sbb, shr, not, dec,xfer
+        addPin(fnIn.addPinHorizontally(new Pin(-15, 180).down(30))); // Math: add, adc, sub, sbb; inc, neg, dec, xfer
+        addPin(fnIn.addPinHorizontally(new Pin(-25, 190).down(30))); // Unary: shl, rlc, shr, not, inc, neg, dec, xfer
     }
 
     /**
@@ -74,7 +72,7 @@ public class Alu extends Adder {
      */
     public void operate() {
         getAB();
-        fn = Pin.pack(fnIn);
+        fn = fnIn.getValue();
         AluOp op = AluOp.values()[fn];
         result = op.perform(a, b);
         int cy = result & 0x100;

@@ -49,24 +49,34 @@ public class PinGroup {
     /**
      * Add and return a pin to the group, shifting the other pins over as necessary to make room
      * These pins are arranged horizontally, with the new pin on the left
+     *
      */
-    public Pin addPinHorizontally() {
+    public Pin addPinHorizontally(Pin pin) {
         int n = pins.size();
-        Pin pin;
         if (gap) switch (n) {
             case 1:
                 pins.get(0).translate(20, 0);
-                pins.add(pin = new Pin(-20, 0));
+                pins.add(pin);
                 return pin;
             case 2:
                 pins.get(1).translate(20, 0);
-                pins.add(pin = new Pin(-20, 0));
+                pins.add(pin);
                 return pin;
         }
         for (Pin i : pins) i.translate(10, 0);
-        pins.add(pin = new Pin(-10 * n, 0));
+        pins.add(pin);
         return pin;
-
+    }
+    public Pin addPinHorizontally() {
+        int n = pins.size();
+        if (gap) switch (n) {
+            case 1:
+                return addPinHorizontally(new Pin(-20, 0));
+            case 2:
+                return addPinHorizontally(new Pin(-20, 0));
+        }
+        for (Pin i : pins) i.translate(10, 0);
+        return addPinHorizontally(new Pin(-10 * n, 0));
     }
 
     /**

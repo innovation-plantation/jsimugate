@@ -75,6 +75,7 @@ public class Part extends Symbol {
      * @return
      */
     public Pin removePin(Pin pin) {
+        if (pin==null) return null;
         pins.remove(pin);
         removeChild(pin);
         return pin;
@@ -197,17 +198,19 @@ public class Part extends Symbol {
                     if (invertPin) pin.toggleInversion();
                     if (pinMap != null) pinMap.put(pinNumber, pin);
                 }
-                scan.findInLine("\\) *([^;]*) *;? *");
-                String techString = scan.match().group(1);
+                scan.findInLine("\\) *([^;]*) *;? *(.*)");
+                MatchResult match = scan.match();
+                String techString = match.group(1);
                 newPart.tech = Tech.PUSH_PULL;
                 if (!techString.isEmpty()) newPart.asTech(Tech.valueOf(techString));
                 Log.println(" TECH is " + newPart.tech);
+                String details = match.group(2);
+                newPart.setDetails(details);
+                if (!details.isEmpty()) Log.println(" DETAILS: "+details);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            String details = scan.nextLine();
-            newPart.setDetails(details);
-            Log.println(details);
+            Log.println( scan.nextLine());
         }
         return newPart;
     }

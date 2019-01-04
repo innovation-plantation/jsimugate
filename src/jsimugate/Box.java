@@ -25,7 +25,8 @@ public class Box extends Part {
      * @return
      */
     public Box resize(int w,int h) {
-        setShape(new Rectangle2D.Double(-10*w/2,-10*h/2,10*w,10*h));
+        w++;h++;
+        setShape(new Rectangle2D.Double(-10*w,-10*h,20*w,20*h));
         return this;
     }
 
@@ -36,7 +37,7 @@ public class Box extends Part {
     public Box resize() {
         int w = Math.max(nPins.size(),sPins.size());
         int h = Math.max(ePins.size(),wPins.size());
-        return this;
+        return resize(w,h);
     }
     /**
      * Resize to accommodate the pins list.
@@ -45,7 +46,6 @@ public class Box extends Part {
     public Box resizeWithPadding(int horizontal_pad,int vertical_pad) {
         int w = Math.max(nPins.size(),sPins.size());
         int h = Math.max(ePins.size(),wPins.size());
-        resize(w+horizontal_pad,h+vertical_pad);
-        return this;
+        return resize(w+horizontal_pad,h+vertical_pad);
     }
 }
