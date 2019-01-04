@@ -6,10 +6,11 @@ import java.util.ArrayList;
 public class Box extends Part {
     int height=4,width=4;
 
-    ArrayList<Pin> nPins = new ArrayList<Pin>();
-    ArrayList<Pin> sPins = new ArrayList<Pin>();
-    ArrayList<Pin> ePins = new ArrayList<Pin>();
-    ArrayList<Pin> wPins = new ArrayList<Pin>();
+    PinGroup ePins=new PinGroup();
+    PinGroup sPins=new PinGroup();
+    PinGroup wPins=new PinGroup();
+    PinGroup nPins=new PinGroup();
+
 
     public Box() {
         resize(4,4);
@@ -35,7 +36,16 @@ public class Box extends Part {
     public Box resize() {
         int w = Math.max(nPins.size(),sPins.size());
         int h = Math.max(ePins.size(),wPins.size());
-        resize(w,h);
+        return this;
+    }
+    /**
+     * Resize to accommodate the pins list.
+     * @return
+     */
+    public Box resizeWithPadding(int horizontal_pad,int vertical_pad) {
+        int w = Math.max(nPins.size(),sPins.size());
+        int h = Math.max(ePins.size(),wPins.size());
+        resize(w+horizontal_pad,h+vertical_pad);
         return this;
     }
 }

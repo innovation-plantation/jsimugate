@@ -60,10 +60,10 @@ public class Alu extends Adder {
     public Alu() {
         label = "ALU";
         fnIn = new Pin[]{
-                addPin(new Pin(30, 160).down(30)),
-                addPin(new Pin(10, 170).down(30)),
-                addPin(new Pin(-10, 180).down(30)),
-                addPin(new Pin(-30, 190).down(30)),
+                cIn, // Carry: and, or, adc, sbb, rlc, not, neg, xfer
+                addPin(new Pin(10, 170).down(30)), // Alternate: xor, or, sub, sbb, shr, not, dec,xfer
+                addPin(new Pin(-10, 180).down(30)), // Math: add, adc, sub, sbb; inc, neg, dec, xfer
+                addPin(new Pin(-30, 190).down(30)), // Unary: shl, rlc, shr, not, inc, neg, dec, xfer
         };
     }
 
