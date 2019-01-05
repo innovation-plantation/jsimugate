@@ -110,10 +110,10 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
         int xPos=50,yPos=50;
         for (Part part : new Part[]{
-                new InConnector(),new OutConnector(), null,
                 new OrGate(),new AndGate(),
                 new XorGate(),new MajorityGate().not(),
                 null,
+                new InConnector(),new OutConnector(), null,
                 new Bus(), new PullupResistor(),
                 new VGround(), new NPNTransistor(), null,
 
