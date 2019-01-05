@@ -34,7 +34,6 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
     private static Rectangle2D.Double lasso = null;
     static File file = new File("circuit.logic"); // set the default file name and path
 
-
     /**
      * Initialize the GUI. Turn on the event listeners and place the part bins on the display.
      */
@@ -120,16 +119,14 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
                 new PulldownResistor(),new Diode(),
                 new PNPTransistor(), new VSource(), null,
-                new Adder(), new Alu(), null,
 
 
                 new Counter(), new RingCounter(),
+                new Clk(), new Decoder(),
+                new DMux(), new Mux(), null,
 
-
-                new Decoder(),
-                new Clk(),
-                new DMux(),
-                new Mux()
+                new Adder(), new Alu(), null,
+                new ThreeState()
 
         }) {
             if (part==null) {
