@@ -3,9 +3,10 @@ package jsimugate;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
-public class Decoder extends Box {
-    public Decoder() {
-        label="DEC";
+public class DMux extends Box {
+    public DMux() {
+        label="MUX";
+        addPin(wPins.addPinVertically()).translate(-width-30,0).left(30);
         addPin(ePins.addPinVertically()).translate(width+30,0).right(30);
         increase();
         increase();
@@ -38,8 +39,13 @@ public class Decoder extends Box {
 
     }
 
-
     public void operate() {
+        if (wPins.pins.get(0).getInValue().bad)  {
+            for (Pin out:ePins.pins) {
+                out.setOutValue(Signal._X);
+            }
+            return;
+        }
         for (Pin pin:sPins.pins) {
             if (pin.getInValue().bad) {
                 for (Pin out:ePins.pins) {
@@ -48,8 +54,6 @@ public class Decoder extends Box {
                 return;
             }
         }
-        ePins.setValue(1<<sPins.getValue());
+        ePins.setValue(wPins.getValue()<<sPins.getValue());
     }
 }
-
-

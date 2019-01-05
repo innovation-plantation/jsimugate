@@ -127,7 +127,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
 
                 new Decoder(),
-                new Clk(), null,
+                new Clk(),
+                new DMux(),
 
         }) {
             if (part==null) {
