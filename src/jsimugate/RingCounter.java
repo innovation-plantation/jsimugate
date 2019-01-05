@@ -9,6 +9,7 @@ public class RingCounter extends Box {
         resize();
         clk=addPin(sPins.addPinHorizontally()).translate(0,40).down(30);
         rst=addPin(sPins.addPinHorizontally()).translate(0,40).down(30);
+        resize();
         increase();
         increase();
         increase();
