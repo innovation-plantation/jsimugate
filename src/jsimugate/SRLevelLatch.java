@@ -37,7 +37,7 @@ public class SRLevelLatch extends Box {
     public void operate() {
         Signal s=sIn.getInValue(), r=rIn.getInValue();
         if (s.bad || r.bad) qSave = qNotNotSave = _X;
-        else if (s.hi && r.hi) {
+        else if (s.hi && r.hi) { // for sr 1 has priority, for rs it would be 0
             qSave =_1;
             qNotNotSave = _0;
         } else if (s.hi)  qSave=qNotNotSave=_1;
