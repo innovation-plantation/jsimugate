@@ -2,9 +2,14 @@ package jsimugate;
 
 import java.awt.*;
 
+import static jsimugate.Signal.*;
+
 public class SRLevelLatch extends Box {
     Pin rIn,sIn,qOut,qBar;
-    Signal m1=Signal._X,m2=Signal._X;
+
+    private Signal qSave=_X;
+    private Signal qNotNotSave=_X;
+
     public SRLevelLatch() {
         name="SR";
         wPins.gap=ePins.gap=true;
@@ -23,16 +28,22 @@ public class SRLevelLatch extends Box {
 
     public void drawAtOrigin(Graphics2D g) {
         super.drawAtOrigin(g);
-        g.drawString("" +
-                "S",-width+5,-height+15);
+        g.drawString("S",-width+5,-height+15);
         g.drawString("R",-width+5,height-5);
         g.drawString("Q",width-15,-height+15);
         g.drawString("Q",width-15,height-5);
     }
 
     public void operate() {
-
-
-
+        Signal s=sIn.getInValue(), r=rIn.getInValue();
+        if (s.bad || r.bad) qSave = qNotNotSave = _X;
+        else if (s.hi && r.hi) {
+            qSave =_1;
+            qNotNotSave = _0;
+        } else if (s.hi)  qSave=qNotNotSave=_1;
+        else if (r.hi) qSave=qNotNotSave=_0;
+        else if (qSave != qNotNotSave) qSave = qNotNotSave = _X;
+        qOut.setOutValue(qSave);
+        qBar.setOutValue(qNotNotSave);
     }
 }
