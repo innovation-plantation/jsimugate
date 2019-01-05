@@ -12,15 +12,41 @@ public class PinGroup {
     List<Pin> pins = new ArrayList<Pin>();
     boolean gap = false;
 
-    public PinGroup() {}
-    public PinGroup(boolean gap) {this.gap=gap;}
+    public PinGroup() {
+    }
+
+    public PinGroup(boolean gap) {
+        this.gap = gap;
+    }
 
     /**
      * Returns how many pins are in the group
+     *
      * @return the number of pins
      */
     int size() {
         return pins.size();
+    }
+
+    /**
+     * Add and return a pin to the group, shifting the other pins over as necessary to make room
+     * These pins are stacked vertically, with new pins on top
+     */
+    public Pin addPinVertically(Pin pin) {
+        int n = pins.size();
+        if (gap) switch (n) {
+            case 1:
+                pins.get(0).translate(0, 20);
+                pins.add(pin);
+                return pin;
+            case 2:
+                pins.get(1).translate(0, 20);
+                pins.add(pin);
+                return pin;
+        }
+        for (Pin i : pins) i.translate(0, 10);
+        pins.add(pin);
+        return pin;
     }
 
     /**
@@ -32,24 +58,16 @@ public class PinGroup {
         Pin pin;
         if (gap) switch (n) {
             case 1:
-                pins.get(0).translate(0, 20);
-                pins.add(pin = new Pin(0, -20));
-                return pin;
+                return addPinVertically(new Pin(0, -20));
             case 2:
-                pins.get(1).translate(0, 20);
-                pins.add(pin = new Pin(0, -20));
-                return pin;
+                return addPinVertically(new Pin(0, -20));
         }
-        for (Pin i : pins) i.translate(0, 10);
-        pins.add(pin = new Pin(0, -10 * n));
-        return pin;
-
+        return addPinVertically(new Pin(0, -10 * n));
     }
 
     /**
      * Add and return a pin to the group, shifting the other pins over as necessary to make room
      * These pins are arranged horizontally, with the new pin on the left
-     *
      */
     public Pin addPinHorizontally(Pin pin) {
         int n = pins.size();
@@ -67,6 +85,7 @@ public class PinGroup {
         pins.add(pin);
         return pin;
     }
+
     public Pin addPinHorizontally() {
         int n = pins.size();
         if (gap) switch (n) {
@@ -75,7 +94,6 @@ public class PinGroup {
             case 2:
                 return addPinHorizontally(new Pin(-20, 0));
         }
-        for (Pin i : pins) i.translate(10, 0);
         return addPinHorizontally(new Pin(-10 * n, 0));
     }
 
@@ -91,18 +109,17 @@ public class PinGroup {
         if (Net.directConnections(victim).size() > 0) return null;
 
         pins.remove(victim);
-        switch (n) {
+        if (gap) switch (n) {
             case 1:
-                break;
+                return victim;
             case 2:
                 pins.get(0).translate(0, -20);
-                break;
+                return victim;
             case 3:
                 pins.get(1).translate(0, -20);
-                break;
-            default:
-                for (Pin i : pins) i.translate(0, -10);
+                return victim;
         }
+        for (Pin i : pins) i.translate(0, -10);
         return victim;
     }
 
@@ -118,24 +135,24 @@ public class PinGroup {
         if (Net.directConnections(victim).size() > 0) return null;
 
         pins.remove(victim);
-        switch (n) {
+        if (gap) switch (n) {
             case 1:
-                break;
+                return victim;
             case 2:
                 pins.get(0).translate(-20, 0);
-                break;
+                return victim;
             case 3:
                 pins.get(1).translate(-20, 0);
-                break;
-            default:
-                for (Pin i : pins) i.translate(-10, 0);
+                return victim;
         }
+        for (Pin i : pins) i.translate(-10, 0);
         return victim;
     }
 
     /**
      * Read the binary value from the pins.
      * Invalid bits are interpreted as zero.
+     *
      * @return the integer number converted from binary.
      */
     public int getValue() {
@@ -146,6 +163,7 @@ public class PinGroup {
 
     /**
      * Drive the pins with the binary value.
+     *
      * @param value the number to be converted to binary
      */
     public void setValue(int value) {

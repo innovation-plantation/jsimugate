@@ -4,7 +4,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 public class Box extends Part {
-    int height=4,width=4;
+    int height=0,width=0;
 
     PinGroup ePins=new PinGroup();
     PinGroup sPins=new PinGroup();
@@ -13,7 +13,7 @@ public class Box extends Part {
 
 
     public Box() {
-        resize(4,4);
+        resize(2,2);
         int[] a={1,2,3};
 
     }
@@ -25,8 +25,16 @@ public class Box extends Part {
      * @return
      */
     public Box resize(int w,int h) {
-        w++;h++;
-        setShape(new Rectangle2D.Double(-10*w,-10*h,20*w,20*h));
+        int newWidth = 10*(w+1), newHeight = 10*(h+1);
+        int dw = newWidth-width;
+        int dh = newHeight-height;
+        setShape(new Rectangle2D.Double(-newWidth,-newHeight,2*newWidth,2*newHeight));
+        for (Pin pin:ePins.pins) pin.translate(dw,0);
+        for (Pin pin:sPins.pins) pin.translate(0,dh);
+        for (Pin pin:wPins.pins) pin.translate(-dw,0);
+        for (Pin pin:nPins.pins) pin.translate(0,-dh);
+        height += dh;
+        width += dw;
         return this;
     }
 
