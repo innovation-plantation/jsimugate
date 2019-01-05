@@ -4,13 +4,13 @@ import java.awt.*;
 
 import static jsimugate.Signal.*;
 
-public class SRLevelLatch extends Box {
+public class LevelTrigSR extends Box {
     Pin rIn,sIn,qOut,qBar;
 
     private Signal qSave=_X;
     private Signal qNotNotSave=_X;
 
-    public SRLevelLatch() {
+    public LevelTrigSR() {
         name="SR";
         wPins.gap=ePins.gap=true;
         resize();
