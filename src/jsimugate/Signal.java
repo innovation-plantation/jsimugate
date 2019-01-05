@@ -40,10 +40,11 @@ public enum Signal implements SignalConstants {
     _H('H', new Color(0xC0, 0x00, 0x00), Gauge.defaultInsulationColor, Gauge.THIN),
     _D('-', new Color(0x00, 0xFF, 0x00), Gauge.defaultInsulationColor, Gauge.THIN),
     // non-standard beyond this point
+    // yeah, nope, maybe are weaker than weak
     _M('M', new Color(0xFF, 0xa0, 0x00), Gauge.defaultInsulationColor, Gauge.FINE),
-    _F('F', new Color(0x40, 0x40, 0x40), Gauge.defaultInsulationColor, Gauge.FINE),
-    _T('T', new Color(0xC0, 0x00, 0x00), Gauge.defaultInsulationColor, Gauge.FINE),
-    ; // could add Y N P (yes, no, probably) with Gauge MEDUIM if logic between X and W were needed.
+    _N('N', new Color(0x40, 0x40, 0x40), Gauge.defaultInsulationColor, Gauge.FINE),
+    _Y('Y', new Color(0xC0, 0x00, 0x00), Gauge.defaultInsulationColor, Gauge.FINE),
+    ; // could add T F P (true, false, possibly) with Gauge MEDUIM if logic between X and W were needed.
 
     public char value;
     Color fgColor;
@@ -67,8 +68,8 @@ public enum Signal implements SignalConstants {
         this.bgColor = bgColor;
         this.fgStroke = gauge.fg;
         this.bgStroke = gauge.bg;
-        this.hi = value == '1' || value == 'H' || value == 'T'; // Y
-        this.lo = value == '0' || value == 'L' || value == 'F'; // N
+        this.hi = value == '1' || value == 'H' || value == 'T' || value == 'Y'; // Y
+        this.lo = value == '0' || value == 'L' || value == 'F' || value == 'N'; // N
         this.good = hi || lo;
         this.bad = !good;
     }

@@ -113,6 +113,7 @@ public class Gate extends Part {
 
         Gate that = (Gate) Part.fromScanner(new Scanner(s), null);
         that.output = output;
+        that.inputs = inputs;
         that.pins = pins;
         that.children = children;
         for (Symbol child : children) child.parent = that;

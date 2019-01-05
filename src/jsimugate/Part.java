@@ -195,7 +195,7 @@ public class Part extends Symbol {
                     if (invertPin) Log.print(" NOT");
                     Log.print(" pin" + pinNumber);
                     Pin pin = newPart.pins.get(pinIndex);
-                    if (invertPin) pin.toggleInversion();
+                    if (invertPin) pin.setInversion(true);
                     if (pinMap != null) pinMap.put(pinNumber, pin);
                 }
                 scan.findInLine("\\) *([^;]*) *;? *(.*)");

@@ -158,15 +158,18 @@ public class Pin extends Symbol {
         super.drawAtOrigin(g);
     }
 
+    void setInversion(boolean makeBubble) {
+        if (bubble != null) {
+            line = (inverted = makeBubble) ? shortLine : longLine;
+            bubble.setVisible(inverted);
+            parent.updateLabel();
+        }
+    }
     /**
      * Switch between inverted and non-inverted pin, toggling the visibility of the bubble.
      */
     void toggleInversion() {
-        if (bubble != null) {
-            line = (inverted = !inverted) ? shortLine : longLine;
-            bubble.setVisible(inverted);
-            parent.updateLabel();
-        }
+        setInversion(inverted=!inverted);
     }
 
     /**

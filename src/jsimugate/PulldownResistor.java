@@ -45,7 +45,7 @@ public class PulldownResistor extends Discrete {
      * Make the value weak
      */
     public void decrease() {
-        setValue(Signal._F);
+        setValue(Signal._N);
     }
 
     /**

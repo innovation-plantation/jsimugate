@@ -45,7 +45,7 @@ public class PullupResistor extends Discrete {
      * Make the value weak
      */
     public void decrease() {
-        setValue(Signal._T);
+        setValue(Signal._Y);
     }
 
     /**

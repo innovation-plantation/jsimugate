@@ -16,14 +16,14 @@ public class Logic {
             {_U, _X, _X, _X, _X, _X, _X, _X, _X, _X, _X, _X}, // X
             {_U, _X, _0, _X, _0, _0, _0, _0, _X, _0, _0, _0}, // 0
             {_U, _X, _X, _1, _1, _1, _1, _1, _X, _1, _1, _1}, // 1
-            {_U, _X, _0, _1, _Z, _W, _L, _H, _X, _M, _F, _T}, // Z
+            {_U, _X, _0, _1, _Z, _W, _L, _H, _X, _M, _N, _Y}, // Z
             {_U, _X, _0, _1, _W, _W, _W, _W, _X, _W, _W, _W}, // W
             {_U, _X, _0, _1, _L, _W, _L, _W, _X, _L, _L, _L}, // L
             {_U, _X, _0, _1, _H, _W, _W, _H, _X, _H, _H, _H}, // H
             {_U, _X, _X, _X, _X, _X, _X, _X, _X, _X, _X, _X}, // -
             {_U, _X, _0, _1, _M, _W, _L, _H, _X, _M, _M, _M}, // M
-            {_U, _X, _0, _1, _F, _W, _L, _H, _X, _M, _F, _M}, // F
-            {_U, _X, _0, _1, _T, _W, _L, _H, _X, _M, _M, _T}, // T
+            {_U, _X, _0, _1, _N, _W, _L, _H, _X, _M, _N, _M}, // F
+            {_U, _X, _0, _1, _Y, _W, _L, _H, _X, _M, _M, _Y}, // T
     };
 // ** IF T/F/M were stronger than W, we'd use this table instead:
 //    public static final Signal[][] resolve_tt = {
@@ -32,14 +32,14 @@ public class Logic {
 //            {_U, _X, _X, _X, _X, _X, _X, _X, _X, _X, _X, _X}, // X
 //            {_U, _X, _0, _X, _0, _0, _0, _0, _X, _0, _0, _0}, // 0
 //            {_U, _X, _X, _1, _1, _1, _1, _1, _X, _1, _1, _1}, // 1
-//            {_U, _X, _0, _1, _Z, _W, _L, _H, _X, _M, _F, _T}, // Z
-//            {_U, _X, _0, _1, _W, _W, _W, _W, _X, _M, _F, _T}, // W
-//            {_U, _X, _0, _1, _L, _W, _L, _W, _X, _M, _F, _T}, // L
-//            {_U, _X, _0, _1, _H, _W, _W, _H, _X, _M, _F, _T}, // H
+//            {_U, _X, _0, _1, _Z, _W, _L, _H, _X, _M, _N, _Y}, // Z
+//            {_U, _X, _0, _1, _W, _W, _W, _W, _X, _M, _N, _Y}, // W
+//            {_U, _X, _0, _1, _L, _W, _L, _W, _X, _M, _N, _Y}, // L
+//            {_U, _X, _0, _1, _H, _W, _W, _H, _X, _M, _N, _Y}, // H
 //            {_U, _X, _X, _X, _X, _X, _X, _X, _X, _X, _X, _X}, // -
 //            {_U, _X, _0, _1, _M, _M, _M, _M, _X, _M, _M, _M}, // M
-//            {_U, _X, _0, _1, _F, _F, _F, _F, _X, _M, _F, _M}, // F
-//            {_U, _X, _0, _1, _T, _T, _T, _T, _X, _M, _M, _T}, // T
+//            {_U, _X, _0, _1, _N, _N, _N, _N, _X, _M, _N, _M}, // F
+//            {_U, _X, _0, _1, _Y, _Y, _Y, _Y, _X, _M, _M, _Y}, // T
 //    };
     /**
      * buffer
@@ -122,7 +122,7 @@ public class Logic {
             {_U, _X, _Z, _Z, _Z, _X, _Z, _Z, _X, _X, _Z, _Z}, // H
             {_U, _X, _Z, _X, _Z, _X, _Z, _X, _X, _X, _Z, _X}, // -
             {_U, _X, _Z, _M, _Z, _X, _Z, _M, _X, _X, _Z, _M}, // M
-            {_U, _X, _Z, _F, _Z, _X, _Z, _F, _X, _X, _Z, _F}, // F
+            {_U, _X, _Z, _N, _Z, _X, _Z, _N, _X, _X, _Z, _N}, // F
             {_U, _X, _Z, _Z, _Z, _X, _Z, _Z, _X, _X, _Z, _Z}, // T
     };
 
@@ -142,7 +142,7 @@ public class Logic {
             {_U, _X, _X, _Z, _Z, _X, _X, _Z, _X, _X, _X, _Z}, // -
             {_U, _X, _M, _Z, _Z, _X, _M, _Z, _X, _X, _M, _Z}, // M
             {_U, _X, _Z, _Z, _Z, _X, _Z, _Z, _X, _X, _Z, _Z}, // F
-            {_U, _X, _T, _Z, _Z, _X, _T, _Z, _X, _X, _T, _Z}, // T
+            {_U, _X, _Y, _Z, _Z, _X, _Y, _Z, _X, _X, _Y, _Z}, // T
     };
     /**
      * anode output for anode and cathode pins on a diode
@@ -158,9 +158,9 @@ public class Logic {
             {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _Z, _Z}, // W
             {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _Z, _Z}, // L
             {_U, _Z, _0, _Z, _Z, _Z, _W, _Z, _Z, _Z, _Z, _Z}, // H
-            {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _F, _Z}, // -
-            {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _F, _Z}, // M
-            {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _F, _Z}, // F
+            {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _N, _Z}, // -
+            {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _N, _Z}, // M
+            {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _N, _Z}, // F
             {_U, _Z, _0, _Z, _Z, _Z, _L, _Z, _Z, _Z, _M, _Z}, // T
 
     };
@@ -181,6 +181,6 @@ public class Logic {
             {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // -
             {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // M
             {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Z}, // F
-            {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _T, _T, _M, _T}, // T
+            {_U, _Z, _Z, _Z, _Z, _Z, _Z, _Z, _Y, _Y, _M, _Y}, // T
     };
 }
