@@ -21,10 +21,15 @@ public class Decoder extends Box {
     }
 
     public void decrease() {
-        removePin(sPins.removePinHorizontally());
-        resize();
         int n=ePins.size()>>1;
-        for (int i=0;i<n;i++) removePin(ePins.removePinVertically());
+        for (int i=n;i<2*n;i++) {
+            if (Net.directConnections(ePins.pins.get(i)).size()>0) return;
+        }
+        if (removePin(sPins.removePinHorizontally())==null) return;
+        resize();
+        for (int i=0;i<n;i++) {
+            removePin(ePins.removePinVertically());
+        }
         resize();
     }
 
