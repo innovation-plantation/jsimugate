@@ -56,8 +56,8 @@ public class PartsBin extends Part {
         g.scale(.75, .75);
 
         if (prototype != null) {
-            String text = prototype.label;
-            if (text == null) text = prototype.name;
+            String text = prototype.name;
+            if (text == null) text = prototype.label;
             if (text != null) {
                 g.setColor(Color.blue);
                 g.drawString(text, -30, 30);

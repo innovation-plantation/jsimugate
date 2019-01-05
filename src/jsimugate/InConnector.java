@@ -31,6 +31,7 @@ public class InConnector extends Discrete {
     public void setValue(Signal s) {
         value = s;
         this.color = value.fgColor;
+        label = "INPUT=" + value.getChar();
     }
 
     /**
@@ -41,7 +42,6 @@ public class InConnector extends Discrete {
     public void processChar(char ch) {
 
         for (Signal s : Signal.values()) if (ch == s.getChar()) setValue(s);
-        label = "INPUT=" + value.getChar();
     }
 
     /**

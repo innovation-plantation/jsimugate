@@ -17,6 +17,7 @@ public class OutConnector extends Discrete {
         addPin(pin = new Pin(-60, 0).left(30));
         name = "OUTPUT";
         fill = Color.white;
+        operate();
     }
 
     /**

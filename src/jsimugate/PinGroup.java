@@ -28,6 +28,12 @@ public class PinGroup {
         return pins.size();
     }
 
+    public void shiftPinsHorizontally(int dx) {
+        for (Pin i : pins) i.translate(dx,0);
+    }
+    public void shiftPinsVertically(int dy) {
+        for (Pin i : pins) i.translate(0, dy);
+    }
     /**
      * Add and return a pin to the group, shifting the other pins over as necessary to make room
      * These pins are stacked vertically, with new pins on top
@@ -44,7 +50,7 @@ public class PinGroup {
                 pins.add(pin);
                 return pin;
         }
-        for (Pin i : pins) i.translate(0, 10);
+        shiftPinsVertically(10);//for (Pin i : pins) i.translate(0, 10);
         pins.add(pin);
         return pin;
     }
@@ -81,7 +87,7 @@ public class PinGroup {
                 pins.add(pin);
                 return pin;
         }
-        for (Pin i : pins) i.translate(10, 0);
+        shiftPinsHorizontally(10);// for (Pin i : pins) i.translate(10, 0);
         pins.add(pin);
         return pin;
     }
@@ -119,7 +125,7 @@ public class PinGroup {
                 pins.get(1).translate(0, -20);
                 return victim;
         }
-        for (Pin i : pins) i.translate(0, -10);
+        shiftPinsVertically(-10);//for (Pin i : pins) i.translate(0, -10);
         return victim;
     }
 
@@ -145,7 +151,7 @@ public class PinGroup {
                 pins.get(1).translate(-20, 0);
                 return victim;
         }
-        for (Pin i : pins) i.translate(-10, 0);
+        shiftPinsHorizontally(-10);  //for (Pin i : pins) i.translate(-10, 0);
         return victim;
     }
 
