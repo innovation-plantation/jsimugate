@@ -13,8 +13,9 @@ public class Box extends Part {
 
 
     public Box() {
-        resize(2,2);
-        int[] a={1,2,3};
+        //resize(2,2);
+        //int[] a={1,2,3};
+        resize();
 
     }
 
