@@ -35,7 +35,7 @@ public class Decoder extends Box {
     public void drawAtOrigin(Graphics2D g) {
         super.drawAtOrigin(g);
         AffineTransform restore = g.getTransform();
-
+        g.drawString("SEL", -11, height -5);
     }
 
 

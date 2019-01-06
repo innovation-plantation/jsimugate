@@ -166,6 +166,10 @@ public class PinGroup {
         for (int n = 0; n < pins.size(); n++) result += pins.get(n).getInValue().asBit() << n;
         return result;
     }
+    public boolean goodValue() {
+        for (Pin pin:pins) if (pin.getInValue().bad) return false;
+        return true;
+    }
 
     /**
      * Drive the pins with the binary value.
