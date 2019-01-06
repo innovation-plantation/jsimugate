@@ -70,6 +70,7 @@ public class Clk extends Part {
 
     /**
      * deserialize
+     *
      * @param details formatted like 0Hz or 0Sec if value>1
      */
     public void setDetails(String details) {
@@ -78,17 +79,19 @@ public class Clk extends Part {
             int value = scanner.nextInt();
             if (scanner.hasNext("Hz")) hz = value;
             else if (scanner.hasNext("sec")) sec = value;
-            Log.println("ms:"+500 * sec / hz);
+            Log.println("ms:" + 500 * sec / hz);
             adjustClock();
         }
     }
+
     /**
      * deserialize
+     *
      * @return details formatted like 0Hz or 0Sec if value>1
      */
     public String getDetails() {
-        if (hz>1) return hz+" Hz";
-        else if (sec>1) return sec+" sec";
+        if (hz > 1) return hz + " Hz";
+        else if (sec > 1) return sec + " sec";
         else return super.getDetails();
     }
 }

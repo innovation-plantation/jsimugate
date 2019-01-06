@@ -137,9 +137,12 @@ public enum Signal implements SignalConstants {
 
     /**
      * Convert the value to an integer bit value zero or one.
+     *
      * @return 1 if it's a high signal, otherwise zero.
      */
-    public int asBit() { return this.hi ? 1 : 0; }
+    public int asBit() {
+        return this.hi ? 1 : 0;
+    }
 
     /**
      * Convert the integer zero or one to a signal.
@@ -147,5 +150,7 @@ public enum Signal implements SignalConstants {
      * @param bit the signal
      * @return _0 or _1, depending on the value being nonzero.
      */
-    public static Signal fromBit(int bit) { return bit==0?_0:_1;}
+    public static Signal fromBit(int bit) {
+        return bit == 0 ? _0 : _1;
+    }
 }

@@ -3,6 +3,9 @@ package jsimugate;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
+/**
+ * Demultiplexer implementation.
+ */
 public class DMux extends Box {
     public DMux() {
         label = "DMUX";
@@ -13,6 +16,9 @@ public class DMux extends Box {
         increase();
     }
 
+    /**
+     * Increase the number of pins. Double the height, while adding one pin to the width.
+     */
     public void increase() {
         if (sPins.size() >= 8) return;
         addPin(sPins.addPinHorizontally()).translate(0, height + 30).down(30);
@@ -22,6 +28,9 @@ public class DMux extends Box {
         resize();
     }
 
+    /**
+     * Decrease the number of pins. Halve the height, while reducing the width by one pin.
+     */
     public void decrease() {
         int n = ePins.size() >> 1;
         for (int i = n; i < 2 * n; i++) {
@@ -35,12 +44,20 @@ public class DMux extends Box {
         resize();
     }
 
+    /**
+     * Add label drawing for pins for this part to what is already drawn by the superclass.
+     *
+     * @param g graphics context for drawing
+     */
     public void drawAtOrigin(Graphics2D g) {
         super.drawAtOrigin(g);
         AffineTransform restore = g.getTransform();
-        g.drawString("SEL", -11, height -5);
+        g.drawString("SEL", -11, height - 5);
     }
 
+    /**
+     * Set output pin values based on input pin values.
+     */
     public void operate() {
         if (wPins.pins.get(0).getInValue().bad) {
             for (Pin out : ePins.pins) {

@@ -108,16 +108,16 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         this.addMouseMotionListener(this);
         this.addComponentListener(this);
 
-        int xPos=50,yPos=50;
+        int xPos = 50, yPos = 50;
         for (Part part : new Part[]{
-                new OrGate(),new AndGate(),
-                new XorGate(),new MajorityGate().not(),
+                new OrGate(), new AndGate(),
+                new XorGate(), new MajorityGate().not(),
                 null,
-                new InConnector(),new OutConnector(), null,
+                new InConnector(), new OutConnector(), null,
                 new Bus(), new PullupResistor(),
                 new VGround(), new NPNTransistor(), null,
 
-                new PulldownResistor(),new Diode(),
+                new PulldownResistor(), new Diode(),
                 new PNPTransistor(), new VSource(), null,
 
 
@@ -127,19 +127,20 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
                 new Adder(), new Alu(), null,
                 new ThreeState(), new LevelTrigSR(),
-                new LevelTrigD(),new EdgeTrigD(),
-                new RegisterFile(),new Memory(),
+                new LevelTrigD(), new EdgeTrigD(),
+                new RegisterFile(), new Memory(),
 
 
         }) {
-            if (part==null) {
+            if (part == null) {
                 yPos += 10;
                 continue;
             }
-            circuit.bins.add(new PartsBin(xPos,yPos,part));
+            circuit.bins.add(new PartsBin(xPos, yPos, part));
             xPos += 50;
-            if (xPos>100) {
-                xPos=50; yPos += 50;
+            if (xPos > 100) {
+                xPos = 50;
+                yPos += 50;
             }
         }
 

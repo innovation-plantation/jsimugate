@@ -3,6 +3,9 @@ package jsimugate;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
+/**
+ * Create a multiplexer with two selection pins, can be increased during simulation,
+ */
 public class Mux extends Box {
     public Mux() {
         label = "MUX";
@@ -13,6 +16,10 @@ public class Mux extends Box {
         increase();
     }
 
+    /**
+     * Increase  the size by one selection pin and the corresponding required other pins
+     * essentially doubling the height of the part
+     */
     public void increase() {
         if (sPins.size() >= 8) return;
         addPin(sPins.addPinHorizontally()).translate(0, height + 30).down(30);
@@ -22,6 +29,9 @@ public class Mux extends Box {
         resize();
     }
 
+    /**
+     * Reduce the size by one selection pin and cut the height about in half in the process.
+     */
     public void decrease() {
         int n = wPins.size() >> 1;
         for (int i = n; i < 2 * n; i++) {
@@ -35,12 +45,20 @@ public class Mux extends Box {
         resize();
     }
 
+    /**
+     * Draw the labels for pins after super does the rest of the work.
+     *
+     * @param g graphics context for drawing
+     */
     public void drawAtOrigin(Graphics2D g) {
         super.drawAtOrigin(g);
         AffineTransform restore = g.getTransform();
-        g.drawString("SEL", -11, height -5);
+        g.drawString("SEL", -11, height - 5);
     }
 
+    /**
+     * Operate the output pins according to the innput pins.
+     */
     public void operate() {
         for (Pin pin : sPins.pins) {
             if (pin.getInValue().bad) {

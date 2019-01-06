@@ -168,10 +168,10 @@ public class Artwork {
      */
     public static Shape pulldownShape() {
         GeneralPath shape = zigzagShape();
-        shape.moveTo(-5,17);
-        shape.lineTo(5,17);
-        shape.moveTo(6,16);
-        shape.lineTo(-6,16);
+        shape.moveTo(-5, 17);
+        shape.lineTo(5, 17);
+        shape.moveTo(6, 16);
+        shape.lineTo(-6, 16);
         shape.closePath();
         shape.moveTo(-7, 15);
         shape.lineTo(0, 25);
@@ -220,17 +220,18 @@ public class Artwork {
 
     /**
      * Shape of adder and ALU parts
+     *
      * @return the shape
      */
     public static Shape adderShape() {
         GeneralPath shape = new GeneralPath();
-        shape.moveTo(-40,0);
-        shape.lineTo(-50,-10);
-        shape.lineTo(-50,-170);
-        shape.lineTo(50,-120);
-        shape.lineTo(50,120);
-        shape.lineTo(-50,170);
-        shape.lineTo(-50,10);
+        shape.moveTo(-40, 0);
+        shape.lineTo(-50, -10);
+        shape.lineTo(-50, -170);
+        shape.lineTo(50, -120);
+        shape.lineTo(50, 120);
+        shape.lineTo(-50, 170);
+        shape.lineTo(-50, 10);
         shape.closePath();
         return shape;
     }

@@ -1,39 +1,49 @@
 package jsimugate;
 
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 
+/**
+ * Box shaped parts that can resize their shape and draw their own boxes.
+ * All pins in pin groups are adjusted when the size of the box is adjusted.
+ * The assumption is that the pins were drawn according to the old box size
+ * so resize() needs to be called after adding pins to east/west groups before
+ * adding to north/south groups and vice versa.
+ */
 public class Box extends Part {
-    int height=0,width=0;
+    int height = 0, width = 0;
 
-    PinGroup ePins=new PinGroup();
-    PinGroup sPins=new PinGroup();
-    PinGroup wPins=new PinGroup();
-    PinGroup nPins=new PinGroup();
+    PinGroup ePins = new PinGroup();
+    PinGroup sPins = new PinGroup();
+    PinGroup wPins = new PinGroup();
+    PinGroup nPins = new PinGroup();
 
 
+    /**
+     * Cakculate the box size for zero pins. This will be used as a basis for
+     * adjusting next time it gets resized because the difference between the
+     * box sizes is the amount that pins need to be moved away when growing,
+     * or back in when shrinking.
+     */
     public Box() {
-        //resize(2,2);
-        //int[] a={1,2,3};
         resize();
-
     }
 
     /**
      * Derived classes are could be created like new Box().resize(10,20);
+     *
      * @param w width to accommodate w pins
      * @param h height to accommodate h pins
      * @return
      */
-    public Box resize(int w,int h) {
-        int newWidth = 10*(w+1), newHeight = 10*(h+1);
-        int dw = newWidth-width;
-        int dh = newHeight-height;
-        setShape(new Rectangle2D.Double(-newWidth,-newHeight,2*newWidth,2*newHeight));
-        for (Pin pin:ePins.pins) pin.translate(dw,0);
-        for (Pin pin:sPins.pins) pin.translate(0,dh);
-        for (Pin pin:wPins.pins) pin.translate(-dw,0);
-        for (Pin pin:nPins.pins) pin.translate(0,-dh);
+    public Box resize(int w, int h) {
+        int newWidth = 10 * (w + 1), newHeight = 10 * (h + 1);
+        int dw = newWidth - width;
+        int dh = newHeight - height;
+        setShape(new Rectangle2D.Double(-newWidth, -newHeight, 2 * newWidth, 2 * newHeight));
+        for (Pin pin : ePins.pins) pin.translate(dw, 0);
+        for (Pin pin : sPins.pins) pin.translate(0, dh);
+        for (Pin pin : wPins.pins) pin.translate(-dw, 0);
+        for (Pin pin : nPins.pins) pin.translate(0, -dh);
         height += dh;
         width += dw;
         return this;
@@ -41,20 +51,23 @@ public class Box extends Part {
 
     /**
      * Resize to accommodate the pins list.
+     *
      * @return
      */
     public Box resize() {
-        int w = Math.max(nPins.size(),sPins.size());
-        int h = Math.max(ePins.size(),wPins.size());
-        return resize(w,h);
+        int w = Math.max(nPins.size(), sPins.size());
+        int h = Math.max(ePins.size(), wPins.size());
+        return resize(w, h);
     }
+
     /**
      * Resize to accommodate the pins list.
+     *
      * @return
      */
-    public Box resizeWithPadding(int horizontal_pad,int vertical_pad) {
-        int w = Math.max(nPins.size(),sPins.size());
-        int h = Math.max(ePins.size(),wPins.size());
-        return resize(w+horizontal_pad,h+vertical_pad);
+    public Box resizeWithPadding(int horizontal_pad, int vertical_pad) {
+        int w = Math.max(nPins.size(), sPins.size());
+        int h = Math.max(ePins.size(), wPins.size());
+        return resize(w + horizontal_pad, h + vertical_pad);
     }
 }

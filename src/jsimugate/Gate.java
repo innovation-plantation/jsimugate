@@ -1,7 +1,5 @@
 package jsimugate;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -10,7 +8,7 @@ import java.util.Scanner;
 public class Gate extends Part {
 
     //List<Pin> inputs = new ArrayList<Pin>();
-    PinGroup inputs=new PinGroup(true);
+    PinGroup inputs = new PinGroup(true);
     Pin output;
 
     /**
@@ -29,7 +27,7 @@ public class Gate extends Part {
      * Add a pin to the gate
      */
     protected void addInput() {
-        Pin pin=inputs.addPinVertically().translate(-70,0).left(30);
+        Pin pin = inputs.addPinVertically().translate(-70, 0).left(30);
         addPin(pin);
         reshape(inputs.size());
         updateLabel();
@@ -39,8 +37,8 @@ public class Gate extends Part {
      * Remove the most recently added pin if it's not connected to anything
      */
     protected void removeInput() {
-        Pin pin=inputs.removePinVertically();
-        if (pin!=null) {
+        Pin pin = inputs.removePinVertically();
+        if (pin != null) {
             removePin(pin);
             reshape(inputs.size());
             updateLabel();

@@ -3,65 +3,91 @@ package jsimugate;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
+/**
+ * An n-bit ring counter implementaton.
+ */
 public class RingCounter extends Box {
-    Pin rst,clk;
+    Pin rst, clk;
     int phase;
-    Signal oldClk=null;
+    Signal oldClk = null;
 
+    /**
+     * Create a ring counter with 4 bits. More bits can be added or the size can be decreased
+     * at will during simulation.
+     */
     public RingCounter() {
-        label="RING";
-        rst=addPin(sPins.addPinHorizontally()).translate(0,40).down(30);
-        clk=addPin(sPins.addPinHorizontally()).translate(0,40).down(30);
+        label = "RING";
+        rst = addPin(sPins.addPinHorizontally()).translate(0, 40).down(30);
+        clk = addPin(sPins.addPinHorizontally()).translate(0, 40).down(30);
         resize();
         increase();
         increase();
         increase();
         increase();
     }
+
+    /**
+     * Add another pin
+     */
     public void increase() {
-        addPin(ePins.addPinVertically()).translate(width+30,0).right(30);
+        addPin(ePins.addPinVertically()).translate(width + 30, 0).right(30);
         resize();
     }
 
+    /**
+     * Reduce the number of pins.
+     */
     public void decrease() {
         removePin(ePins.removePinVertically());
         resize();
     }
 
+    /**
+     * Add labels for the pins to the drawing.
+     *
+     * @param g graphics context for drawing
+     */
     public void drawAtOrigin(Graphics2D g) {
         super.drawAtOrigin(g);
         AffineTransform restore = g.getTransform();
-        g.rotate(-Math.PI/2);
-        g.translate(-height,-10);
+        g.rotate(-Math.PI / 2);
+        g.translate(-height, -10);
 
-        g.drawString("> ",0,4);
-        g.translate(0,20);
-        if (ePins.size()>0) g.drawString("RST",1,4);
+        g.drawString("> ", 0, 4);
+        g.translate(0, 20);
+        if (ePins.size() > 0) g.drawString("RST", 1, 4);
         g.setTransform(restore);
-        g.translate(width-1,height-15);
-        for (int i=0;i<ePins.size();i++) {
-            String text="\u03D5"+i;
+        g.translate(width - 1, height - 15);
+        for (int i = 0; i < ePins.size(); i++) {
+            String text = "\u03D5" + i;
             int textWidth = g.getFontMetrics().stringWidth(text);
-            g.drawString(text,-textWidth,-i*20);
+            g.drawString(text, -textWidth, -i * 20);
         }
     }
 
+    /**
+     * Reset the state.
+     */
     public void reset() {
         phase = 0;
-        oldClk=clk.getInValue();
+        oldClk = clk.getInValue();
     }
+
+    /**
+     * Operate the part by setting the outputs and state according to the inputs and state.
+     */
     public void operate() {
         if (rst.getInValue().hi) {
             reset();
-            for (Pin pin:ePins.pins) {
+            for (Pin pin : ePins.pins) {
                 pin.setOutValue(Signal._0);
             }
             return;
         }
         Signal newClk = clk.getInValue();
-        if (oldClk==null || !oldClk.good || !newClk.good || !rst.getInValue().good) {
+        if (oldClk == null || !oldClk.good || !newClk.good || !rst.getInValue().good) {
             oldClk = null;
-            for (int i=0;i<ePins.size();i++) {
+            for (int i = 0; i < ePins.size(); i++) {
                 ePins.pins.get(i).setOutValue(Signal._X);
             }
             return;

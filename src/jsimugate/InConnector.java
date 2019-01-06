@@ -50,8 +50,10 @@ public class InConnector extends Discrete {
     public void operate() {
         pin.setOutValue(value);
     }
+
     /**
      * deserialize
+     *
      * @param details formatted like 0Hz or 0Sec if value>1
      */
     public void setDetails(String details) {
@@ -61,12 +63,14 @@ public class InConnector extends Discrete {
             Log.println(this.value.toString());
         }
     }
+
     /**
      * deserialize
+     *
      * @return details formatted like 0Hz or 0Sec if value>1
      */
     public String getDetails() {
-        if (value!=Signal._Z)  return value.toString();
+        if (value != Signal._Z) return value.toString();
         else return super.getDetails();
     }
 }

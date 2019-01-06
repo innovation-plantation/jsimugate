@@ -59,7 +59,7 @@ public class Alu extends Adder {
      */
     public Alu() {
         label = "ALU";
-        fnIn.addPinHorizontally(cIn.translate(-25,0)); // Carry: and, or, adc, sbb, rlc, not, neg, xfer
+        fnIn.addPinHorizontally(cIn.translate(-25, 0)); // Carry: and, or, adc, sbb, rlc, not, neg, xfer
         addPin(fnIn.addPinHorizontally(new Pin(-5, 170).down(30))); // Alternate: xor, or, sub, sbb, shr, not, dec,xfer
         addPin(fnIn.addPinHorizontally(new Pin(-15, 180).down(30))); // Math: add, adc, sub, sbb; inc, neg, dec, xfer
         addPin(fnIn.addPinHorizontally(new Pin(-25, 190).down(30))); // Unary: shl, rlc, shr, not, inc, neg, dec, xfer

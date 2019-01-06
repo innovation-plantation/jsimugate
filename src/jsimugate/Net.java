@@ -9,7 +9,7 @@ public class Net {
     Set<Pin> pins = new HashSet<Pin>();
     Set<Wire> wires = new HashSet<Wire>();
     static List<Net> nets = new ArrayList<Net>();
-    boolean recovery=false;
+    boolean recovery = false;
 
     /**
      * This should be called every time a wire is constructed

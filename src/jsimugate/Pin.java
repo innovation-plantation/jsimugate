@@ -165,11 +165,12 @@ public class Pin extends Symbol {
             parent.updateLabel();
         }
     }
+
     /**
      * Switch between inverted and non-inverted pin, toggling the visibility of the bubble.
      */
     void toggleInversion() {
-        setInversion(inverted=!inverted);
+        setInversion(inverted = !inverted);
     }
 
     /**
@@ -222,6 +223,7 @@ public class Pin extends Symbol {
     /**
      * Read the binary value from the pins.
      * Invalid bits are interpreted as zero.
+     *
      * @param pins pins with a binary value
      * @return the integer number converted from binary.
      */
@@ -233,8 +235,9 @@ public class Pin extends Symbol {
 
     /**
      * Drive the pins with the binary value.
+     *
      * @param pins pins to receive the binary value
-     * @param src the number to be converted to binary
+     * @param src  the number to be converted to binary
      */
     public static void unpack(Pin[] pins, int src) {
         for (int n = 0; n < pins.length; n++) pins[n].setOutValue(Signal.fromBit((src >> n) & 1));

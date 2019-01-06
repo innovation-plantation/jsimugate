@@ -75,7 +75,7 @@ public class Part extends Symbol {
      * @return
      */
     public Pin removePin(Pin pin) {
-        if (pin==null) return null;
+        if (pin == null) return null;
         pins.remove(pin);
         removeChild(pin);
         return pin;
@@ -206,11 +206,11 @@ public class Part extends Symbol {
                 Log.println(" TECH is " + newPart.tech);
                 String details = match.group(2);
                 newPart.setDetails(details);
-                if (!details.isEmpty()) Log.println(" DETAILS: "+details);
+                if (!details.isEmpty()) Log.println(" DETAILS: " + details);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Log.println( scan.nextLine());
+            Log.println(scan.nextLine());
         }
         return newPart;
     }
@@ -221,14 +221,19 @@ public class Part extends Symbol {
      *
      * @param details
      */
-    public void setDetails(String details) {}
+    public void setDetails(String details) {
+    }
+
     /**
      * Override setDetails and getDetails to serialize and desertailze extra information about the part
      * beyond its transform, type, pins, and technology.
      *
      * @return details
      */
-    public String getDetails() { return "";}
+    public String getDetails() {
+        return "";
+    }
+
     /**
      * Convert to an equivalent symbol such by DeMorganizing
      */

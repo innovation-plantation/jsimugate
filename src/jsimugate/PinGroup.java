@@ -29,11 +29,13 @@ public class PinGroup {
     }
 
     public void shiftPinsHorizontally(int dx) {
-        for (Pin i : pins) i.translate(dx,0);
+        for (Pin i : pins) i.translate(dx, 0);
     }
+
     public void shiftPinsVertically(int dy) {
         for (Pin i : pins) i.translate(0, dy);
     }
+
     /**
      * Add and return a pin to the group, shifting the other pins over as necessary to make room
      * These pins are stacked vertically, with new pins on top
@@ -166,8 +168,9 @@ public class PinGroup {
         for (int n = 0; n < pins.size(); n++) result += pins.get(n).getInValue().asBit() << n;
         return result;
     }
+
     public boolean goodValue() {
-        for (Pin pin:pins) if (pin.getInValue().bad) return false;
+        for (Pin pin : pins) if (pin.getInValue().bad) return false;
         return true;
     }
 

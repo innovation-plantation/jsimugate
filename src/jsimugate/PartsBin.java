@@ -12,7 +12,7 @@ import java.awt.geom.Rectangle2D;
 public class PartsBin extends Part {
 
     private Part prototype;
-    double scale=.25;
+    double scale = .25;
 
     /**
      * Create the parts bin labeled with the name and shape of the part.
@@ -28,10 +28,10 @@ public class PartsBin extends Part {
         this.setShape(new Rectangle2D.Double(-25, -25, 50, 50));
         this.addChild(part);
         Rectangle bounds = part.hitbox.getBounds();
-        double w=bounds.width, h=bounds.height;
-        scale=.25; // this looks better than linear scaling because of aliasing.
-        if (h>100) scale/=3;
-        if (w<40) scale *=1.5;
+        double w = bounds.width, h = bounds.height;
+        scale = .25; // this looks better than linear scaling because of aliasing.
+        if (h > 100) scale /= 3;
+        if (w < 40) scale *= 1.5;
 
         this.fill = new Color(0x00, 0xFF, 0xFF, 0x10);
         this.color = Color.gray;
@@ -50,7 +50,7 @@ public class PartsBin extends Part {
         AffineTransform restore = g.getTransform();
 
         g.scale(scale, scale);
-        g.translate(0,-10);
+        g.translate(0, -10);
         drawChildren(g);
         g.setTransform(restore);
         g.scale(.75, .75);
