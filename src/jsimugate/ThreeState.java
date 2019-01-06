@@ -26,7 +26,10 @@ public class ThreeState extends Box {
     }
 
     public void decrease() {
-        if (wPins.size()<2) return;
+        int n=wPins.size();
+        if (n<2) return;
+        if (Net.directConnections(ePins.pins.get(n-1)).size()>0) return;
+        if (Net.directConnections(wPins.pins.get(n-1)).size()>0) return;
         this.removePin(wPins.removePinVertically());
         this.removePin(ePins.removePinVertically());
         resize();
