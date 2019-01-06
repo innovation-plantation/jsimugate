@@ -11,7 +11,7 @@ public class LevelTrigD extends Box {
     private ArrayList<Signal> qSave=new ArrayList<Signal>();
 
     public LevelTrigD() {
-        name="D";
+        name="D LEV";
         clkIn = addPin(sPins.addPinHorizontally()).down(30).translate(0,40);
         resize();
         addPin(wPins.addPinVertically()).left(30).translate(-50,0);
