@@ -18,13 +18,20 @@ You can also increase or decrease the size in which a part is drawn by holding d
 
 Drag from pin to pin to connect or disconnect a wire between them. 
 
+Right-click a part to apply DeMorgan's theorem on it, or to switch to open collector or other technology type.
+
 Hold ctrl while moving selected parts to duplicate them. When storing a circuit, highlight what part of the circuit you want to store
-before storing to a file, and when you load back to the file, the current circuit will remain while the loaded circuit will be highlighted
-so you can move it where you want it. 
+before storing to a file, and when you load back to the file, the current circuit will remain
+while the loaded circuit will be highlighted so you can move it where you want it. 
 
-There is no panning or zooming of the display yet, so be careful to not drop parts beyond the limits of the window, 
-or you may not see them again. There is also no input/out device and no ROM or method of programming ROMs yet, so if you need that
-capability now, use simugate instead of jsimugate, but be warned: The two will not have compatible formats for saving parts, and 
-simugate is much slower than jsimugate for larger circuits. 
+One feature to be added is a quick method for connecting busses. 
+There is also no panning or zooming of the display yet.
+There is also no input/out device and no ROM or method of programming ROMs yet.
+If you need the missing features now, you can use simugate instead of jsimugate.
+simugate is the puthon version of the program.
+But be warned: The two will not have compatible formats for saving parts, though
+they are both text formats so it should be possible to convert by hand if absolutely necessary. 
+Also be aware that simugate is much slower than jsimugate for larger circuits, and the GUI is quite different. 
+In essence, simugate served as a prototype for jsimugate.
 
-Anbother feature I hope to add is a quick method for connecting busses. 
+
