@@ -53,6 +53,14 @@ public class DMux extends Box {
         super.drawAtOrigin(g);
         AffineTransform restore = g.getTransform();
         g.drawString("SEL", -11, height - 5);
+        String text = Integer.toString(ePins.size()-1);
+        int textWidth = g.getFontMetrics().stringWidth(text);
+        g.drawString(text, width-textWidth-5, -height+25);
+        int n=sPins.size();
+        if (n>2) {
+            g.drawString("0", width - 25, height - 5);
+            g.drawString(Integer.toString(n-1), -width + 15, height - 5);
+        }
     }
 
     /**

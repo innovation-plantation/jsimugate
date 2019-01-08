@@ -54,6 +54,12 @@ public class Mux extends Box {
         super.drawAtOrigin(g);
         AffineTransform restore = g.getTransform();
         g.drawString("SEL", -11, height - 5);
+        int n=sPins.size();
+        if (n>2) {
+            g.drawString("0", width - 25, height - 5);
+            g.drawString(Integer.toString(n-1), -width + 15, height - 5);
+        }
+        g.drawString(Integer.toString(wPins.size()-1), -width+5, -height+25);
     }
 
     /**
