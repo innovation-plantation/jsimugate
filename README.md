@@ -2,7 +2,9 @@
 
 Here's a digital logic circuit simulator I just threw together the last couple of weeks. 
 It is intended to be used for teaching and learning computer arcitecture.
+
 ![image](https://user-images.githubusercontent.com/26174810/50952496-ae901f80-1454-11e9-95fe-de516bf43894.png)
+
 Components are idealized,using augmented std_logic signals so a few details are unrealistic
 such as unbounded fanout, diodes having an unrealistic memory capability when connected in a loop, and there is
 a single time-unit delay for all parts without regard to their internal complexity. 
