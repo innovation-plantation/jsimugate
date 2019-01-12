@@ -36,4 +36,6 @@ they are both text formats so it should be possible to convert by hand if absolu
 Also be aware that simugate is much slower than jsimugate for larger circuits, and the GUI is quite different. 
 In essence, simugate served as a prototype for jsimugate.
 
+Visit the Wiki at https://github.com/innovation-plantation/jsimugate/wiki
 
+or download and run at https://github.com/innovation-plantation/jsimugate/raw/master/jsimugate.jar
