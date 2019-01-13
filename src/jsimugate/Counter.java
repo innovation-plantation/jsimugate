@@ -25,7 +25,7 @@ public class Counter extends Box {
      * Make it a bigger counter with more bits
      */
     public void increase() {
-        if (ePins.size() > 31) return;
+        if (ePins.size() > 30) return;
         addPin(ePins.addPinVertically()).translate(width + 30, 0).right(30);
         addPin(wPins.addPinVertically()).translate(-width - 30, 0).left(30);
         resize();
@@ -35,6 +35,8 @@ public class Counter extends Box {
      * Make it a smaller counter with fewer bits
      */
     public void decrease() {
+        if (Net.directConnections(ePins.pins.get(ePins.size() - 1)).size() > 0) return;
+        if (Net.directConnections(wPins.pins.get(wPins.size() - 1)).size() > 0) return;
         removePin(wPins.removePinVertically());
         removePin(ePins.removePinVertically());
         resize();
