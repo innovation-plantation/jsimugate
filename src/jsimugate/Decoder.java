@@ -3,6 +3,9 @@ package jsimugate;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
+import static jsimugate.Signal._0;
+import static jsimugate.Signal._1;
+
 /**
  * A binary decoder part implementation
  */
@@ -79,7 +82,9 @@ public class Decoder extends Box {
                 return;
             }
         }
-        ePins.setValue(1 << sPins.getValue());
+        for (int i=0;i<ePins.size();i++) {
+            ePins.pins.get(i).setOutValue(i==sPins.getValue()?_1:_0);
+        }
     }
 }
 

@@ -3,7 +3,7 @@ package jsimugate;
 import java.awt.*;
 
 
-public class SevenSegment extends Box {
+public class SevenSegmentLED extends Box {
     static Shape[] shapes= {
             Artwork.aSegmentShape(),
             Artwork.bSegmentShape(),
@@ -14,7 +14,7 @@ public class SevenSegment extends Box {
             Artwork.gSegmentShape(),
 
     };
-    public SevenSegment() {
+    public SevenSegmentLED() {
         name = "7SEG";
         for (int i = 0; i < 7; i++) {
             addPin(wPins.addPinVertically()).left(30).translate( -width - 30,0);
