@@ -17,7 +17,7 @@ public class Alu extends Adder {
         CLR(true, (a, b) -> 0), ///////////// 0 0 0 0
         AND(false, (a, b) -> a & b), //////// 0 0 0 1
         XOR(false, (a, b) -> a ^ b), //////// 0 0 1 0
-        OR(false, (a, b) -> a | b), ///////// 0 0 1 1,
+        OR(false, (a, b) -> a | b), ///////// 0 0 1 1
 
         ADD(true, (a, b) -> a + b), ///////// 0 1 0 0
         ADC(true, (a, b) -> a + b + 1), ///// 0 1 0 1

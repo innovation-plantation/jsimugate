@@ -39,67 +39,78 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
      */
     public void init() {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
-            if (e.getID() == KeyEvent.KEY_PRESSED) switch (e.getKeyChar()) {
-                case 'd':
-                    Log.println(circuit.toString());
-                    break;
-                case 'n':
-                    Net.dump();
-                    break;
-                case 'r':
-                    Numbered.renumber();
-                    break;
-                case 'w':
-                    for (Wire wire : circuit.wires) System.out.println(wire);
-                    break;
-                case '+':
-                    for (Part part : circuit.parts)
-                        if (part.isSelected()) {
-                            if (e.isAltDown()) part.transform.scale(2, 2);
-                            else part.increase();
+            if (e.getID() == KeyEvent.KEY_PRESSED) {
+                switch (e.getKeyChar()) {
+                    case 'd':
+                        Log.println(circuit.toString());
+                        break;
+                    case 'n':
+                        Net.dump();
+                        break;
+                    case 'r':
+                        Numbered.renumber();
+                        break;
+                    case 'w':
+                        for (Wire wire : circuit.wires) System.out.println(wire);
+                        break;
+                    case '+':
+                        for (Part part : circuit.parts)
+                            if (part.isSelected()) {
+                                if (e.isAltDown()) part.transform.scale(2, 2);
+                                else part.increase();
+                            }
+                        break;
+                    case '-':
+                        for (Part part : circuit.parts)
+                            if (part.isSelected()) {
+                                if (e.isAltDown()) part.transform.scale(.5, .5);
+                                else part.decrease();
+                            }
+                        break;
+                    default:
+                        int step = 4;
+                        switch (e.getKeyCode()) {
+                            case KeyEvent.VK_UP:
+                                for (Part part : circuit.parts) {
+                                    if (part.isSelected()) {
+                                        part.transform.scale(1, -1);
+                                    }
+                                }
+                                break;
+                            case KeyEvent.VK_DOWN:
+                                for (Part part : circuit.parts) {
+                                    if (part.isSelected()) {
+                                        part.transform.scale(-1, 1);
+                                    }
+                                }
+                                break;
+                            case KeyEvent.VK_LEFT:
+                                step = -step; // fall-through
+                            case KeyEvent.VK_RIGHT:
+                                if (e.isControlDown()) step *= 3;
+                                if (e.isShiftDown()) step /= 2;
+                                for (Part part : circuit.parts) {
+                                    if (part.isSelected()) {
+                                        if (e.isAltDown())
+                                            part.transform.setToTranslation(part.transform.getTranslateX(),
+                                                    part.transform.getTranslateY());
+                                        else part.transform.rotate(Math.PI / step);
+                                    }
+                                }
+                                break;
                         }
-                    break;
-                case '-':
-                    for (Part part : circuit.parts)
-                        if (part.isSelected()) {
-                            if (e.isAltDown()) part.transform.scale(.5, .5);
-                            else part.decrease();
-                        }
-                    break;
-                default:
-                    int step = 4;
-                    switch (e.getKeyCode()) {
-                        case KeyEvent.VK_UP:
-                            for (Part part : circuit.parts) {
-                                if (part.isSelected()) {
-                                    part.transform.scale(1, -1);
-                                }
-                            }
-                            break;
-                        case KeyEvent.VK_DOWN:
-                            for (Part part : circuit.parts) {
-                                if (part.isSelected()) {
-                                    part.transform.scale(-1, 1);
-                                }
-                            }
-                            break;
-                        case KeyEvent.VK_LEFT:
-                            step = -step; // fall-through
-                        case KeyEvent.VK_RIGHT:
-                            if (e.isControlDown()) step *= 3;
-                            if (e.isShiftDown()) step /= 2;
-                            for (Part part : circuit.parts) {
-                                if (part.isSelected()) {
-                                    if (e.isAltDown()) part.transform.setToTranslation(part.transform.getTranslateX(),
-                                            part.transform.getTranslateY());
-                                    else part.transform.rotate(Math.PI / step);
-                                }
-                            }
-                            break;
-                    }
+                }
+                Log.println("key down "+e.getKeyChar());
+                for (Part part : circuit.parts) {
+                    if (part.isSelected()) part.processChar(Character.toUpperCase(e.getKeyChar()));
+                }
             }
-            for (Part part : circuit.parts)
-                if (part.isSelected()) part.processChar(Character.toUpperCase(e.getKeyChar()));
+            else if (e.getID() == KeyEvent.KEY_RELEASED) {
+                Log.println("key up");
+                for (Part part : circuit.parts) {
+                    if (part.isSelected()) part.processChar('\0');
+                }
+            }
             repaint();
             return false;
         });
@@ -110,28 +121,19 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
         int xPos = 50, yPos = 50;
         for (Part part : new Part[]{
-                new OrGate(), new AndGate(),
-                new XorGate(), new MajorityGate().not(),
+                new OrGate(), new AndGate(), new MajorityGate().not(),
+                new XorGate(), new Bus(), new ThreeState(),
+                new InConnector(), new Diode(), new OutConnector(),
+                new VGround(), new NPNTransistor(), new PullupResistor(),
+                new VSource(), new PNPTransistor(), new PulldownResistor(),
                 null,
-                new InConnector(), new OutConnector(), null,
-                new Bus(), new PullupResistor(),
-                new VGround(), new NPNTransistor(), null,
-
-                new PulldownResistor(), new Diode(),
-                new PNPTransistor(), new VSource(), null,
-
-
-                new Counter(), new RingCounter(),
-                new Clk(), new Decoder(),
-                new DMux(), new Mux(), null,
-
-                new Adder(), new Alu(), null,
-                new ThreeState(), new LevelTrigSR(),
-                new LevelTrigD(), new EdgeTrigD(),
-                new RegisterFile(), new Memory(),
+                new Clk(), new RingCounter(), new Counter(),
+                new Decoder(), new Mux(), new DMux(),
+                new LevelTrigSR(), new LevelTrigD(), new EdgeTrigD(),
+                new Adder(), new Alu(), new ROMemory("[80] 55 aa 55 aa 55 aa 55 aa"),
+                new Display(), new RegisterFile(), new Memory(),
                 null,
-                new ROMemory("[80] 55 aa 55 aa 55 aa 55 aa"), new Display(),
-
+                new Keyboard(),
 
         }) {
             if (part == null) {
@@ -140,7 +142,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             }
             circuit.bins.add(new PartsBin(xPos, yPos, part));
             xPos += 50;
-            if (xPos > 100) {
+            if (xPos > 150) {
                 xPos = 50;
                 yPos += 50;
             }

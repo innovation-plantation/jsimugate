@@ -235,4 +235,17 @@ public class Artwork {
         shape.closePath();
         return shape;
     }
+    /**
+     * Shape of keys on keyboard
+     *
+     * @return the shape
+     */
+    public static Shape keyboardShape() {
+        GeneralPath shape = new GeneralPath();
+        for (int i=-10;i<=10;i+=4) {
+            shape.moveTo(-50, i);
+            shape.lineTo(50, i);
+        }
+        return shape;
+    }
 }
