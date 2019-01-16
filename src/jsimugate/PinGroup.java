@@ -9,8 +9,10 @@ import java.util.List;
  * resizing the shape of the part, and updating the label if necessary.
  */
 public class PinGroup {
+    public static List<PinGroup> pinGroups = new ArrayList<PinGroup>();
     List<Pin> pins = new ArrayList<Pin>();
     boolean gap = false;
+
 
     public PinGroup() {
     }
@@ -26,6 +28,29 @@ public class PinGroup {
      */
     int size() {
         return pins.size();
+    }
+
+    /**
+     * if there's a PinGroup that contains the pin, find and return it
+     * @param pin being searched for
+     * @return group containing the pin
+     */
+    static PinGroup groupOf(Pin pin) {
+        for (PinGroup group:pinGroups) {
+            if (group.pins.contains(pin)) {
+                return group;
+            }
+        }
+        return null;
+    }
+    private void addPin(Pin pin) {
+        if (pins.isEmpty()) pinGroups.add(this);
+        pins.add(pin);
+    }
+
+    private void removePin(Pin victim) {
+        pins.remove(victim);
+        if (pins.isEmpty()) pinGroups.remove(this);
     }
 
     public void shiftPinsHorizontally(int dx) {
@@ -45,17 +70,18 @@ public class PinGroup {
         if (gap) switch (n) {
             case 1:
                 pins.get(0).translate(0, 20);
-                pins.add(pin);
+                addPin(pin);
                 return pin;
             case 2:
                 pins.get(1).translate(0, 20);
-                pins.add(pin);
+                addPin(pin);
                 return pin;
         }
         shiftPinsVertically(10);//for (Pin i : pins) i.translate(0, 10);
-        pins.add(pin);
+        addPin(pin);
         return pin;
     }
+
 
     /**
      * Add and return a pin to the group, shifting the other pins over as necessary to make room
@@ -82,15 +108,15 @@ public class PinGroup {
         if (gap) switch (n) {
             case 1:
                 pins.get(0).translate(20, 0);
-                pins.add(pin);
+                addPin(pin);
                 return pin;
             case 2:
                 pins.get(1).translate(20, 0);
-                pins.add(pin);
+                addPin(pin);
                 return pin;
         }
         shiftPinsHorizontally(10);// for (Pin i : pins) i.translate(10, 0);
-        pins.add(pin);
+        addPin(pin);
         return pin;
     }
 
@@ -116,7 +142,7 @@ public class PinGroup {
         // if wires attached return now without removing victim.
         if (Net.directConnections(victim).size() > 0) return null;
 
-        pins.remove(victim);
+        removePin(victim);
         if (gap) switch (n) {
             case 1:
                 return victim;
@@ -142,7 +168,7 @@ public class PinGroup {
         // if wires attached return now without removing victim.
         if (Net.directConnections(victim).size() > 0) return null;
 
-        pins.remove(victim);
+        removePin(victim);
         if (gap) switch (n) {
             case 1:
                 return victim;
@@ -156,6 +182,7 @@ public class PinGroup {
         shiftPinsHorizontally(-10);  //for (Pin i : pins) i.translate(-10, 0);
         return victim;
     }
+
 
     /**
      * Read the binary value from the pins.

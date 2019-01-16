@@ -30,6 +30,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             new float[]{9, 2}, 0);
     MouseEvent recentMouseEvent = null;
     private Wire protoWire = null;
+    Pin recentSrc=null,recentDst=null;
     private static Point2D.Double lassoBegin = null;
     private static Rectangle2D.Double lasso = null;
     static File file = new File("circuit.logic"); // set the default file name and path
@@ -100,12 +101,11 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                                 break;
                         }
                 }
-                Log.println("key down "+e.getKeyChar());
+                Log.println("key down " + e.getKeyChar());
                 for (Part part : circuit.parts) {
                     if (part.isSelected()) part.processChar(Character.toUpperCase(e.getKeyChar()));
                 }
-            }
-            else if (e.getID() == KeyEvent.KEY_RELEASED) {
+            } else if (e.getID() == KeyEvent.KEY_RELEASED) {
                 Log.println("key up");
                 for (Part part : circuit.parts) {
                     if (part.isSelected()) part.processChar('\0');
@@ -364,6 +364,55 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
      */
     @Override
     public void mouseClicked(MouseEvent e) {
+        switch (e.getClickCount()) {
+            case 2:
+                for (Part part : circuit.parts) {
+                    for (Pin pin : part.pins) {
+                        if (pin.at(e.getPoint())) {
+                            PinGroup src = PinGroup.groupOf(recentSrc);
+                            PinGroup dst = PinGroup.groupOf(recentDst);
+                            PinGroup target = PinGroup.groupOf(pin);
+                            if (src==null) return;
+                            if (dst==null) return;
+                            if (target==null) return;
+                            int iSrc = src.pins.indexOf(recentSrc);
+                            int iDst = dst.pins.indexOf(recentDst);
+                            int iTarget = target.pins.indexOf(pin);
+                            if (target==src) {
+                                for (int i=iSrc+1,j=iDst+1;i<=iTarget&&i<src.size() && j<dst.size(); i++,j++) {
+                                    addOrRemoveWire(src.pins.get(i),dst.pins.get(j));
+                                }
+                                for (int i=iSrc-1,j=iDst-1;i>=iTarget&&i>=0 && j>=0; i--,j--) {
+                                    addOrRemoveWire(src.pins.get(i),dst.pins.get(j));
+                                }
+                            } else if (target==dst) {
+                                for (int i=iSrc+1,j=iDst+1;j<=iTarget&&i<src.size() && j<dst.size(); i++,j++) {
+                                    addOrRemoveWire(src.pins.get(i),dst.pins.get(j));
+                                }
+                                for (int i=iSrc-1,j=iDst-1;j>=iTarget&&i>=0 && j>=0; i--,j--) {
+                                    addOrRemoveWire(src.pins.get(i),dst.pins.get(j));
+                                }
+
+                            }
+                        }
+                    }
+                }
+                return;
+            case 3:
+                PinGroup src = PinGroup.groupOf(recentSrc);
+                PinGroup dst = PinGroup.groupOf(recentDst);
+                if (src==null) return;
+                if (dst==null) return;
+                int iSrc = src.pins.indexOf(recentSrc);
+                int iDst = dst.pins.indexOf(recentDst);
+                for (int i=iSrc+1,j=iDst+1;i<src.size() && j<dst.size(); i++,j++) {
+                    addOrRemoveWire(src.pins.get(i),dst.pins.get(j));
+                }
+                for (int i=iSrc-1,j=iDst-1;i>=0 && j>=0; i--,j--) {
+                    addOrRemoveWire(src.pins.get(i),dst.pins.get(j));
+                }
+                return;
+        }
         // clicking on inverter should invert it
         for (Part part : circuit.parts) {
             for (Pin pin : part.pins) {
@@ -514,6 +563,17 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         recentMouseEvent = e;
     }
 
+    void addOrRemoveWire(Pin src, Pin dst) {
+        Wire oldWire = Net.findWire(src, dst);
+        if (oldWire != null) {
+            Log.println("FOUND " + oldWire + oldWire.src + oldWire.dst);
+            Net.disconnect(oldWire);
+            circuit.wires.remove(oldWire);
+        } else {
+            circuit.wires.add(new Wire(src, dst));
+        }
+    }
+
     /**
      * Handle releasing of the mouse button.
      * Complete wire connection if one is started.
@@ -534,15 +594,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                             // Don't connect pin to self
                             break;
                         }
-                        // connect or disconnect
-                        Wire oldWire = Net.findWire(protoWire.src, pin);
-                        if (oldWire != null) {
-                            Log.println("FOUND " + oldWire + oldWire.src + oldWire.dst);
-                            Net.disconnect(oldWire);
-                            circuit.wires.remove(oldWire);
-                        } else {
-                            circuit.wires.add(protoWire.to(pin));
-                        }
+                        // connect or disconnect ///////////////
+                        addOrRemoveWire(recentSrc=protoWire.src, recentDst=pin);
                     }
                 }
             }
@@ -674,6 +727,6 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
     static String appendLogicToFilename(String filename) {
         if (filename.matches(".*\\.(logic)?|\".*\"")) return filename;
-        return filename+".logic";
+        return filename + ".logic";
     }
 }
