@@ -18,7 +18,11 @@ To create a part, drag it from its parts bin. To recycle it, drag selected parts
 click where they belong. To increase or decrease a selected part (the number of pins or speed of the clock), type + or -. 
 You can also increase or decrease the size in which a part is drawn by holding down Alt while typing.
 
-Drag from pin to pin to connect or disconnect a wire between them. 
+Drag from pin to pin to connect or disconnect a wire between them.
+
+A range of wires can be routed together. Simply route the first wire, then either
+* triple-click to route the remaining wires or
+* double-click another pin to route wires up to that pin
 
 Right-click a part to apply DeMorgan's theorem on it, or to switch to open collector or other technology type.
 
