@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  */
 public class JSimuGate extends Panel implements MouseListener, MouseMotionListener, ComponentListener {
     private static final long serialVersionUID = 1L;
-    Circuit circuit = new Circuit();
+    Circuit circuit = new Circuit().withStandardBins();
     private Dimension size;
     private Image image;
     private Graphics graphics;
@@ -118,37 +118,6 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
         this.addComponentListener(this);
-
-        int xPos = 50, yPos = 50;
-        for (Part part : new Part[]{
-                new OrGate(), new AndGate(), new MajorityGate().not(),
-                new XorGate(), new Bus(), new ThreeState(),
-                new InConnector(), new Diode(), new OutConnector(),
-                new VGround(), new NPNTransistor(), new PullupResistor(),
-                new VSource(), new PNPTransistor(), new PulldownResistor(),
-                null,
-                new Clk(), new RingCounter(), new Counter(),
-                new Decoder(), new Mux(), new DMux(),
-                new LevelTrigSR(), new LevelTrigD(), new EdgeTrigD(),
-                new Adder(), new Alu(), new ROMemory("[80] 55 aa 55 aa 55 aa 55 aa"),
-                new Keyboard(), new RegisterFile(), new Memory(),
-                null,
-                new Display(),
-                new SevenSegmentDecoder(),
-                new SevenSegmentLED(),
-
-        }) {
-            if (part == null) {
-                yPos += 10;
-                continue;
-            }
-            circuit.bins.add(new PartsBin(xPos, yPos, part));
-            xPos += 50;
-            if (xPos > 150) {
-                xPos = 50;
-                yPos += 50;
-            }
-        }
 
         updateImageSize();
         circuit.startup(() -> repaint()); // repaint this component whenever the circuit is updated
@@ -265,7 +234,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         JMenu fileMenu = new JMenu("File");
         JMenuItem menuItem;
 
-        menuItem = new JMenuItem("Open...");
+        menuItem = new JMenuItem("Load... (add to existing circuit)");
         menuItem.addActionListener(event -> {
             JFileChooser choice = new JFileChooser(file);
             choice.setFileFilter(new FileNameExtensionFilter("jSimuGate Circuits (.logic)", "logic"));
@@ -273,6 +242,26 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 if (choice.getSelectedFile().exists()) {
                     try {
                         Scanner scan = new Scanner(choice.getSelectedFile());
+                        panel.circuit.fromScanner(scan);
+                    } catch (FileNotFoundException ex) {
+                        JOptionPane.showMessageDialog(panel, ex.getMessage());
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(panel, "File " + file + " does not exist");
+                }
+            }
+        });
+        fileMenu.add(menuItem);
+
+        menuItem = new JMenuItem("Open... (replace existing circuit)");
+        menuItem.addActionListener(event -> {
+            JFileChooser choice = new JFileChooser(file);
+            choice.setFileFilter(new FileNameExtensionFilter("jSimuGate Circuits (.logic)", "logic"));
+            if (choice.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
+                if (choice.getSelectedFile().exists()) {
+                    try {
+                        Scanner scan = new Scanner(choice.getSelectedFile());
+                        panel.circuit = new Circuit().withStandardBins();
                         panel.circuit.fromScanner(scan);
                     } catch (FileNotFoundException ex) {
                         JOptionPane.showMessageDialog(panel, ex.getMessage());
@@ -297,9 +286,10 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                     System.out.println("OVERWRITING");
                 }
                 file = choice.getSelectedFile();
-                System.out.println("Save as " + file.getAbsolutePath());
+                String filename = appendLogicToFilename(file.getAbsolutePath());
+                System.out.println("Save as " + filename);
                 try {
-                    PrintWriter printWriter = new PrintWriter(file.getAbsolutePath(), "UTF-8");
+                    PrintWriter printWriter = new PrintWriter(filename, "UTF-8");
                     Numbered.renumber();
                     printWriter.write(panel.circuit.toString());
                     printWriter.close();
@@ -312,9 +302,10 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
         menuItem = new JMenuItem("Save");
         menuItem.addActionListener(event -> {
-            System.out.println("Save" + file.getAbsolutePath());
+            String filename = appendLogicToFilename(file.getAbsolutePath());
+            System.out.println("Save" + filename);
             try {
-                PrintWriter printWriter = new PrintWriter(file.getAbsolutePath(), "UTF-8");
+                PrintWriter printWriter = new PrintWriter(filename, "UTF-8");
                 Numbered.renumber();
                 printWriter.write(panel.circuit.toString());
                 printWriter.close();
@@ -681,4 +672,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         recentMouseEvent = e;
     }
 
+    static String appendLogicToFilename(String filename) {
+        if (filename.matches(".*\\.(logic)?|\".*\"")) return filename;
+        return filename+".logic";
+    }
 }

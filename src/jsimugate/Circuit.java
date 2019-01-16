@@ -125,4 +125,39 @@ public class Circuit {
             repaint.run();
         }).start();
     }
+
+    public Circuit withStandardBins() {
+        int xPos = 50, yPos = 50;
+        for (Part part : new Part[]{
+                new OrGate(), new AndGate(), new MajorityGate().not(),
+                new XorGate(), new Bus(), new ThreeState(),
+                new InConnector(), new Diode(), new OutConnector(),
+                new VGround(), new NPNTransistor(), new PullupResistor(),
+                new VSource(), new PNPTransistor(), new PulldownResistor(),
+                null,
+                new Clk(), new RingCounter(), new Counter(),
+                new Decoder(), new Mux(), new DMux(),
+                new LevelTrigSR(), new LevelTrigD(), new EdgeTrigD(),
+                new Adder(), new Alu(), new ROMemory("[80] 55 aa 55 aa 55 aa 55 aa"),
+                new Keyboard(), new RegisterFile(), new Memory(),
+                null,
+                new Display(),
+                new SevenSegmentDecoder(),
+                new SevenSegmentLED(),
+
+        }) {
+            if (part == null) {
+                yPos += 10;
+                continue;
+            }
+            bins.add(new PartsBin(xPos, yPos, part));
+            xPos += 50;
+            if (xPos > 150) {
+                xPos = 50;
+                yPos += 50;
+            }
+        }
+        return this;
+
+    }
 }
