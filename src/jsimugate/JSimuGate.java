@@ -30,7 +30,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             new float[]{9, 2}, 0);
     MouseEvent recentMouseEvent = null;
     private Wire protoWire = null;
-    Pin recentSrc=null,recentDst=null;
+    Pin recentSrc = null, recentDst = null;
     private static Point2D.Double lassoBegin = null;
     private static Rectangle2D.Double lasso = null;
     static File file = new File("circuit.logic"); // set the default file name and path
@@ -234,6 +234,16 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         JMenu fileMenu = new JMenu("File");
         JMenuItem menuItem;
 
+        menuItem = new JMenuItem("New");
+        menuItem.addActionListener(event -> {
+            if (0!=JOptionPane.showConfirmDialog(null, "Clear existing circuit?")) return;
+            Net.nets.clear();
+            PinGroup.pinGroups.clear();
+            panel.circuit = new Circuit().withStandardBins();
+
+        });
+        fileMenu.add(menuItem);
+
         menuItem = new JMenuItem("Load... (add to existing circuit)");
         menuItem.addActionListener(event -> {
             JFileChooser choice = new JFileChooser(file);
@@ -261,6 +271,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 if (choice.getSelectedFile().exists()) {
                     try {
                         Scanner scan = new Scanner(choice.getSelectedFile());
+                        Net.nets.clear();
+                        PinGroup.pinGroups.clear();
                         panel.circuit = new Circuit().withStandardBins();
                         panel.circuit.fromScanner(scan);
                     } catch (FileNotFoundException ex) {
@@ -372,25 +384,25 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                             PinGroup src = PinGroup.groupOf(recentSrc);
                             PinGroup dst = PinGroup.groupOf(recentDst);
                             PinGroup target = PinGroup.groupOf(pin);
-                            if (src==null) return;
-                            if (dst==null) return;
-                            if (target==null) return;
+                            if (src == null) return;
+                            if (dst == null) return;
+                            if (target == null) return;
                             int iSrc = src.pins.indexOf(recentSrc);
                             int iDst = dst.pins.indexOf(recentDst);
                             int iTarget = target.pins.indexOf(pin);
-                            if (target==src) {
-                                for (int i=iSrc+1,j=iDst+1;i<=iTarget&&i<src.size() && j<dst.size(); i++,j++) {
-                                    addOrRemoveWire(src.pins.get(i),dst.pins.get(j));
+                            if (target == src) {
+                                for (int i = iSrc + 1, j = iDst + 1; i <= iTarget && i < src.size() && j < dst.size(); i++, j++) {
+                                    addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
                                 }
-                                for (int i=iSrc-1,j=iDst-1;i>=iTarget&&i>=0 && j>=0; i--,j--) {
-                                    addOrRemoveWire(src.pins.get(i),dst.pins.get(j));
+                                for (int i = iSrc - 1, j = iDst - 1; i >= iTarget && i >= 0 && j >= 0; i--, j--) {
+                                    addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
                                 }
-                            } else if (target==dst) {
-                                for (int i=iSrc+1,j=iDst+1;j<=iTarget&&i<src.size() && j<dst.size(); i++,j++) {
-                                    addOrRemoveWire(src.pins.get(i),dst.pins.get(j));
+                            } else if (target == dst) {
+                                for (int i = iSrc + 1, j = iDst + 1; j <= iTarget && i < src.size() && j < dst.size(); i++, j++) {
+                                    addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
                                 }
-                                for (int i=iSrc-1,j=iDst-1;j>=iTarget&&i>=0 && j>=0; i--,j--) {
-                                    addOrRemoveWire(src.pins.get(i),dst.pins.get(j));
+                                for (int i = iSrc - 1, j = iDst - 1; j >= iTarget && i >= 0 && j >= 0; i--, j--) {
+                                    addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
                                 }
 
                             }
@@ -401,15 +413,15 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             case 3:
                 PinGroup src = PinGroup.groupOf(recentSrc);
                 PinGroup dst = PinGroup.groupOf(recentDst);
-                if (src==null) return;
-                if (dst==null) return;
+                if (src == null) return;
+                if (dst == null) return;
                 int iSrc = src.pins.indexOf(recentSrc);
                 int iDst = dst.pins.indexOf(recentDst);
-                for (int i=iSrc+1,j=iDst+1;i<src.size() && j<dst.size(); i++,j++) {
-                    addOrRemoveWire(src.pins.get(i),dst.pins.get(j));
+                for (int i = iSrc + 1, j = iDst + 1; i < src.size() && j < dst.size(); i++, j++) {
+                    addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
                 }
-                for (int i=iSrc-1,j=iDst-1;i>=0 && j>=0; i--,j--) {
-                    addOrRemoveWire(src.pins.get(i),dst.pins.get(j));
+                for (int i = iSrc - 1, j = iDst - 1; i >= 0 && j >= 0; i--, j--) {
+                    addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
                 }
                 return;
         }
@@ -595,7 +607,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                             break;
                         }
                         // connect or disconnect ///////////////
-                        addOrRemoveWire(recentSrc=protoWire.src, recentDst=pin);
+                        addOrRemoveWire(recentSrc = protoWire.src, recentDst = pin);
                     }
                 }
             }
