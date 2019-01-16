@@ -70,7 +70,8 @@ public class DMux extends Box {
      * Set output pin values based on input pin values.
      */
     public void operate() {
-        if (wPins.pins.get(0).getInValue().bad) {
+        Signal in = wPins.pins.get(0).getInValue();
+        if (in.bad) {
             for (Pin out : ePins.pins) {
                 out.setOutValue(Signal._X);
             }
@@ -85,7 +86,7 @@ public class DMux extends Box {
             }
         }
         for (int i=0;i<ePins.size();i++) {
-            ePins.pins.get(i).setOutValue(i==sPins.getValue()?_1:_0);
+            ePins.pins.get(i).setOutValue(i==sPins.getValue()?in:_0);
         }
     }
 }
