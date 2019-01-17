@@ -126,6 +126,18 @@ public class Circuit {
         }).start();
     }
 
+    public void removeSelectedParts() {
+        for (Part part : parts) {
+            if (part.isSelected()) for (Pin pin : part.pins) {
+                for (Wire wire : wires) {
+                    if (wire.src == pin || wire.dst == pin) Net.disconnect(wire);
+                }
+                wires.removeIf(wire -> wire.src == pin || wire.dst == pin);
+            }
+        }
+        parts.removeIf(part -> part.isSelected());
+    }
+
     public Circuit withStandardBins() {
         int xPos = 50, yPos = 50;
         for (Part part : new Part[]{

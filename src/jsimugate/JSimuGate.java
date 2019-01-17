@@ -17,6 +17,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.awt.Toolkit.getDefaultToolkit;
+import static java.awt.event.KeyEvent.*;
+
 /**
  * User interface for circuit simulation. This could be an Applet by changing JPanel to JApplet or Applet, etc.
  */
@@ -34,6 +37,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
     private static Point2D.Double lassoBegin = null;
     private static Rectangle2D.Double lasso = null;
     static File file = new File("circuit.logic"); // set the default file name and path
+    static JFrame frame = new JFrame("jSimuGate");
 
     /**
      * Initialize the GUI. Turn on the event listeners and place the part bins on the display.
@@ -42,18 +46,6 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
             if (e.getID() == KeyEvent.KEY_PRESSED) {
                 switch (e.getKeyChar()) {
-                    case 'd':
-                        Log.println(circuit.toString());
-                        break;
-                    case 'n':
-                        Net.dump();
-                        break;
-                    case 'r':
-                        Numbered.renumber();
-                        break;
-                    case 'w':
-                        for (Wire wire : circuit.wires) System.out.println(wire);
-                        break;
                     case '+':
                         for (Part part : circuit.parts)
                             if (part.isSelected()) {
@@ -68,26 +60,27 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                                 else part.decrease();
                             }
                         break;
+
                     default:
                         int step = 4;
                         switch (e.getKeyCode()) {
-                            case KeyEvent.VK_UP:
+                            case VK_UP:
                                 for (Part part : circuit.parts) {
                                     if (part.isSelected()) {
                                         part.transform.scale(1, -1);
                                     }
                                 }
                                 break;
-                            case KeyEvent.VK_DOWN:
+                            case VK_DOWN:
                                 for (Part part : circuit.parts) {
                                     if (part.isSelected()) {
                                         part.transform.scale(-1, 1);
                                     }
                                 }
                                 break;
-                            case KeyEvent.VK_LEFT:
+                            case VK_LEFT:
                                 step = -step; // fall-through
-                            case KeyEvent.VK_RIGHT:
+                            case VK_RIGHT:
                                 if (e.isControlDown()) step *= 3;
                                 if (e.isShiftDown()) step /= 2;
                                 for (Part part : circuit.parts) {
@@ -99,6 +92,15 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                                     }
                                 }
                                 break;
+                            case VK_DELETE:
+                                circuit.removeSelectedParts();
+                                break;
+                            case VK_A: {
+                                if (e.isControlDown()) {
+                                    for (Part part : circuit.parts) part.setSelected(true);
+                                }
+                                break;
+                            }
                         }
                 }
                 Log.println("key down " + e.getKeyChar());
@@ -193,12 +195,17 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
      */
     public static void main(String[] args) throws InstantiationException, IllegalAccessException, SecurityException {
         JSimuGate panel = new JSimuGate();
-        JFrame frame = new JFrame("jSimuGate");
+
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
+                if (0 != JOptionPane.showConfirmDialog(null, "Quit now?")) return;
                 System.exit(0);
             }
         });
+        // Change the icon image
+        ImageIcon img = new ImageIcon("classes/artifacts/jsimugate_jar/innovation-plantation.png");
+        frame.setIconImage(img.getImage());
         frame.setSize(1280, 1024);
         frame.add(panel);
         panel.init();
@@ -236,7 +243,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
         menuItem = new JMenuItem("New");
         menuItem.addActionListener(event -> {
-            if (0!=JOptionPane.showConfirmDialog(null, "Clear existing circuit?")) return;
+            if (0 != JOptionPane.showConfirmDialog(null, "Clear existing circuit?")) return;
             Net.nets.clear();
             PinGroup.pinGroups.clear();
             panel.circuit = new Circuit().withStandardBins();
@@ -324,6 +331,12 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             } catch (FileNotFoundException | UnsupportedEncodingException ex) {
                 JOptionPane.showMessageDialog(panel, ex.getMessage());
             }
+        });
+        fileMenu.add(menuItem);
+
+        menuItem = new JMenuItem("Exit");
+        menuItem.addActionListener(event -> {
+            getDefaultToolkit().getSystemEventQueue().postEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
         });
         fileMenu.add(menuItem);
 
@@ -634,20 +647,15 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
         for (PartsBin bin : circuit.bins) {
             if (bin.at(e.getPoint())) {
-                for (Part part : circuit.parts) {
-                    if (part.isSelected()) for (Pin pin : part.pins) {
-                        for (Wire wire : circuit.wires) {
-                            if (wire.src == pin || wire.dst == pin) Net.disconnect(wire);
-                        }
-                        circuit.wires.removeIf(wire -> wire.src == pin || wire.dst == pin);
-                    }
-                }
-                circuit.parts.removeIf(part -> part.isSelected());
+                circuit.removeSelectedParts();
+                break;
             }
         }
         repaint();
         recentMouseEvent = e;
     }
+
+
 
     /**
      * Handle mouse dragging:
@@ -741,4 +749,5 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         if (filename.matches(".*\\.(logic)?|\".*\"")) return filename;
         return filename + ".logic";
     }
+
 }

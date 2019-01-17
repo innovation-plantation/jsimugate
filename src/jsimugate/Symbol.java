@@ -206,8 +206,10 @@ public class Symbol extends Numbered {
             g.drawString(label, -25, sublabel == null ? 5 : 0);
         }
         if (sublabel != null) {
+            AffineTransform restoreT = g.getTransform();
             g.scale(2.2, 2);
             g.drawString(sublabel, -10, label == null ? 5 : 9);
+            g.setTransform(restoreT);
         }
         g.setStroke(restore);
     }
