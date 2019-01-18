@@ -13,7 +13,7 @@ public class Circuit {
     public ArrayList<Wire> wires = new ArrayList<Wire>();
 
     boolean debug; // when true, generate debug info to standard output
-
+    javax.swing.Timer timer=null;
     /**
      * List of all parts suitable for saving. Inverse of fromString
      *
@@ -92,7 +92,8 @@ public class Circuit {
      * @param repaint
      */
     public void startup(Runnable repaint) {
-        new javax.swing.Timer(10, e -> {
+        if (timer!=null) timer.stop();
+        timer = new javax.swing.Timer(10, e -> {
 
             for (Net net : Net.nets) {
                 Signal wire_value = Signal._Z;
@@ -123,7 +124,8 @@ public class Circuit {
                 part.operate();
             }
             repaint.run();
-        }).start();
+        });
+        timer.start();
     }
 
     public void removeSelectedParts() {

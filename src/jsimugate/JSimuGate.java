@@ -247,7 +247,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             Net.nets.clear();
             PinGroup.pinGroups.clear();
             panel.circuit = new Circuit().withStandardBins();
-
+            panel.circuit.startup(() -> panel.repaint());
         });
         fileMenu.add(menuItem);
 
@@ -282,6 +282,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                         PinGroup.pinGroups.clear();
                         panel.circuit = new Circuit().withStandardBins();
                         panel.circuit.fromScanner(scan);
+                        panel.circuit.startup(() -> panel.repaint());
                     } catch (FileNotFoundException ex) {
                         JOptionPane.showMessageDialog(panel, ex.getMessage());
                     }
