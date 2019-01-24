@@ -1,5 +1,6 @@
 package jsimugate;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.Scanner;
 
@@ -69,8 +70,12 @@ public class ROMemory extends Box {
                 scan.findInLine(" *\\ *([0-9A-Fa-f][0-9A-Fa-f]?) *");
                 int data = Integer.parseInt(scan.match().group(1), 16);
                 System.out.println("Addr: " + addr + "  data:" + data);
-                qSave[addr]=data;
-                addr++;
+                try {
+                    qSave[addr] = data;
+                    addr++;
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    System.err.println("ROM Address out of bounds");
+                }
             } else {
                 if (scan.findInLine(" *\\[ *([0-9A-Fa-f]+) *\\]")!=null) {
                     addr = Integer.parseInt(scan.match().group(1), 16);
@@ -92,10 +97,28 @@ public class ROMemory extends Box {
         for (int addr=0;addr<0x100;addr++) {
             if (qSave[addr]==null) needAddr=true;
             else {
-                if (needAddr) result += " ["+Integer.toHexString(addr)+"]";
+                if (needAddr) {
+                    result += " ["+Integer.toHexString(addr)+"]";
+                    needAddr = false;
+                }
                 result += " " + Integer.toHexString(qSave[addr]);
             }
         }
         return result;
+    }
+
+    /**
+     * Edit the ROM program on double click
+     */
+    public void processDoubleClick(){
+        JTextArea textarea = new JTextArea(10,20);
+        JPanel panel = new JPanel();
+        panel.add(textarea);
+        textarea.setText(getDetails().replaceAll("\\[","\n\\["));
+        if (JOptionPane.showConfirmDialog(null, panel, "ROM Program",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)!=0) return;
+        String newProgram = textarea.getText();
+        if (newProgram==null) return;
+        setDetails(newProgram.replaceAll("\n"," "));
     }
 }

@@ -127,6 +127,9 @@ public class Part extends Symbol {
     public void processChar(char ch) {
     }
 
+    public void processDoubleClick() {
+    }
+
     /**
      * Serialize the part to a string, suitable for saving and restoring using fromScanner.
      *

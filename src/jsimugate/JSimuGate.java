@@ -187,13 +187,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
     /**
      * Start the circuit simulation program
-     *
-     * @param args 1024x1280 --fullscreen would set the dimensions and maximize the window to full-screen.
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws SecurityException
      */
-    public static void main(String[] args) throws InstantiationException, IllegalAccessException, SecurityException {
+    public static void mainProgram(String[] args)  {
         JSimuGate panel = new JSimuGate();
 
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -228,6 +223,9 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             if (s.equals("--fullscreen")) frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         }
 
+    }
+    public static void main(String[] args) {
+        javax.swing.SwingUtilities.invokeLater(() -> {mainProgram(args);} );
     }
 
     /**
@@ -420,7 +418,11 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                                 }
 
                             }
+                            return;
                         }
+                    }
+                    if (part.at(e.getPoint())) {
+                        part.processDoubleClick();
                     }
                 }
                 return;

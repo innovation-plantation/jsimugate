@@ -158,6 +158,8 @@ public class Circuit {
                 new Display(),
                 new SevenSegmentDecoder(),
                 new SevenSegmentLED(),
+                null,
+                new TextLabel(),
 
         }) {
             if (part == null) {
