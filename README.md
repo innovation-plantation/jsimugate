@@ -30,15 +30,12 @@ Hold ctrl while moving selected parts to duplicate them. When storing a circuit,
 before storing to a file, and when you load back to the file, the current circuit will remain
 while the loaded circuit will be highlighted so you can move it where you want it. 
 
-One feature to be added is a quick method for connecting busses. 
-There is also no panning or zooming of the display yet.
-There is also no input/out device and no ROM or method of programming ROMs yet.
-If you need the missing features now, you can use simugate instead of jsimugate.
-simugate is the puthon version of the program.
-But be warned: The two will not have compatible formats for saving parts, though
-they are both text formats so it should be possible to convert by hand if absolutely necessary. 
-Also be aware that simugate is much slower than jsimugate for larger circuits, and the GUI is quite different. 
-In essence, simugate served as a prototype for jsimugate.
+Double-click a ROM to modify the program. Addresses and data are all hexadecimal.
+Square brackets surrounding address values distinguish addresses from data.
+
+There is no panning or zooming of the display yet.
+
+Simugate, written in Python served as a prototype for jSimugate.
 
 Visit the Wiki at https://github.com/innovation-plantation/jsimugate/wiki
 
