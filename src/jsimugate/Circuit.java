@@ -152,7 +152,7 @@ public class Circuit {
                 new Clk(), new RingCounter(), new Counter(),
                 new Decoder(), new Mux(), new DMux(),
                 new LevelTrigSR(), new LevelTrigD(), new EdgeTrigD(),
-                new Adder(), new Alu(), new ROMemory("[80] 55 aa 55 aa 55 aa 55 aa"),
+                new Adder(), new Alu(), new ROMemory("[F0] abad deed cafe babe feed face dead beef"),
                 new Keyboard(), new RegisterFile(), new Memory(),
                 null,
                 new Display(),

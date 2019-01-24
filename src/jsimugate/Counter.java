@@ -97,12 +97,12 @@ public class Counter extends Box {
             return;
         }
         if (oldClk.lo && newClk.hi) {
-            ePins.setValue(number);
             if (oldClk.hi != clk.getInValue().hi) {
                 number++;
                 number %= 1 << ePins.size();
                 if (ld.getInValue().hi) number = wPins.getValue();
             }
+            ePins.setValue(number);
         }
         oldClk = newClk;
     }
