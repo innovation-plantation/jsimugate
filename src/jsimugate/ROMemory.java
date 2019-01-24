@@ -119,6 +119,7 @@ public class ROMemory extends Box {
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)!=0) return;
         String newProgram = textarea.getText();
         if (newProgram==null) return;
+        for (int i=0;i<0x100;i++) qSave[i]=null;
         setDetails(newProgram.replaceAll("\n"," "));
     }
 }
