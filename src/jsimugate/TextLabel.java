@@ -41,4 +41,11 @@ public class TextLabel extends Part {
         label = newLabel;
         shape = defaultShape; // trigger recalculating the new shape within the graphics context
     }
+
+    public void setDetails(String details) {
+        label = details;
+    }
+    public String getDetails() {
+        return label;
+    }
 }
