@@ -243,6 +243,12 @@ public class Part extends Symbol {
     public Part convert() {
         return this;
     }
+    /**
+     * Convert to an equivalent symbol such by DeMorganizing
+     */
+    public Part reversePolarity() {
+        return this;
+    }
 
     /**
      * Make a duplicate copy of this part at the specified location.
@@ -256,4 +262,5 @@ public class Part extends Symbol {
         result.transform.setToTranslation(x, y);
         return result;
     }
+
 }

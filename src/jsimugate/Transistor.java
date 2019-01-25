@@ -3,6 +3,7 @@ package jsimugate;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
+import java.util.Scanner;
 
 /**
  * Bipolar Junction Transistors for digital switching circuits: NPN: Emitter
@@ -89,4 +90,11 @@ public class Transistor extends Discrete {
         this.c.setOutValue(tt[e.getInValue().ordinal()][b.getInValue().ordinal()]);
     }
 
+    public Part reversePolarity() {
+        Transistor newPart = (Transistor)super.reversePolarity();
+        newPart.b=b;
+        newPart.c=c;
+        newPart.e=e;
+        return newPart;
+    }
 }

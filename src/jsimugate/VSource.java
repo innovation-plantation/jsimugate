@@ -6,7 +6,7 @@ import java.awt.*;
  * Implementation of a voltage-source component
  */
 public class VSource extends Discrete {
-    private Pin pin;
+    Pin pin;
 
     /**
      * Create the component
@@ -18,6 +18,7 @@ public class VSource extends Discrete {
         this.fill = Color.red;
         this.pin = this.addPin(new Pin(0, 5).down(15, false));
         this.name = "SOURCE";
+        opposite=VGround.class.getSimpleName();
     }
 
     /**
@@ -25,5 +26,13 @@ public class VSource extends Discrete {
      */
     public void operate() {
         this.pin.setOutValue(Signal._1);
+    }
+
+    public Part reversePolarity() {
+        this.pin.transform.setToTranslation(0, 0);
+        this.pin.up(15,false);
+        VGround newPart = (VGround)super.reversePolarity();
+        newPart.pin = pin;
+        return newPart;
     }
 }

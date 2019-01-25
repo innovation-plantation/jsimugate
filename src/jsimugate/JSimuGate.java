@@ -472,7 +472,12 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                     {
                         addActionListener(e -> {
                             for (Part part : circuit.parts) {
-                                if (part.isSelected()) circuit.parts.set(circuit.parts.indexOf(part), part.convert());
+                                if (part.isSelected()) {
+                                    Part newPart=part.convert();
+                                    newPart.setSelected(true);
+                                    circuit.parts.set(circuit.parts.indexOf(part),newPart);
+
+                                }
                             }
                             display.repaint();
                         });
@@ -483,15 +488,29 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                         {
                             addActionListener(e -> {
                                 for (Part part : circuit.parts) {
-                                    if (part.isSelected())
+                                    if (part.isSelected()) {
                                         circuit.parts.set(circuit.parts.indexOf(part), part.asTech(tech));
+                                    }
                                 }
                                 display.repaint();
                             });
                         }
                     });
                 }
-
+                menu.add(new JMenuItem("Reverse Polarity") {
+                    {
+                        addActionListener(e -> {
+                            for (Part part : circuit.parts) {
+                                if (part.isSelected()) {
+                                    Part newPart=part.reversePolarity();
+                                    newPart.setSelected(true);
+                                    circuit.parts.set(circuit.parts.indexOf(part),newPart);
+                                }
+                            }
+                            display.repaint();
+                        });
+                    }
+                });
                 menu.show(this, e.getX(), e.getY());
             }
         }

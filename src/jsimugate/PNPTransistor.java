@@ -1,6 +1,7 @@
 package jsimugate;
 
 import java.awt.*;
+import java.util.Scanner;
 
 /**
  * Implementation of a PNP transistor. The emitter and base are pins, and the collector is an output.
@@ -13,9 +14,11 @@ public class PNPTransistor extends Transistor {
      */
     public PNPTransistor() {
         super();
-        this.arrow = pnp_arrow;
-        this.name = "PNP";
-        this.tt = Logic.pnp_tt;
-        this.color = Color.red;
+        arrow = pnp_arrow;
+        name = "PNP";
+        tt = Logic.pnp_tt;
+        color = Color.red;
+        opposite = NPNTransistor.class.getSimpleName();
     }
+
 }

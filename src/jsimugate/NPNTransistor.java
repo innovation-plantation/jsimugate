@@ -14,5 +14,6 @@ public class NPNTransistor extends Transistor {
         this.arrow = npn_arrow;
         this.name = "NPN";
         this.tt = Logic.npn_tt;
+        opposite = PNPTransistor.class.getSimpleName();
     }
 }

@@ -7,7 +7,7 @@ import java.util.Scanner;
  */
 public class PulldownResistor extends Discrete {
 
-    private Pin pin;
+    Pin pin;
     Signal value;
 
     /**
@@ -20,6 +20,7 @@ public class PulldownResistor extends Discrete {
         this.pin = this.addPin(new Pin(0, -20));
         this.name = "PULLDN";
         setValue(Signal._L);
+        opposite=PullupResistor.class.getSimpleName();
     }
 
     /**
@@ -76,5 +77,11 @@ public class PulldownResistor extends Discrete {
     public String getDetails() {
         if (value != Signal._L) return value.toString();
         else return super.getDetails();
+    }
+    public Part reversePolarity() {
+        pin.transform.setToTranslation(0,20);
+        PullupResistor newPart = (PullupResistor)super.reversePolarity();
+        newPart.pin = pin;
+        return newPart;
     }
 }
