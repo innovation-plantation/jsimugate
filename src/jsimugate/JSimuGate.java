@@ -104,8 +104,10 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                         }
                 }
                 Log.println("key down " + e.getKeyChar());
-                for (Part part : circuit.parts) {
-                    if (part.isSelected()) part.processChar(Character.toUpperCase(e.getKeyChar()));
+                if (!e.isAltDown() && !e.isControlDown()) {
+                    for (Part part : circuit.parts) {
+                        if (part.isSelected()) part.processChar(Character.toUpperCase(e.getKeyChar()));
+                    }
                 }
             } else if (e.getID() == KeyEvent.KEY_RELEASED) {
                 Log.println("key up");
@@ -188,7 +190,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
     /**
      * Start the circuit simulation program
      */
-    public static void mainProgram(String[] args)  {
+    public static void mainProgram(String[] args) {
         JSimuGate panel = new JSimuGate();
 
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -224,8 +226,11 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         }
 
     }
+
     public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(() -> {mainProgram(args);} );
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            mainProgram(args);
+        });
     }
 
     /**
@@ -583,6 +588,11 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
         // if there's no hit, start dragging
         if (topHit == null) {
+            // if there's no modifier keys, clear the selection
+            if (!e.isAltDown() && !e.isControlDown() && !e.isShiftDown()) {
+                for (Part part : circuit.parts) part.setSelected(false);
+            }
+
             // for no hits, begin lasso
             lassoBegin = new Point2D.Double(e.getX(), e.getY());
             lasso = new Rectangle2D.Double(e.getX(), e.getY(), 0, 0);
@@ -657,7 +667,6 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         repaint();
         recentMouseEvent = e;
     }
-
 
 
     /**
