@@ -3,7 +3,6 @@ package jsimugate;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
-import java.util.Scanner;
 
 /**
  * Bipolar Junction Transistors for digital switching circuits: NPN: Emitter
@@ -17,28 +16,14 @@ public class Transistor extends Discrete {
 
     static final Ellipse2D circle = new Ellipse2D.Double(-15, 15, 30, 30);
     static final GeneralPath resistor = Artwork.zigzagShape();
-    static final GeneralPath npn_arrow = new GeneralPath(), pnp_arrow = new GeneralPath();
-    private Pin b, c, e;
-    protected GeneralPath arrow;
+
+    Pin b, c, e;
     protected Signal[][] tt;
 
-    /**
-     * Set up path in advance for these shapes.
-     */
-    static {
-        // NPN arrow (points outwards toward the bottom left)
-        npn_arrow.moveTo(-10 + 3, 40 - 6);
-        npn_arrow.lineTo(-10 - 1.5, 40 - 10.5);
-        npn_arrow.lineTo(-10 + 0, 40 - 0);
-        npn_arrow.lineTo(-10 + 9, 40 - 4.5);
-        npn_arrow.closePath();
 
-        // PNP arrow (points inwards from the bottom left)
-        pnp_arrow.moveTo(-5 - 3, 30 + 6);
-        pnp_arrow.lineTo(-5 + 1.5, 30 + 10.5);
-        pnp_arrow.lineTo(-5 + 0, 30 + 0);
-        pnp_arrow.lineTo(-5 - 9, 30 + 4.5);
-        pnp_arrow.closePath();
+    public void drawEmitter(Graphics2D g) {
+        g.setColor(b.getInValue().fgColor);
+        g.drawLine(-5, 30, -10, 40);
     }
 
     /**
@@ -64,23 +49,24 @@ public class Transistor extends Discrete {
     public void drawAtOrigin(Graphics2D g) {
         super.drawAtOrigin(g);
         g.setStroke(defaultStroke);
+
+        // Emitter (left)
+        g.setColor(e.getInValue().fgColor);
+        g.drawLine(-10, 40, -20, 40);
+        drawEmitter(g);
+
+        // Collector (right)
+        g.setColor(c.getOutValue().fgColor);
+        g.drawLine(5, 30, 10, 40);
+        //g.setColor(c.getInValue().fgColor);
+        g.drawLine(10, 40, 20, 40);
+
         // base (top)
         g.setColor(b.getInValue().fgColor);
         g.drawLine(0, 15, 0, 25);
         g.fillRect(-10, 25, 20, 5);
         g.draw(resistor);
 
-        // Emitter (left)
-        g.setColor(e.getInValue().fgColor);
-        g.drawLine(-5, 30, -10, 40);
-        g.drawLine(-10, 40, -20, 40);
-        g.fill(arrow);
-
-        // Collector (right)
-        g.setColor(c.getOutValue().fgColor);
-        g.drawLine(5, 30, 10, 40);
-        g.setColor(c.getInValue().fgColor);
-        g.drawLine(10, 40, 20, 40);
     }
 
     /**
@@ -91,10 +77,10 @@ public class Transistor extends Discrete {
     }
 
     public Part reversePolarity() {
-        Transistor newPart = (Transistor)super.reversePolarity();
-        newPart.b=b;
-        newPart.c=c;
-        newPart.e=e;
+        Transistor newPart = (Transistor) super.reversePolarity();
+        newPart.b = b;
+        newPart.c = c;
+        newPart.e = e;
         return newPart;
     }
 }
