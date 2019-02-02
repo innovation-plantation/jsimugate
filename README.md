@@ -33,7 +33,12 @@ while the loaded circuit will be highlighted so you can move it where you want i
 Double-click a ROM to modify the program. Addresses and data are all hexadecimal.
 Square brackets surrounding address values distinguish addresses from data.
 
-There is no panning or zooming of the display yet.
+Zooming and panning works naturally with a space mouse. 
+Just push in the direction that you want the viewer to move in three dimensions. 
+
+You can also zoom and out in by holding the Ctrl key while pressing +/-, or while scrolling the mouse wheel.
+Zooming is centered around the mouse, so panning can be done by zooming.
+To pan, zoom out with the mouse on one side of the screen, and zoom back in with the mouse on the opposite side of the screen.
 
 Simugate, written in Python served as a prototype for jSimugate.
 
