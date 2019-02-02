@@ -9,10 +9,10 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,15 +38,40 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
     private static Rectangle2D.Double lasso = null;
     static File file = new File("circuit.logic"); // set the default file name and path
     static JFrame frame = new JFrame("jSimuGate");
+    static final AffineTransform identity = new AffineTransform();
+    static double scaleUnit = Math.sqrt(Math.sqrt(Math.sqrt(2))), inverseScaleUnit = 1 / scaleUnit;
 
     /**
      * Initialize the GUI. Turn on the event listeners and place the part bins on the display.
      */
     public void init() {
+        this.addMouseWheelListener(e -> {
+            if (e.isControlDown()) {
+                int x = e.getX(), y = e.getY();
+                AffineTransform t = AffineTransform.getTranslateInstance(x, y);
+                for (int i = 0; i < e.getWheelRotation(); i++) t.scale(inverseScaleUnit, inverseScaleUnit);
+                for (int j = 0; j > e.getWheelRotation(); j--) t.scale(scaleUnit, scaleUnit);
+                t.translate(-x, -y);
+                for (Part part : circuit.parts) {
+                    part.transform.preConcatenate(t);
+                }
+            }
+            if (e.isShiftDown()) {
+                for (Part part : circuit.parts) {
+                    for (int i = 0; i < e.getWheelRotation(); i++) part.decrease();
+                    for (int j = 0; j > e.getWheelRotation(); j--) part.increase();
+                }
+            }
+        });
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
             if (e.getID() == KeyEvent.KEY_PRESSED) {
                 switch (e.getKeyChar()) {
                     case '+':
+                        if (e.isControlDown()) {
+                            int x = recentMouseEvent.getX(), y = recentMouseEvent.getY();
+                            circuit.scale(scaleUnit,x,y);
+                            break;
+                        }
                         for (Part part : circuit.parts)
                             if (part.isSelected()) {
                                 if (e.isAltDown()) part.transform.scale(2, 2);
@@ -54,6 +79,11 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                             }
                         break;
                     case '-':
+                        if (e.isControlDown()) {
+                            int x = recentMouseEvent.getX(), y = recentMouseEvent.getY();
+                            circuit.scale(inverseScaleUnit,x,y);
+                            break;
+                        }
                         for (Part part : circuit.parts)
                             if (part.isSelected()) {
                                 if (e.isAltDown()) part.transform.scale(.5, .5);
@@ -125,6 +155,33 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
         updateImageSize();
         circuit.startup(() -> repaint()); // repaint this component whenever the circuit is updated
+        File spaceNavigator = new File("/dev/hidraw2");
+        if (spaceNavigator.exists()&&spaceNavigator.canRead()) {
+            try {
+                FileInputStream stream = new FileInputStream(spaceNavigator);
+                byte[] bytes=new byte[7];
+                ByteBuffer packet = ByteBuffer.allocateDirect(bytes.length);
+                packet.order(ByteOrder.LITTLE_ENDIAN);
+                new Thread(() -> {
+                    for (;;) {
+                        try {
+                            if (stream.read(bytes) < 0) continue;
+                            packet.rewind();
+                            packet.put(bytes);
+                            packet.rewind();
+                            if (packet.get()!=1) continue;
+                            int dx=packet.getShort(),dy=packet.getShort(),dz=packet.getShort();
+                            System.out.printf("%04d %04d %04d \n",dx,dy,dz);
+                            int x=getWidth()/2,y=getHeight()/2;
+                            circuit.scale(1+dz*.0001,x,y);
+                            circuit.translate(-dx*.05,-dy*.05);
+                        } catch (IOException ex) {
+                        }
+                    }
+                }).start();
+            } catch (IOException ex) {}
+
+        }
     }
 
     /**
@@ -473,9 +530,9 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                         addActionListener(e -> {
                             for (Part part : circuit.parts) {
                                 if (part.isSelected()) {
-                                    Part newPart=part.convert();
+                                    Part newPart = part.convert();
                                     newPart.setSelected(true);
-                                    circuit.parts.set(circuit.parts.indexOf(part),newPart);
+                                    circuit.parts.set(circuit.parts.indexOf(part), newPart);
 
                                 }
                             }
@@ -502,9 +559,9 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                         addActionListener(e -> {
                             for (Part part : circuit.parts) {
                                 if (part.isSelected()) {
-                                    Part newPart=part.reversePolarity();
+                                    Part newPart = part.reversePolarity();
                                     newPart.setSelected(true);
-                                    circuit.parts.set(circuit.parts.indexOf(part),newPart);
+                                    circuit.parts.set(circuit.parts.indexOf(part), newPart);
                                 }
                             }
                             display.repaint();
@@ -651,7 +708,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                             // Don't connect pin to self
                             break;
                         }
-                        // connect or disconnect ///////////////
+                        // connect or disconnect
                         addOrRemoveWire(recentSrc = protoWire.src, recentDst = pin);
                     }
                 }
@@ -756,6 +813,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
                 }
             }
+
 
             int dx = e.getX() - recentMouseEvent.getX();
             int dy = e.getY() - recentMouseEvent.getY();

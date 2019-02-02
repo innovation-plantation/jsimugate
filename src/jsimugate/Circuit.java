@@ -1,6 +1,7 @@
 package jsimugate;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.*;
 
@@ -13,7 +14,8 @@ public class Circuit {
     public ArrayList<Wire> wires = new ArrayList<Wire>();
 
     boolean debug; // when true, generate debug info to standard output
-    javax.swing.Timer timer=null;
+    javax.swing.Timer timer = null;
+
     /**
      * List of all parts suitable for saving. Inverse of fromString
      *
@@ -71,14 +73,17 @@ public class Circuit {
      * @param g
      */
     public void render(Graphics2D g) {
+
         for (Part part : parts) {
             part.draw(g);
             for (Pin pin : part.pins) {
                 pin.setInValue(Signal._Z);
             }
         }
+      //  g.setTransform(AffineTransform.getRotateInstance(0));
 
         for (Wire wire : wires) wire.draw(g);
+
 
         for (PartsBin bin : bins) {
             bin.draw(g);
@@ -92,7 +97,7 @@ public class Circuit {
      * @param repaint
      */
     public void startup(Runnable repaint) {
-        if (timer!=null) timer.stop();
+        if (timer != null) timer.stop();
         timer = new javax.swing.Timer(10, e -> {
 
             for (Net net : Net.nets) {
@@ -174,6 +179,18 @@ public class Circuit {
             }
         }
         return this;
-
+    }
+    public void scale(double scaleFactor,double x,double y) {
+        AffineTransform t = AffineTransform.getTranslateInstance(x, y);
+        t.scale(scaleFactor, scaleFactor);
+        t.translate(-x, -y);
+        for (Part part : parts) {
+            part.transform.preConcatenate(t);
+        }
+    }
+    public void translate(double x,double y) {
+        for (Part part : parts) {
+            part.transform.preConcatenate(AffineTransform.getTranslateInstance(x, y));
+        }
     }
 }
