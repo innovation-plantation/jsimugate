@@ -111,12 +111,19 @@ public class ROMemory extends Box {
      * Edit the ROM program on double click
      */
     public void processDoubleClick(){
-        JTextArea textarea = new JTextArea(10,20);
+        JTextArea textarea = new JTextArea(40,80);
         JPanel panel = new JPanel();
-        panel.add(textarea);
+        JScrollPane scroller = new JScrollPane(textarea);
+        panel.add(scroller);
         textarea.setText(getDetails().replaceAll("\\[","\n\\["));
-        if (JOptionPane.showConfirmDialog(null, panel, "ROM Program",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)!=0) return;
+
+        try {
+            editing = true;
+            if (JOptionPane.showConfirmDialog(null, panel, "ROM Program",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != 0) return;
+        } finally {
+            editing = false;
+        }
         String newProgram = textarea.getText();
         if (newProgram==null) return;
         for (int i=0;i<0x100;i++) qSave[i]=null;

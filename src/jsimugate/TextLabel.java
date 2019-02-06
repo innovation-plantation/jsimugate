@@ -8,43 +8,52 @@ import java.awt.*;
  */
 public class TextLabel extends Part {
     Shape defaultShape;
+
     public TextLabel() {
-        name="TEXT";
-        label="T";
+        name = "TEXT";
+        label = "T";
         this.color = this.fill = null;
         defaultShape = shape;
     }
 
     /**
      * Just draw the text, but highlight it if it's selected.
+     *
      * @param g graphics context for drawing
      */
     public void drawAtOrigin(Graphics2D g) {
-        if (shape==defaultShape) {
-            setShape(g.getFontMetrics().getStringBounds(label,g));
+        if (shape == defaultShape) {
+            setShape(g.getFontMetrics().getStringBounds(label, g));
         }
         if (isSelected()) {
             g.setColor(highlightColor);
             g.fill(hitbox);
         }
         g.setColor(Color.black);
-        g.drawString(label,0,0);
+        g.drawString(label, 0, 0);
     }
 
     /**
      * Upon double-clicking, accept new text for the label
      */
-    public void processDoubleClick(){
-        String newLabel = JOptionPane.showInputDialog(null, "Enter new text:",
-                        "Text Label", 1);
-        if (newLabel==null || newLabel.matches(" *")) return;
-        label = newLabel;
+    public void processDoubleClick() {
+        try {
+            editing = true;
+            String newLabel = JOptionPane.showInputDialog(null, "Enter new text:",
+                    "Text Label", 1);
+
+            if (newLabel == null || newLabel.matches(" *")) return;
+            label = newLabel;
+        } finally {
+            editing = false;
+        }
         shape = defaultShape; // trigger recalculating the new shape within the graphics context
     }
 
     public void setDetails(String details) {
         label = details;
     }
+
     public String getDetails() {
         return label;
     }
