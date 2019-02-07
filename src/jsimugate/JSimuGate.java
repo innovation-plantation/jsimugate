@@ -37,7 +37,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
     private static Point2D.Double lassoBegin = null;
     private static Rectangle2D.Double lasso = null;
     static File file = new File("circuit.logic"); // set the default file name and path
-    static JFrame frame = new JFrame("jSimuGate 0.3");
+    static JFrame frame = new JFrame("jSimuGate 0.4");
     static final AffineTransform identity = new AffineTransform();
     static double scaleUnit = Math.sqrt(Math.sqrt(Math.sqrt(2))), inverseScaleUnit = 1 / scaleUnit;
 
@@ -457,11 +457,43 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 for (Part part : circuit.parts) {
                     for (Pin pin : part.pins) {
                         if (pin.at(e.getPoint())) {
+                            if (recentSrc==null || recentDst==null) return;
                             PinGroup src = PinGroup.groupOf(recentSrc);
                             PinGroup dst = PinGroup.groupOf(recentDst);
                             PinGroup target = PinGroup.groupOf(pin);
-                            if (src == null) return;
-                            if (dst == null) return;
+                            if (src==null && dst==null) return;
+                            // if one end is not a group, duplicate its part for each pin in group
+                            Part template=null;
+                            PinGroup group=null;
+                            Pin templatePin=null;
+                            if (src == null) {
+                                template = (Part)recentSrc.parent;
+                                group = dst;
+                                templatePin = recentDst;
+                            }
+                            if (dst == null) {
+                                template = (Part)recentDst.parent;
+                                group = src;
+                                templatePin = recentSrc;
+                            }
+                            if (template!=null) {
+                                if (template.pins.size()!=1) return; // only duplicate single-pin parts.
+                                for (Pin p:group.pins) {
+                                    if (p==templatePin) continue;
+                                    // find dx and dy between p and templatePin
+                                    AffineTransform  a=templatePin.gTransform, b=p.gTransform;
+                                    double dx = b.getTranslateX()-a.getTranslateX();
+                                    double dy = b.getTranslateY()-a.getTranslateY();
+                                    // duplicate template that distance from its origin
+                                    Part newPart = template.dup(0,0);
+                                    newPart.transform.setTransform(template.gTransform);
+                                    newPart.transform.preConcatenate(AffineTransform.getTranslateInstance(dx,dy));
+                                    circuit.parts.add(newPart);
+                                    // wire the duplicated part to p
+                                    addOrRemoveWire(p,newPart.pins.get(0));
+                                }
+                                return;
+                            }
                             if (target == null) return;
                             int iSrc = src.pins.indexOf(recentSrc);
                             int iDst = dst.pins.indexOf(recentDst);

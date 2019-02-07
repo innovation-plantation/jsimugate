@@ -15,6 +15,7 @@ public class RegisterFile extends Box {
     Pin wClkIn, rdEnaIn;
     private Integer[] qSave = new Integer[]{null, null, null, null, null, null, null, null};
     Signal prevClk = _X;
+    Signal[] aSave = new Signal[3],dSave=new Signal[8];
 
     public RegisterFile() {
         label = "REG FILE";
@@ -50,14 +51,15 @@ public class RegisterFile extends Box {
     /**
      * Update the outputs and state based on the input pins and the state.
      */
+    int sel;
+    boolean selValid;
+    int inData;
+    boolean goodInData;
     public void operate() {
         Signal clk = wClkIn.getInValue();
         Signal rd = rdEnaIn.getInValue();
-        int sel = sPins.getValue();
-        boolean selValid = sPins.goodValue();
         if (clk.hi && prevClk.lo) { // handle write pulse
-            boolean goodInData = wPins.goodValue();
-            if (selValid) qSave[sel] = goodInData ? wPins.getValue() : null;
+            if (selValid) qSave[sel] = goodInData ? inData : null;
             else for (int i = 0; i < 8; i++) qSave[i] = null;
         }
         if (rd.hi) {
@@ -66,5 +68,8 @@ public class RegisterFile extends Box {
             else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_X);
         } else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_Z);
         prevClk = clk;
+        if (selValid = sPins.goodValue()) sel = sPins.getValue();
+        if (goodInData = wPins.goodValue()) inData = wPins.getValue();
+
     }
 }

@@ -10,7 +10,7 @@ import static jsimugate.Signal.*;
  */
 public class EdgeTrigD extends Box {
     Pin clkIn, rstIn;
-    private ArrayList<Signal> qSave = new ArrayList<Signal>();
+    private ArrayList<Signal> qSave = new ArrayList<Signal>(),dSave=new ArrayList<Signal>();
     Signal prevClk = _X;
 
     /**
@@ -23,6 +23,7 @@ public class EdgeTrigD extends Box {
         resize(); // must resize between adding horizontally and vertically.
         addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
         addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
+        dSave.add(_X);
         qSave.add(_X);
         resize();
     }
@@ -48,7 +49,8 @@ public class EdgeTrigD extends Box {
         Signal clk = clkIn.getInValue();
         Signal rst = rstIn.getInValue();
         for (int i = 0; i < wPins.size(); i++) {
-            Signal d = wPins.pins.get(i).getInValue();
+            Signal d = dSave.get(i);
+            dSave.set(i,wPins.pins.get(i).getInValue());
             if (rst.hi) qSave.set(i, _0);
             if (rst.bad || clk.bad) qSave.set(i, _X);
             else if (clk.hi && prevClk.lo) {
@@ -67,6 +69,7 @@ public class EdgeTrigD extends Box {
     public void increase() {
         addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
         addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
+        dSave.add(_X);
         qSave.add(_X);
         resize();
     }
@@ -81,6 +84,7 @@ public class EdgeTrigD extends Box {
         if (Net.directConnections(wPins.pins.get(n - 1)).size() > 0) return;
         removePin(wPins.removePinVertically());
         removePin(ePins.removePinVertically());
+        dSave.remove(dSave.size() - 1);
         qSave.remove(qSave.size() - 1);
         resize();
 

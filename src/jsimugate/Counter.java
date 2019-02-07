@@ -10,6 +10,8 @@ public class Counter extends Box {
     Pin ld, rst, clk;
     int number;
     Signal oldClk = null;
+    int dSave;
+    Signal ldSave;
 
     public Counter() {
         label = "CTR";
@@ -100,10 +102,12 @@ public class Counter extends Box {
             if (oldClk.hi != clk.getInValue().hi) {
                 number++;
                 number %= 1 << ePins.size();
-                if (ld.getInValue().hi) number = wPins.getValue();
+                if (ldSave.hi) number = dSave;
             }
             ePins.setValue(number);
         }
         oldClk = newClk;
+        dSave = wPins.getValue();
+        ldSave = ld.getInValue();
     }
 }
