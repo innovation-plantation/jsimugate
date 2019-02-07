@@ -190,10 +190,13 @@ public class PinGroup {
      *
      * @return the integer number converted from binary.
      */
-    public int getValue() {
-        int result = 0;
-        for (int n = 0; n < pins.size(); n++) result += pins.get(n).getInValue().asBit() << n;
+    public long getLongValue() {
+        long result = 0;
+        for (int n = 0; n < pins.size(); n++) result += (long)pins.get(n).getInValue().asBit() << n;
         return result;
+    }
+    public int getValue() {
+        return (int)getLongValue();
     }
 
     public boolean goodValue() {

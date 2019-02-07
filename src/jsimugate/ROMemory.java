@@ -3,13 +3,14 @@ package jsimugate;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import static jsimugate.Signal._X;
 import static jsimugate.Signal._Z;
 
 public class ROMemory extends Box {
     Pin wClkIn, rdEnaIn;
-    private Integer[] qSave = new Integer[256];
+    private ConcurrentSkipListMap<Long,Integer> qSave = new ConcurrentSkipListMap<Long,Integer>();
     Signal prevClk = _X;
 
 
@@ -18,12 +19,14 @@ public class ROMemory extends Box {
      */
     public ROMemory() {
         name = "ROM";
+        rdEnaIn = addPin(sPins.addPinHorizontally()).down(30).translate(0, height + 30);
+        resize();
         for (int i = 0; i < 8; i++) {
-            addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
             addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
         }
-        resize();
-        rdEnaIn = addPin(sPins.addPinHorizontally()).down(30).translate(0, height + 30);
+        for (int i = 0; i < 8; i++) {
+            addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
+        }
         resize();
     }
     public ROMemory(String data) {
@@ -49,10 +52,10 @@ public class ROMemory extends Box {
      */
     public void operate() {
         Signal rd = rdEnaIn.getInValue();
-        int sel = wPins.getValue();
+        Long sel = wPins.getLongValue();
         boolean selValid = wPins.goodValue();
         if (rd.hi) {
-            Integer value = qSave[sel];
+            Integer value = qSave.get(sel);
             if (selValid && value != null) ePins.setValue(value);
             else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_X);
         } else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_Z);
@@ -64,21 +67,17 @@ public class ROMemory extends Box {
      */
     public void setDetails(String details) {
         Scanner scan = new Scanner(details);
-        int addr = 0;
+        long  addr = 0;
         while (scan.hasNext()) {
             if (scan.hasNextInt(16) ) {
                 scan.findInLine(" *\\ *([0-9A-Fa-f][0-9A-Fa-f]?) *");
                 int data = Integer.parseInt(scan.match().group(1), 16);
                 System.out.println("Addr: " + addr + "  data:" + data);
-                try {
-                    qSave[addr] = data;
-                    addr++;
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    System.err.println("ROM Address out of bounds");
-                }
+                qSave.put(addr,data);
+                addr++;
             } else {
                 if (scan.findInLine(" *\\[ *([0-9A-Fa-f]+) *\\]")!=null) {
-                    addr = Integer.parseInt(scan.match().group(1), 16);
+                    addr = Long.parseUnsignedLong(scan.match().group(1), 16);
                     System.out.println("ADDR:" + addr);
                 }
             }
@@ -89,19 +88,18 @@ public class ROMemory extends Box {
     /**
      * deserialize
      *
-     * @return details formatted like 0Hz or 0Sec if value>1
+     * @return details formatted like [f0] de ad be ef ca fe
      */
     public String getDetails() {
-        boolean needAddr=true;
+        Long nextAddr=null;
         String result="";
-        for (int addr=0;addr<0x100;addr++) {
-            if (qSave[addr]==null) needAddr=true;
-            else {
-                if (needAddr) {
-                    result += " ["+Integer.toHexString(addr)+"]";
-                    needAddr = false;
+        for (long addr:qSave.keySet()) {
+            if (qSave.get(addr)!=null) {
+                if (nextAddr==null || addr != nextAddr) {
+                    result += " ["+Long.toHexString(addr)+"]";
                 }
-                result += " " + Integer.toHexString(qSave[addr]);
+                result += " " + Integer.toHexString(qSave.get(addr));
+                nextAddr = addr+1L;
             }
         }
         return result;
@@ -126,7 +124,23 @@ public class ROMemory extends Box {
         }
         String newProgram = textarea.getText();
         if (newProgram==null) return;
-        for (int i=0;i<0x100;i++) qSave[i]=null;
+        qSave.clear();
         setDetails(newProgram.replaceAll("\n"," "));
+    }
+
+    /**
+     * Grow the address bus
+     */
+    public void increase() {
+        if (wPins.size()<63) addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
+        resize();
+    }
+
+    /**
+     * Shrink the address bus
+     */
+    public void decrease() {
+        removePin(wPins.removePinVertically());
+        resize();
     }
 }

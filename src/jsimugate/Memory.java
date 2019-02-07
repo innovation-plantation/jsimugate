@@ -1,6 +1,7 @@
 package jsimugate;
 
 import java.awt.*;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import static jsimugate.Signal._X;
 import static jsimugate.Signal._Z;
@@ -10,7 +11,7 @@ import static jsimugate.Signal._Z;
  */
 public class Memory extends Box {
     Pin wClkIn, rdEnaIn;
-    private Integer[] qSave = new Integer[256];
+    private ConcurrentSkipListMap<Long,Integer> qSave = new ConcurrentSkipListMap<Long,Integer>();
     Signal prevClk = _X;
 
     /**
@@ -18,13 +19,15 @@ public class Memory extends Box {
      */
     public Memory() {
         name = "RAM";
-        for (int i = 0; i < 8; i++) {
-            addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
-            addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
-        }
-        resize();
         rdEnaIn = addPin(sPins.addPinHorizontally()).down(30).translate(0, height + 30);
         wClkIn = addPin(sPins.addPinHorizontally()).down(30).translate(0, height + 30);
+        resize();
+        for (int i = 0; i < 8; i++) {
+            addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
+        }
+        for (int i = 0; i < 8; i++) {
+            addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
+        }
         resize();
     }
 
@@ -50,20 +53,39 @@ public class Memory extends Box {
     public void operate() {
         Signal clk = wClkIn.getInValue();
         Signal rd = rdEnaIn.getInValue();
-        int sel = wPins.getValue();
+        long sel = wPins.getLongValue();
         boolean selValid = wPins.goodValue();
         if (clk.hi && prevClk.lo) { // handle write pulse
             boolean goodInData = ePins.goodValue();
-            if (selValid) qSave[sel] = goodInData ? ePins.getValue() : null;
-            else for (int i = 0; i < 8; i++) qSave[i] = null;
+            if (selValid) {
+                if (goodInData) qSave.put(sel,ePins.getValue());
+                else qSave.remove(sel);
+            }
+            else qSave.clear();
             Log.print("WR data " + (goodInData ? "+" : "*") + ePins.getValue());
             Log.println(" to " + (selValid ? "+" : "*") + sel);
         }
         if (rd.hi) {
-            Integer value = qSave[sel];
+            Integer value = qSave.get(sel);
             if (selValid && value != null) ePins.setValue(value);
             else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_X);
         } else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_Z);
         prevClk = clk;
+    }
+
+    /**
+     * Grow the address bus
+     */
+    public void increase() {
+        if (wPins.size()<63) addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
+        resize();
+    }
+
+    /**
+     * Shrink the address bus
+     */
+    public void decrease() {
+        removePin(wPins.removePinVertically());
+        resize();
     }
 }

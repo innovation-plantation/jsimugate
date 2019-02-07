@@ -37,7 +37,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
     private static Point2D.Double lassoBegin = null;
     private static Rectangle2D.Double lasso = null;
     static File file = new File("circuit.logic"); // set the default file name and path
-    static JFrame frame = new JFrame("jSimuGate 0.2");
+    static JFrame frame = new JFrame("jSimuGate 0.3");
     static final AffineTransform identity = new AffineTransform();
     static double scaleUnit = Math.sqrt(Math.sqrt(Math.sqrt(2))), inverseScaleUnit = 1 / scaleUnit;
 
