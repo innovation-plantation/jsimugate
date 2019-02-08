@@ -14,6 +14,9 @@ import java.util.ArrayList;
 public class Symbol extends Numbered {
     static final Shape defaultPath = new Rectangle2D.Double(-4, -4, 8, 8);
     static final Stroke defaultStroke = new BasicStroke(3);
+    static Stroke getDefaultStroke() {return defaultStroke;}
+    static final Stroke thinStroke = new BasicStroke(2);
+    static Stroke getThinStroke() {return  new BasicStroke(2);}
     static final Stroke defaultHighlightStroke = new BasicStroke(10);
     static final Color defaultHighlightColor = new Color(255, 255, 0, 80);
     static final Color defaultFillColor = new Color(200, 200, 200, 245);

@@ -37,7 +37,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
     private static Point2D.Double lassoBegin = null;
     private static Rectangle2D.Double lasso = null;
     static File file = new File("circuit.logic"); // set the default file name and path
-    static JFrame frame = new JFrame("jSimuGate 0.4");
+    static JFrame frame = new JFrame("jSimuGate 0.50");
     static final AffineTransform identity = new AffineTransform();
     static double scaleUnit = Math.sqrt(Math.sqrt(Math.sqrt(2))), inverseScaleUnit = 1 / scaleUnit;
 
@@ -461,6 +461,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                             PinGroup src = PinGroup.groupOf(recentSrc);
                             PinGroup dst = PinGroup.groupOf(recentDst);
                             PinGroup target = PinGroup.groupOf(pin);
+                            if (target == null) return;
+                            int iTarget = target.pins.indexOf(pin);
                             if (src==null && dst==null) return;
                             // if one end is not a group, duplicate its part for each pin in group
                             Part template=null;
@@ -478,26 +480,23 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                             }
                             if (template!=null) {
                                 if (template.pins.size()!=1) return; // only duplicate single-pin parts.
-                                for (Pin p:group.pins) {
-                                    if (p==templatePin) continue;
-                                    // find dx and dy between p and templatePin
-                                    AffineTransform  a=templatePin.gTransform, b=p.gTransform;
-                                    double dx = b.getTranslateX()-a.getTranslateX();
-                                    double dy = b.getTranslateY()-a.getTranslateY();
-                                    // duplicate template that distance from its origin
-                                    Part newPart = template.dup(0,0);
-                                    newPart.transform.setTransform(template.gTransform);
-                                    newPart.transform.preConcatenate(AffineTransform.getTranslateInstance(dx,dy));
-                                    circuit.parts.add(newPart);
-                                    // wire the duplicated part to p
-                                    addOrRemoveWire(p,newPart.pins.get(0));
+                                int i=group.pins.indexOf(templatePin);
+                                for (int j = i + 1; j<=iTarget && j < group.size() ; j++) {
+                                    Pin jPin = group.pins.get(j);
+                                    if (Net.directConnections(jPin).size() > 0) continue;
+                                    Part newPart = replicatePart(template,templatePin.gTransform,jPin.gTransform);
+                                    addOrRemoveWire(jPin,newPart.pins.get(0));
+                                }
+                                for (int j = i - 1; j>=iTarget && j >= 0; j--) {
+                                    Pin jPin = group.pins.get(j);
+                                    if (Net.directConnections(jPin).size() > 0) continue;
+                                    Part newPart = replicatePart(template,templatePin.gTransform,jPin.gTransform);
+                                    addOrRemoveWire(jPin,newPart.pins.get(0));
                                 }
                                 return;
                             }
-                            if (target == null) return;
                             int iSrc = src.pins.indexOf(recentSrc);
                             int iDst = dst.pins.indexOf(recentDst);
-                            int iTarget = target.pins.indexOf(pin);
                             if (target == src) {
                                 for (int i = iSrc + 1, j = iDst + 1; i <= iTarget && i < src.size() && j < dst.size(); i++, j++) {
                                     addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
@@ -525,8 +524,29 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             case 3:
                 PinGroup src = PinGroup.groupOf(recentSrc);
                 PinGroup dst = PinGroup.groupOf(recentDst);
-                if (src == null) return;
-                if (dst == null) return;
+                if (src==null && dst==null) return;
+                // if one end is not a group, duplicate its part for each pin in group
+                Part template=null;
+                PinGroup group=null;
+                Pin templatePin=null;
+                if (src == null) {
+                    template = (Part)recentSrc.parent;
+                    group = dst;
+                    templatePin = recentDst;
+                }
+                if (dst == null) {
+                    template = (Part)recentDst.parent;
+                    group = src;
+                    templatePin = recentSrc;
+                }
+                if (template!=null) {
+                    if (template.pins.size()!=1) return; // only duplicate single-pin parts.
+                    for (Pin p:group.pins) {  // wire each pin to corresponding duplicated part
+                        if (Net.directConnections(p).size() > 0) continue;
+                        addOrRemoveWire(p,replicatePart(template,templatePin.gTransform,p.gTransform).pins.get(0));
+                    }
+                    return;
+                }
                 int iSrc = src.pins.indexOf(recentSrc);
                 int iDst = dst.pins.indexOf(recentDst);
                 for (int i = iSrc + 1, j = iDst + 1; i < src.size() && j < dst.size(); i++, j++) {
@@ -559,6 +579,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             if (topHit != null) {
                 Component display = this;
                 JPopupMenu menu = new javax.swing.JPopupMenu("Part Menu");
+                if (topHit instanceof Gate)
                 menu.add(new JMenuItem("Convert (DeMorgan)") {
                     {
                         addActionListener(e -> {
@@ -574,6 +595,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                         });
                     }
                 });
+                if (!(topHit instanceof Discrete))
                 for (Tech tech : Tech.values()) {
                     menu.add(new JMenuItem(tech.description) {
                         {
@@ -588,6 +610,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                         }
                     });
                 }
+                if (topHit instanceof Discrete)
                 menu.add(new JMenuItem("Reverse Polarity") {
                     {
                         addActionListener(e -> {
@@ -611,6 +634,38 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         repaint();
         recentMouseEvent = e;
     }
+
+    /**
+     * Make a copy of the part offset by dx,dy
+     * @param part original part
+     * @param dx distance to move in x direction from original part
+     * @param dy distance to move in y direction from original part
+     * @return new part
+     */
+    private Part replicatePart(Part part, double dx, double dy) {
+        // duplicate template
+        Part newPart = part.dup(0,0);
+        newPart.transform.setTransform(part.gTransform);
+        circuit.parts.add(newPart);
+        newPart.transform.preConcatenate(AffineTransform.getTranslateInstance(dx,dy));
+        return newPart;
+    }
+    /**
+     * Make a copy of a part, offset by the distance between the transforms a and b
+     * e.g. for a pullup connected to one pin to be replicated to the locations of other pins
+     * call with a the transform of the one pin, and b for each of the other pins that needs a duplicate pullup.
+     * @param part
+     * @param a source transform (typically pin connected to existing part)
+     * @param b dest transform (typically pin to be connected to new part)
+     * @return newly created part
+     */
+    private Part replicatePart(Part part, AffineTransform a, AffineTransform b) {
+        // find dx and dy between p and templatePin
+        double dx = b.getTranslateX()-a.getTranslateX();
+        double dy = b.getTranslateY()-a.getTranslateY();
+        return replicatePart(part,dx,dy);
+    }
+
 
     /**
      * unused event

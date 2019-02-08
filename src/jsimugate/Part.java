@@ -1,5 +1,6 @@
 package jsimugate;
 
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +8,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
+
+import static jsimugate.Signal.*;
 
 /**
  * A generic part, to be overridden by specific parts for their individual operational behavior and appearance.
@@ -25,26 +28,32 @@ public class Part extends Symbol {
      */
     enum Tech {
         PUSH_PULL("Push-Pull (like CMOS)"), // strong 1 and 0 push-pull like values (typically CMOS)
-        TTL("Standard TTL (NPN)", Signal._1, Signal._H), // weak when 1 like standard TTL
-        OC("Standard Open Collector (NPN)", Signal._1, Signal._Z, "\u2390"), // floating when 1 like TTL OC
-        TTL_PNP("Nonstandard TTL (PNP)", Signal._0, Signal._L), // weak when 0 rare dual of standard TTL
-        OC_PNP("Nonstandard Open Collector (PNP)", Signal._0, Signal._Z, "\u238F"); // floating when 0 rare in some PLC
+        TTL("Standard TTL (NPN)",getThinStroke(),Color.black, _1, _H), // weak when 1 like standard TTL
+        OC("Standard Open Collector (NPN)",getThinStroke(),Color.black, _1, _Z, "\u2390"), // floating when 1 like TTL OC
+        TTL_PNP("Nonstandard TTL (PNP)",getThinStroke(),Color.blue, _0, _L), // weak when 0 rare dual of standard TTL
+        OC_PNP("Nonstandard Open Collector (PNP)",getThinStroke(),Color.blue, _0, _Z, "\u238F"); // floating when 0 rare in some PLC
         String mark;
         Signal changeFrom = Signal._Z;
         Signal changeTo = Signal._Z;
         String description;
+        Stroke stroke=getDefaultStroke();
+        Color color=Color.black;
 
-        Tech(String description, Signal changeFrom, Signal changeTo, String mark) {
+        Tech(String description, Stroke stroke, Color color, Signal changeFrom, Signal changeTo, String mark) {
             this.description = description;
             this.changeFrom = changeFrom;
             this.changeTo = changeTo;
             this.mark = mark;
+            this.stroke = stroke;
+            this.color = color;
         }
 
-        Tech(String description, Signal changeFrom, Signal changeTo) {
+        Tech(String description, Stroke stroke, Color color, Signal changeFrom, Signal changeTo) {
             this.description = description;
             this.changeFrom = changeFrom;
             this.changeTo = changeTo;
+            this.stroke = stroke;
+            this.color = color;
         }
 
         Tech(String description) {
@@ -99,6 +108,8 @@ public class Part extends Symbol {
     public Part asTech(Tech technology) {
         this.tech = technology;
         sublabel = technology.mark;
+        this.setColor(technology.color);
+        stroke = technology.stroke;
         return this;
     }
 
