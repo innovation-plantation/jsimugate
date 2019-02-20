@@ -153,4 +153,20 @@ public enum Signal implements SignalConstants {
     public static Signal fromBit(int bit) {
         return bit == 0 ? _0 : _1;
     }
+
+    /**
+     * returns the signal with opposite polarity, if applicable.
+     * @return the signal with opposite polarity, if applicable, otherwise self.
+     */
+    public Signal opposite() {
+        switch (this) {
+            case _1: return _0;
+            case _0: return _1;
+            case _H: return _L;
+            case _L: return _H;
+            case _Y: return _N;
+            case _N: return _Y;
+        }
+        return this;
+    }
 }

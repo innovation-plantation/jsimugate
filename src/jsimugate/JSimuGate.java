@@ -12,7 +12,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.FileChannel;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +36,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
     private static Point2D.Double lassoBegin = null;
     private static Rectangle2D.Double lasso = null;
     static File file = new File("circuit.logic"); // set the default file name and path
-    static JFrame frame = new JFrame("jSimuGate 0.50");
+    static JFrame frame = new JFrame("jSimuGate 0.51");
     static final AffineTransform identity = new AffineTransform();
     static double scaleUnit = Math.sqrt(Math.sqrt(Math.sqrt(2))), inverseScaleUnit = 1 / scaleUnit;
 
@@ -55,8 +54,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 for (Part part : circuit.parts) {
                     if (part.isSelected() || !e.isShiftDown()) part.transform.preConcatenate(t);
                 }
-            }
-            else if (e.isShiftDown()) {
+            } else if (e.isShiftDown()) {
                 for (Part part : circuit.parts) {
                     if (part.isSelected()) {
                         for (int i = 0; i < e.getWheelRotation(); i++) part.decrease();
@@ -71,7 +69,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                     case '+':
                         if (e.isControlDown()) {
                             int x = recentMouseEvent.getX(), y = recentMouseEvent.getY();
-                            circuit.scale(scaleUnit,x,y);
+                            circuit.scale(scaleUnit, x, y);
                             break;
                         }
                         for (Part part : circuit.parts)
@@ -83,7 +81,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                     case '-':
                         if (e.isControlDown()) {
                             int x = recentMouseEvent.getX(), y = recentMouseEvent.getY();
-                            circuit.scale(inverseScaleUnit,x,y);
+                            circuit.scale(inverseScaleUnit, x, y);
                             break;
                         }
                         for (Part part : circuit.parts)
@@ -158,30 +156,31 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         updateImageSize();
         circuit.startup(() -> repaint()); // repaint this component whenever the circuit is updated
         File spaceNavigator = new File("/dev/hidraw2");
-        if (spaceNavigator.exists()&&spaceNavigator.canRead()) {
+        if (spaceNavigator.exists() && spaceNavigator.canRead()) {
             try {
                 FileInputStream stream = new FileInputStream(spaceNavigator);
-                byte[] bytes=new byte[7];
+                byte[] bytes = new byte[7];
                 ByteBuffer packet = ByteBuffer.allocateDirect(bytes.length);
                 packet.order(ByteOrder.LITTLE_ENDIAN);
                 new Thread(() -> {
-                    for (;;) {
+                    for (; ; ) {
                         try {
                             if (stream.read(bytes) < 0) continue;
                             packet.rewind();
                             packet.put(bytes);
                             packet.rewind();
-                            if (packet.get()!=1) continue;
-                            int dx=packet.getShort(),dy=packet.getShort(),dz=packet.getShort();
-                            System.out.printf("%04d %04d %04d \n",dx,dy,dz);
-                            int x=getWidth()/2,y=getHeight()/2;
-                            circuit.scale(1+dz*.0001,x,y);
-                            circuit.translate(-dx*.05,-dy*.05);
+                            if (packet.get() != 1) continue;
+                            int dx = packet.getShort(), dy = packet.getShort(), dz = packet.getShort();
+                            System.out.printf("%04d %04d %04d \n", dx, dy, dz);
+                            int x = getWidth() / 2, y = getHeight() / 2;
+                            circuit.scale(1 + dz * .0001, x, y);
+                            circuit.translate(-dx * .05, -dy * .05);
                         } catch (IOException ex) {
                         }
                     }
                 }).start();
-            } catch (IOException ex) {}
+            } catch (IOException ex) {
+            }
 
         }
     }
@@ -382,7 +381,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         });
         fileMenu.add(menuItem);
 
-        menuItem = new JMenuItem("Save");
+        menuItem = new JMenuItem("Save as circuit.logic");
         menuItem.addActionListener(event -> {
             String filename = appendLogicToFilename(file.getAbsolutePath());
             System.out.println("Save" + filename);
@@ -457,41 +456,41 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 for (Part part : circuit.parts) {
                     for (Pin pin : part.pins) {
                         if (pin.at(e.getPoint())) {
-                            if (recentSrc==null || recentDst==null) return;
+                            if (recentSrc == null || recentDst == null) return;
                             PinGroup src = PinGroup.groupOf(recentSrc);
                             PinGroup dst = PinGroup.groupOf(recentDst);
                             PinGroup target = PinGroup.groupOf(pin);
                             if (target == null) return;
                             int iTarget = target.pins.indexOf(pin);
-                            if (src==null && dst==null) return;
+                            if (src == null && dst == null) return;
                             // if one end is not a group, duplicate its part for each pin in group
-                            Part template=null;
-                            PinGroup group=null;
-                            Pin templatePin=null;
+                            Part template = null;
+                            PinGroup group = null;
+                            Pin templatePin = null;
                             if (src == null) {
-                                template = (Part)recentSrc.parent;
+                                template = (Part) recentSrc.parent;
                                 group = dst;
                                 templatePin = recentDst;
                             }
                             if (dst == null) {
-                                template = (Part)recentDst.parent;
+                                template = (Part) recentDst.parent;
                                 group = src;
                                 templatePin = recentSrc;
                             }
-                            if (template!=null) {
-                                if (template.pins.size()!=1) return; // only duplicate single-pin parts.
-                                int i=group.pins.indexOf(templatePin);
-                                for (int j = i + 1; j<=iTarget && j < group.size() ; j++) {
+                            if (template != null) {
+                                if (template.pins.size() != 1) return; // only duplicate single-pin parts.
+                                int i = group.pins.indexOf(templatePin);
+                                for (int j = i + 1; j <= iTarget && j < group.size(); j++) {
                                     Pin jPin = group.pins.get(j);
                                     if (Net.directConnections(jPin).size() > 0) continue;
-                                    Part newPart = replicatePart(template,templatePin.gTransform,jPin.gTransform);
-                                    addOrRemoveWire(jPin,newPart.pins.get(0));
+                                    Part newPart = replicatePart(template, templatePin.gTransform, jPin.gTransform);
+                                    addOrRemoveWire(jPin, newPart.pins.get(0));
                                 }
-                                for (int j = i - 1; j>=iTarget && j >= 0; j--) {
+                                for (int j = i - 1; j >= iTarget && j >= 0; j--) {
                                     Pin jPin = group.pins.get(j);
                                     if (Net.directConnections(jPin).size() > 0) continue;
-                                    Part newPart = replicatePart(template,templatePin.gTransform,jPin.gTransform);
-                                    addOrRemoveWire(jPin,newPart.pins.get(0));
+                                    Part newPart = replicatePart(template, templatePin.gTransform, jPin.gTransform);
+                                    addOrRemoveWire(jPin, newPart.pins.get(0));
                                 }
                                 return;
                             }
@@ -524,26 +523,26 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             case 3:
                 PinGroup src = PinGroup.groupOf(recentSrc);
                 PinGroup dst = PinGroup.groupOf(recentDst);
-                if (src==null && dst==null) return;
+                if (src == null && dst == null) return;
                 // if one end is not a group, duplicate its part for each pin in group
-                Part template=null;
-                PinGroup group=null;
-                Pin templatePin=null;
+                Part template = null;
+                PinGroup group = null;
+                Pin templatePin = null;
                 if (src == null) {
-                    template = (Part)recentSrc.parent;
+                    template = (Part) recentSrc.parent;
                     group = dst;
                     templatePin = recentDst;
                 }
                 if (dst == null) {
-                    template = (Part)recentDst.parent;
+                    template = (Part) recentDst.parent;
                     group = src;
                     templatePin = recentSrc;
                 }
-                if (template!=null) {
-                    if (template.pins.size()!=1) return; // only duplicate single-pin parts.
-                    for (Pin p:group.pins) {  // wire each pin to corresponding duplicated part
+                if (template != null) {
+                    if (template.pins.size() != 1) return; // only duplicate single-pin parts.
+                    for (Pin p : group.pins) {  // wire each pin to corresponding duplicated part
                         if (Net.directConnections(p).size() > 0) continue;
-                        addOrRemoveWire(p,replicatePart(template,templatePin.gTransform,p.gTransform).pins.get(0));
+                        addOrRemoveWire(p, replicatePart(template, templatePin.gTransform, p.gTransform).pins.get(0));
                     }
                     return;
                 }
@@ -580,51 +579,51 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 Component display = this;
                 JPopupMenu menu = new javax.swing.JPopupMenu("Part Menu");
                 if (topHit instanceof Gate)
-                menu.add(new JMenuItem("Convert (DeMorgan)") {
-                    {
-                        addActionListener(e -> {
-                            for (Part part : circuit.parts) {
-                                if (part.isSelected()) {
-                                    Part newPart = part.convert();
-                                    newPart.setSelected(true);
-                                    circuit.parts.set(circuit.parts.indexOf(part), newPart);
-
-                                }
-                            }
-                            display.repaint();
-                        });
-                    }
-                });
-                if (!(topHit instanceof Discrete))
-                for (Tech tech : Tech.values()) {
-                    menu.add(new JMenuItem(tech.description) {
+                    menu.add(new JMenuItem("Convert (DeMorgan)") {
                         {
                             addActionListener(e -> {
                                 for (Part part : circuit.parts) {
                                     if (part.isSelected()) {
-                                        circuit.parts.set(circuit.parts.indexOf(part), part.asTech(tech));
+                                        Part newPart = part.convert();
+                                        newPart.setSelected(true);
+                                        circuit.parts.set(circuit.parts.indexOf(part), newPart);
+
                                     }
                                 }
                                 display.repaint();
                             });
                         }
                     });
-                }
-                if (topHit instanceof Discrete)
-                menu.add(new JMenuItem("Reverse Polarity") {
-                    {
-                        addActionListener(e -> {
-                            for (Part part : circuit.parts) {
-                                if (part.isSelected()) {
-                                    Part newPart = part.reversePolarity();
-                                    newPart.setSelected(true);
-                                    circuit.parts.set(circuit.parts.indexOf(part), newPart);
-                                }
+                if (!(topHit instanceof Discrete || topHit instanceof Bus))
+                    for (Tech tech : Tech.values()) {
+                        menu.add(new JMenuItem(tech.description) {
+                            {
+                                addActionListener(e -> {
+                                    for (Part part : circuit.parts) {
+                                        if (part.isSelected()) {
+                                            circuit.parts.set(circuit.parts.indexOf(part), part.asTech(tech));
+                                        }
+                                    }
+                                    display.repaint();
+                                });
                             }
-                            display.repaint();
                         });
                     }
-                });
+                if (topHit instanceof Discrete)
+                    menu.add(new JMenuItem("Reverse Polarity") {
+                        {
+                            addActionListener(e -> {
+                                for (Part part : circuit.parts) {
+                                    if (part.isSelected()) {
+                                        Part newPart = part.reversePolarity();
+                                        newPart.setSelected(true);
+                                        circuit.parts.set(circuit.parts.indexOf(part), newPart);
+                                    }
+                                }
+                                display.repaint();
+                            });
+                        }
+                    });
                 menu.show(this, e.getX(), e.getY());
             }
         }
@@ -637,33 +636,36 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
     /**
      * Make a copy of the part offset by dx,dy
+     *
      * @param part original part
-     * @param dx distance to move in x direction from original part
-     * @param dy distance to move in y direction from original part
+     * @param dx   distance to move in x direction from original part
+     * @param dy   distance to move in y direction from original part
      * @return new part
      */
     private Part replicatePart(Part part, double dx, double dy) {
         // duplicate template
-        Part newPart = part.dup(0,0);
+        Part newPart = part.dup(0, 0);
         newPart.transform.setTransform(part.gTransform);
         circuit.parts.add(newPart);
-        newPart.transform.preConcatenate(AffineTransform.getTranslateInstance(dx,dy));
+        newPart.transform.preConcatenate(AffineTransform.getTranslateInstance(dx, dy));
         return newPart;
     }
+
     /**
      * Make a copy of a part, offset by the distance between the transforms a and b
      * e.g. for a pullup connected to one pin to be replicated to the locations of other pins
      * call with a the transform of the one pin, and b for each of the other pins that needs a duplicate pullup.
+     *
      * @param part
-     * @param a source transform (typically pin connected to existing part)
-     * @param b dest transform (typically pin to be connected to new part)
+     * @param a    source transform (typically pin connected to existing part)
+     * @param b    dest transform (typically pin to be connected to new part)
      * @return newly created part
      */
     private Part replicatePart(Part part, AffineTransform a, AffineTransform b) {
         // find dx and dy between p and templatePin
-        double dx = b.getTranslateX()-a.getTranslateX();
-        double dy = b.getTranslateY()-a.getTranslateY();
-        return replicatePart(part,dx,dy);
+        double dx = b.getTranslateX() - a.getTranslateX();
+        double dy = b.getTranslateY() - a.getTranslateY();
+        return replicatePart(part, dx, dy);
     }
 
 
