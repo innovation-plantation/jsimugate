@@ -10,6 +10,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.*;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Scanner;
@@ -23,6 +24,7 @@ import static java.awt.event.KeyEvent.*;
  * User interface for circuit simulation. This could be an Applet by changing JPanel to JApplet or Applet, etc.
  */
 public class JSimuGate extends Panel implements MouseListener, MouseMotionListener, ComponentListener {
+    static String version = "jSimuGate 0.54";
     private static final long serialVersionUID = 1L;
     Circuit circuit = new Circuit().withStandardBins();
     private Dimension size;
@@ -35,10 +37,12 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
     Pin recentSrc = null, recentDst = null;
     private static Point2D.Double lassoBegin = null;
     private static Rectangle2D.Double lasso = null;
-    static File file = new File("circuit.logic"); // set the default file name and path
-    static JFrame frame = new JFrame("jSimuGate 0.51");
+    static File savedFile;
+    static File otherFile;
+    static JFrame frame = new JFrame(version);
     static final AffineTransform identity = new AffineTransform();
     static double scaleUnit = Math.sqrt(Math.sqrt(Math.sqrt(2))), inverseScaleUnit = 1 / scaleUnit;
+    static JMenuItem saveMenuItem = null;
 
     /**
      * Initialize the GUI. Turn on the event listeners and place the part bins on the display.
@@ -64,6 +68,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             }
         });
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
+            if (!hasFocus()) return false;
             if (e.getID() == KeyEvent.KEY_PRESSED) {
                 switch (e.getKeyChar()) {
                     case '+':
@@ -268,6 +273,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         JMenuBar bar = new JMenuBar();
         JMenu fileMenu = createFileMenu(panel);
         bar.add(fileMenu);
+        JMenu helpMenu = createHelpMenu(panel);
+        bar.add(helpMenu);
         frame.setJMenuBar(bar);
 
         frame.setVisible(true);
@@ -291,6 +298,29 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         });
     }
 
+    public static JMenu createHelpMenu(JSimuGate panel) {
+
+        JMenu menu = new JMenu("Help");
+        JMenuItem menuItem;
+
+        menuItem = new JMenuItem("About");
+        menuItem.addActionListener(event -> {
+            JOptionPane.showMessageDialog(panel, version+ " by Dr. Ted Shaneyfelt 2019\nhttps://github.com/innovation-plantation/jsimugate");
+        });
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Help");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+        menuItem.addActionListener(event -> {
+            try {
+                Desktop.getDesktop().browse(new URI("https://github.com/innovation-plantation/jsimugate/wiki"));
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(panel, version + " Documentation is available online at\nhttps://github.com/innovation-plantation/jsimugate/wiki");
+            }
+        });
+        menu.add(menuItem);
+        return menu;
+    }
     /**
      * Create the file menu
      *
@@ -298,6 +328,11 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
      * @return the created menu
      */
     public static JMenu createFileMenu(JSimuGate panel) {
+        try {
+            savedFile = otherFile = new File(new File("circuit.logic").getCanonicalPath()); // set the default file name and path
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
 
         JMenu fileMenu = new JMenu("File");
         JMenuItem menuItem;
@@ -314,7 +349,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
         menuItem = new JMenuItem("Load... (add to existing circuit)");
         menuItem.addActionListener(event -> {
-            JFileChooser choice = new JFileChooser(file);
+            JFileChooser choice = new JFileChooser(otherFile);
+            choice.setSelectedFile(otherFile);
             choice.setFileFilter(new FileNameExtensionFilter("jSimuGate Circuits (.logic)", "logic"));
             if (choice.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
                 if (choice.getSelectedFile().exists()) {
@@ -325,7 +361,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                         JOptionPane.showMessageDialog(panel, ex.getMessage());
                     }
                 } else {
-                    JOptionPane.showMessageDialog(panel, "File " + file + " does not exist");
+                    JOptionPane.showMessageDialog(panel, "File " + otherFile + " does not exist");
                 }
             }
         });
@@ -333,10 +369,13 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
         menuItem = new JMenuItem("Open... (replace existing circuit)");
         menuItem.addActionListener(event -> {
-            JFileChooser choice = new JFileChooser(file);
+            JFileChooser choice = new JFileChooser(savedFile);
+            choice.setSelectedFile(savedFile);
             choice.setFileFilter(new FileNameExtensionFilter("jSimuGate Circuits (.logic)", "logic"));
             if (choice.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
-                if (choice.getSelectedFile().exists()) {
+                savedFile = choice.getSelectedFile();
+                saveMenuItem.setText("Save "+savedFile.getName());
+                if (savedFile.exists()) {
                     try {
                         Scanner scan = new Scanner(choice.getSelectedFile());
                         Net.nets.clear();
@@ -348,15 +387,17 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                         JOptionPane.showMessageDialog(panel, ex.getMessage());
                     }
                 } else {
-                    JOptionPane.showMessageDialog(panel, "File " + file + " does not exist");
+                    JOptionPane.showMessageDialog(panel, "File " + savedFile + " does not exist");
                 }
             }
         });
         fileMenu.add(menuItem);
 
         menuItem = new JMenuItem("Save as...");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
-            JFileChooser choice = new JFileChooser(file);
+            JFileChooser choice = new JFileChooser(savedFile);
+            choice.setSelectedFile(savedFile);
             choice.setFileFilter(new FileNameExtensionFilter("jSimuGate Circuits (.logic)", "logic"));
             if (choice.showSaveDialog(panel) == JFileChooser.APPROVE_OPTION) {
 
@@ -364,39 +405,51 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                     if (JOptionPane.showConfirmDialog(panel,
                             "Overwrite " + choice.getSelectedFile().getName() + "?") != JOptionPane.YES_OPTION)
                         return;
-                    System.out.println("OVERWRITING");
                 }
-                file = choice.getSelectedFile();
-                String filename = appendLogicToFilename(file.getAbsolutePath());
-                System.out.println("Save as " + filename);
+                savedFile = choice.getSelectedFile();
+                String filename = appendLogicToFilename(savedFile.getAbsolutePath());
+                savedFile = new File(filename);
+                saveMenuItem.setText("Save "+savedFile.getName());
                 try {
-                    PrintWriter printWriter = new PrintWriter(filename, "UTF-8");
+                    PrintWriter printWriter = new PrintWriter(savedFile, "UTF-8");
                     Numbered.renumber();
                     printWriter.write(panel.circuit.toString());
                     printWriter.close();
                 } catch (FileNotFoundException | UnsupportedEncodingException ex) {
                     JOptionPane.showMessageDialog(panel, ex.getMessage());
                 }
+
+
+
+
             }
         });
         fileMenu.add(menuItem);
 
-        menuItem = new JMenuItem("Save as circuit.logic");
+        menuItem = saveMenuItem = new JMenuItem("Save " + savedFile.getName());
         menuItem.addActionListener(event -> {
-            String filename = appendLogicToFilename(file.getAbsolutePath());
-            System.out.println("Save" + filename);
+            String filename = appendLogicToFilename(savedFile.getAbsolutePath());
+            savedFile = new File(filename);
+
+
+            System.out.println("Save" + savedFile.getAbsolutePath());
             try {
-                PrintWriter printWriter = new PrintWriter(filename, "UTF-8");
+                PrintWriter printWriter = new PrintWriter(savedFile, "UTF-8");
                 Numbered.renumber();
                 printWriter.write(panel.circuit.toString());
                 printWriter.close();
             } catch (FileNotFoundException | UnsupportedEncodingException ex) {
                 JOptionPane.showMessageDialog(panel, ex.getMessage());
             }
+
+
+
+
         });
         fileMenu.add(menuItem);
 
-        menuItem = new JMenuItem("Exit");
+        menuItem = new JMenuItem("Quit");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
             getDefaultToolkit().getSystemEventQueue().postEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
         });
@@ -875,20 +928,22 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             // Not creating a lasso. Moving or Copying parts.
 
             if (recentMouseEvent.getID() == MouseEvent.MOUSE_PRESSED) {
-                // if (!recentMouseEvent.isControlDown())
-                {
-                    // Moving
-                    if (!recentMouseEvent.isShiftDown()) {
-                        // Add whatever is under the mouse to the selection unless CTRL or SHIFT was
-                        // pressed
-                        for (Part part : circuit.parts) {
-                            if (part.at(recentMouseEvent.getPoint())) {
-                                part.setSelected(true);
-                            }
+
+                // Begin moving or copying
+                // If there's two or more in the same spot, only grab them all if
+                // they're already all selected or if SHIFT is down.
+                // This makes it more natural to discover when one part is hidden below another.
+                if (recentMouseEvent.isShiftDown()) {
+                    // Add whatever else is under the mouse to the selection if SHIFT was
+                    // pressed
+                    for (Part part : circuit.parts) {
+                        if (part.at(recentMouseEvent.getPoint())) {
+                            part.setSelected(true);
                         }
                     }
                 }
-                // else
+
+
                 if (recentMouseEvent.isControlDown()) {
                     // Copying
                     String string = "";

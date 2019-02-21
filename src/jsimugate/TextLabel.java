@@ -37,16 +37,12 @@ public class TextLabel extends Part {
      * Upon double-clicking, accept new text for the label
      */
     public void processDoubleClick() {
-        try {
-            editing = true;
-            String newLabel = JOptionPane.showInputDialog(null, "Enter new text:",
-                    "Text Label", 1);
+        String newLabel = JOptionPane.showInputDialog(null, "Enter new text:",
+                "Text Label", 1);
 
-            if (newLabel == null || newLabel.matches(" *")) return;
-            label = newLabel;
-        } finally {
-            editing = false;
-        }
+        if (newLabel == null || newLabel.matches(" *")) return;
+        label = newLabel;
+
         shape = defaultShape; // trigger recalculating the new shape within the graphics context
     }
 

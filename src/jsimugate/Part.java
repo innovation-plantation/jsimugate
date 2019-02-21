@@ -15,7 +15,6 @@ import static jsimugate.Signal.*;
  * A generic part, to be overridden by specific parts for their individual operational behavior and appearance.
  */
 public class Part extends Symbol {
-    static boolean editing = false; /** Don't transform parts when arrow keys are in use by editor */
 
     List<Pin> pins = new ArrayList<Pin>();
 
@@ -275,7 +274,6 @@ public class Part extends Symbol {
         return result;
     }
     boolean isSelected() {
-        if (editing) return false;
         return super.isSelected();
     }
 }
