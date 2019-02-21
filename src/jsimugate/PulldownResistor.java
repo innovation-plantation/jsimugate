@@ -59,7 +59,7 @@ public class PulldownResistor extends Discrete {
     /**
      * deserialize
      *
-     * @param details formatted like 0Hz or 0Sec if value>1
+     * @param details
      */
     public void setDetails(String details) {
         Scanner scanner = new Scanner(details);
@@ -72,7 +72,7 @@ public class PulldownResistor extends Discrete {
     /**
      * deserialize
      *
-     * @return details formatted like 0Hz or 0Sec if value>1
+     * @return details
      */
     public String getDetails() {
         if (value != Signal._L) return value.toString();
@@ -80,6 +80,7 @@ public class PulldownResistor extends Discrete {
     }
     public Part reversePolarity() {
         pin.transform.setToTranslation(0,20);
+        this.setValue(value.opposite());
         PullupResistor newPart = (PullupResistor)super.reversePolarity();
         newPart.pin = pin;
         return newPart;

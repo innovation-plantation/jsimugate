@@ -80,6 +80,7 @@ public class PullupResistor extends Discrete {
     }
     public Part reversePolarity() {
         pin.transform.setToTranslation(0,-20);
+        this.setValue(value.opposite());
         PulldownResistor newPart = (PulldownResistor)super.reversePolarity();
         newPart.pin = pin;
         return newPart;
