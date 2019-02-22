@@ -44,13 +44,15 @@ public class Diode extends Discrete {
         this.transform.rotate(Math.PI);
         this.removePin(anode);
         this.removePin(cathode);
-        Pin temp = anode; anode=cathode;cathode=temp;
+        Pin temp = anode;
+        anode = cathode;
+        cathode = temp;
         this.addPin(anode);
         this.addPin(cathode);
-        anode.transform.setToTranslation(-20,0);
-        cathode.transform.setToTranslation(20,0);
+        anode.transform.setToTranslation(-20, 0);
+        cathode.transform.setToTranslation(20, 0);
         anode.left(10, false);
-        cathode.right(10,false);
+        cathode.right(10, false);
         return this;
     }
 

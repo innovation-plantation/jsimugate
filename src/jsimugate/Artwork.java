@@ -235,6 +235,7 @@ public class Artwork {
         shape.closePath();
         return shape;
     }
+
     /**
      * Shape of keys on keyboard
      *
@@ -242,107 +243,114 @@ public class Artwork {
      */
     public static Shape keyboardShape() {
         GeneralPath shape = new GeneralPath();
-        for (int i=-10;i<=10;i+=4) {
+        for (int i = -10; i <= 10; i += 4) {
             shape.moveTo(-50, i);
             shape.lineTo(50, i);
         }
         return shape;
     }
+
     /**
      * Shape of segment a in seven segment display
      */
     public static Shape aSegmentShape() {
         GeneralPath shape = new GeneralPath();
-        shape.moveTo(-15,-40);
-        shape.lineTo(-10,-45);
-        shape.lineTo(10,-45);
-        shape.lineTo(15,-40);
-        shape.lineTo(10,-35);
-        shape.lineTo(-10,-35);
+        shape.moveTo(-15, -40);
+        shape.lineTo(-10, -45);
+        shape.lineTo(10, -45);
+        shape.lineTo(15, -40);
+        shape.lineTo(10, -35);
+        shape.lineTo(-10, -35);
         shape.closePath();
         return shape;
     }
+
     /**
      * Shape of segment b in seven segment display
      */
     public static Shape bSegmentShape() {
         GeneralPath shape = new GeneralPath();
-        shape.moveTo(20,-35);
-        shape.lineTo(25,-30);
-        shape.lineTo(25,-10);
-        shape.lineTo(20,-5);
-        shape.lineTo(15,-10);
-        shape.lineTo(15,-30);
+        shape.moveTo(20, -35);
+        shape.lineTo(25, -30);
+        shape.lineTo(25, -10);
+        shape.lineTo(20, -5);
+        shape.lineTo(15, -10);
+        shape.lineTo(15, -30);
         shape.closePath();
         return shape;
     }
+
     /**
      * Shape of segment c in seven segment display
      */
     public static Shape cSegmentShape() {
         GeneralPath shape = new GeneralPath();
-        shape.moveTo(20,35);
-        shape.lineTo(25,30);
-        shape.lineTo(25,10);
-        shape.lineTo(20,5);
-        shape.lineTo(15,10);
-        shape.lineTo(15,30);
+        shape.moveTo(20, 35);
+        shape.lineTo(25, 30);
+        shape.lineTo(25, 10);
+        shape.lineTo(20, 5);
+        shape.lineTo(15, 10);
+        shape.lineTo(15, 30);
         shape.closePath();
         return shape;
     }
+
     /**
      * Shape of segment d in seven segment display
      */
     public static Shape dSegmentShape() {
         GeneralPath shape = new GeneralPath();
-        shape.moveTo(-15,40);
-        shape.lineTo(-10,45);
-        shape.lineTo(10,45);
-        shape.lineTo(15,40);
-        shape.lineTo(10,35);
-        shape.lineTo(-10,35);
+        shape.moveTo(-15, 40);
+        shape.lineTo(-10, 45);
+        shape.lineTo(10, 45);
+        shape.lineTo(15, 40);
+        shape.lineTo(10, 35);
+        shape.lineTo(-10, 35);
         shape.closePath();
         return shape;
     }
+
     /**
      * Shape of segment e in seven segment display
      */
     public static Shape eSegmentShape() {
         GeneralPath shape = new GeneralPath();
-        shape.moveTo(-20,35);
-        shape.lineTo(-25,30);
-        shape.lineTo(-25,10);
-        shape.lineTo(-20,5);
-        shape.lineTo(-15,10);
-        shape.lineTo(-15,30);
+        shape.moveTo(-20, 35);
+        shape.lineTo(-25, 30);
+        shape.lineTo(-25, 10);
+        shape.lineTo(-20, 5);
+        shape.lineTo(-15, 10);
+        shape.lineTo(-15, 30);
         shape.closePath();
         return shape;
     }
+
     /**
      * Shape of segment f in seven segment display
      */
     public static Shape fSegmentShape() {
         GeneralPath shape = new GeneralPath();
-        shape.moveTo(-20,-35);
-        shape.lineTo(-25,-30);
-        shape.lineTo(-25,-10);
-        shape.lineTo(-20,-5);
-        shape.lineTo(-15,-10);
-        shape.lineTo(-15,-30);
+        shape.moveTo(-20, -35);
+        shape.lineTo(-25, -30);
+        shape.lineTo(-25, -10);
+        shape.lineTo(-20, -5);
+        shape.lineTo(-15, -10);
+        shape.lineTo(-15, -30);
         shape.closePath();
         return shape;
     }
+
     /**
      * Shape of segment a in seven segment display
      */
     public static Shape gSegmentShape() {
         GeneralPath shape = new GeneralPath();
-        shape.moveTo(-15,0);
-        shape.lineTo(-10,-5);
-        shape.lineTo(10,-5);
-        shape.lineTo(15,0);
-        shape.lineTo(10,5);
-        shape.lineTo(-10,5);
+        shape.moveTo(-15, 0);
+        shape.lineTo(-10, -5);
+        shape.lineTo(10, -5);
+        shape.lineTo(15, 0);
+        shape.lineTo(10, 5);
+        shape.lineTo(-10, 5);
         shape.closePath();
         return shape;
     }

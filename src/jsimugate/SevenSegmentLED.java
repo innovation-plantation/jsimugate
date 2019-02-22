@@ -4,7 +4,7 @@ import java.awt.*;
 
 
 public class SevenSegmentLED extends Box {
-    static Shape[] shapes= {
+    static Shape[] shapes = {
             Artwork.aSegmentShape(),
             Artwork.bSegmentShape(),
             Artwork.cSegmentShape(),
@@ -14,10 +14,11 @@ public class SevenSegmentLED extends Box {
             Artwork.gSegmentShape(),
 
     };
+
     public SevenSegmentLED() {
         name = "7SEG";
         for (int i = 0; i < 7; i++) {
-            addPin(wPins.addPinVertically()).left(30).translate( -width - 30,0);
+            addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
         }
         resizeWithPadding(3, -1);
         fill = Color.darkGray;
@@ -31,21 +32,21 @@ public class SevenSegmentLED extends Box {
     public void drawAtOrigin(Graphics2D g) {
         super.drawAtOrigin(g);
         g.setColor(color.lightGray);
-        g.drawString("a", -width , 63);
-        g.drawString("b", -width , 43);
-        g.drawString("c", -width , 23);
-        g.drawString("d", -width , 3);
-        g.drawString("e", -width , -17);
-        g.drawString("f", -width , -37);
-        g.drawString("g", -width , -57);
+        g.drawString("a", -width, 63);
+        g.drawString("b", -width, 43);
+        g.drawString("c", -width, 23);
+        g.drawString("d", -width, 3);
+        g.drawString("e", -width, -17);
+        g.drawString("f", -width, -37);
+        g.drawString("g", -width, -57);
 
-       for (int i=0;i<7;i++) {
-           Signal signal = wPins.pins.get(i).getInValue();
-           Color color = signal.fgColor;
-           if (signal.bad) color = color.darker().darker();
-           if (signal.hi) color = color.brighter().brighter();
-           g.setColor(color);
-           g.fill(shapes[i]);
-       }
+        for (int i = 0; i < 7; i++) {
+            Signal signal = wPins.pins.get(i).getInValue();
+            Color color = signal.fgColor;
+            if (signal.bad) color = color.darker().darker();
+            if (signal.hi) color = color.brighter().brighter();
+            g.setColor(color);
+            g.fill(shapes[i]);
+        }
     }
 }

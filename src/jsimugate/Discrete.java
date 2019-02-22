@@ -9,7 +9,7 @@ import java.util.Scanner;
  * by alternate tech.
  */
 public class Discrete extends Part {
-    String opposite=null;
+    String opposite = null;
 
     /**
      * override to prevent changing from default

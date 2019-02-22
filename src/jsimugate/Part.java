@@ -27,16 +27,16 @@ public class Part extends Symbol {
      */
     enum Tech {
         PUSH_PULL("Push-Pull (like CMOS)"), // strong 1 and 0 push-pull like values (typically CMOS)
-        TTL("Standard TTL (NPN)",getThinStroke(),Color.black, _1, _H), // weak when 1 like standard TTL
-        OC("Standard Open Collector (NPN)",getThinStroke(),Color.black, _1, _Z, "\u2390"), // floating when 1 like TTL OC
-        TTL_PNP("Nonstandard TTL (PNP)",getThinStroke(),Color.blue, _0, _L), // weak when 0 rare dual of standard TTL
-        OC_PNP("Nonstandard Open Collector (PNP)",getThinStroke(),Color.blue, _0, _Z, "\u238F"); // floating when 0 rare in some PLC
+        TTL("Standard TTL (NPN)", getThinStroke(), Color.black, _1, _H), // weak when 1 like standard TTL
+        OC("Standard Open Collector (NPN)", getThinStroke(), Color.black, _1, _Z, "\u2390"), // floating when 1 like TTL OC
+        TTL_PNP("Nonstandard TTL (PNP)", getThinStroke(), Color.blue, _0, _L), // weak when 0 rare dual of standard TTL
+        OC_PNP("Nonstandard Open Collector (PNP)", getThinStroke(), Color.blue, _0, _Z, "\u238F"); // floating when 0 rare in some PLC
         String mark;
         Signal changeFrom = Signal._Z;
         Signal changeTo = Signal._Z;
         String description;
-        Stroke stroke=getDefaultStroke();
-        Color color=Color.black;
+        Stroke stroke = getDefaultStroke();
+        Color color = Color.black;
 
         Tech(String description, Stroke stroke, Color color, Signal changeFrom, Signal changeTo, String mark) {
             this.description = description;
@@ -254,6 +254,7 @@ public class Part extends Symbol {
     public Part convert() {
         return this;
     }
+
     /**
      * Convert to an equivalent symbol such by DeMorganizing
      */
@@ -273,6 +274,7 @@ public class Part extends Symbol {
         result.transform.setToTranslation(x, y);
         return result;
     }
+
     boolean isSelected() {
         return super.isSelected();
     }

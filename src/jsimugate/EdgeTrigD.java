@@ -10,7 +10,7 @@ import static jsimugate.Signal.*;
  */
 public class EdgeTrigD extends Box {
     Pin clkIn, rstIn;
-    private ArrayList<Signal> qSave = new ArrayList<Signal>(),dSave=new ArrayList<Signal>();
+    private ArrayList<Signal> qSave = new ArrayList<Signal>(), dSave = new ArrayList<Signal>();
     Signal prevClk = _X;
 
     /**
@@ -50,7 +50,7 @@ public class EdgeTrigD extends Box {
         Signal rst = rstIn.getInValue();
         for (int i = 0; i < wPins.size(); i++) {
             Signal d = dSave.get(i);
-            dSave.set(i,wPins.pins.get(i).getInValue());
+            dSave.set(i, wPins.pins.get(i).getInValue());
             if (rst.hi) qSave.set(i, _0);
             if (rst.bad || clk.bad) qSave.set(i, _X);
             else if (clk.hi && prevClk.lo) {

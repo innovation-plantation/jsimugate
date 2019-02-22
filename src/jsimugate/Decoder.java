@@ -57,10 +57,10 @@ public class Decoder extends Box {
         super.drawAtOrigin(g);
         AffineTransform restore = g.getTransform();
         g.drawString("SEL", -11, height - 5);
-        int n=sPins.size();
-        if (n>2) {
+        int n = sPins.size();
+        if (n > 2) {
             g.drawString("0", width - 25, height - 5);
-            g.drawString(Integer.toString(n-1), -width + 15, height - 5);
+            g.drawString(Integer.toString(n - 1), -width + 15, height - 5);
         }
         g.translate(width - 1, height - 15);
         for (int i = 0; i < ePins.size(); i++) {
@@ -82,8 +82,8 @@ public class Decoder extends Box {
                 return;
             }
         }
-        for (int i=0;i<ePins.size();i++) {
-            ePins.pins.get(i).setOutValue(i==sPins.getValue()?_1:_0);
+        for (int i = 0; i < ePins.size(); i++) {
+            ePins.pins.get(i).setOutValue(i == sPins.getValue() ? _1 : _0);
         }
     }
 }

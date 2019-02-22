@@ -80,7 +80,7 @@ public class Circuit {
                 pin.setInValue(Signal._Z);
             }
         }
-      //  g.setTransform(AffineTransform.getRotateInstance(0));
+        //  g.setTransform(AffineTransform.getRotateInstance(0));
 
         for (Wire wire : wires) wire.draw(g);
 
@@ -180,7 +180,8 @@ public class Circuit {
         }
         return this;
     }
-    public void scale(double scaleFactor,double x,double y) {
+
+    public void scale(double scaleFactor, double x, double y) {
         AffineTransform t = AffineTransform.getTranslateInstance(x, y);
         t.scale(scaleFactor, scaleFactor);
         t.translate(-x, -y);
@@ -188,7 +189,8 @@ public class Circuit {
             part.transform.preConcatenate(t);
         }
     }
-    public void translate(double x,double y) {
+
+    public void translate(double x, double y) {
         for (Part part : parts) {
             part.transform.preConcatenate(AffineTransform.getTranslateInstance(x, y));
         }

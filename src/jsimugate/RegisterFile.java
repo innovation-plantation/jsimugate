@@ -15,7 +15,7 @@ public class RegisterFile extends Box {
     Pin wClkIn, rdEnaIn;
     private Integer[] qSave = new Integer[]{null, null, null, null, null, null, null, null};
     Signal prevClk = _X;
-    Signal[] aSave = new Signal[3],dSave=new Signal[8];
+    Signal[] aSave = new Signal[3], dSave = new Signal[8];
 
     public RegisterFile() {
         label = "REG FILE";
@@ -55,6 +55,7 @@ public class RegisterFile extends Box {
     boolean selValid;
     int inData;
     boolean goodInData;
+
     public void operate() {
         Signal clk = wClkIn.getInValue();
         Signal rd = rdEnaIn.getInValue();

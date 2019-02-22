@@ -32,17 +32,19 @@ public class PinGroup {
 
     /**
      * if there's a PinGroup that contains the pin, find and return it
+     *
      * @param pin being searched for
      * @return group containing the pin
      */
     static PinGroup groupOf(Pin pin) {
-        for (PinGroup group:pinGroups) {
+        for (PinGroup group : pinGroups) {
             if (group.pins.contains(pin)) {
                 return group;
             }
         }
         return null;
     }
+
     private void addPin(Pin pin) {
         if (pins.isEmpty()) pinGroups.add(this);
         pins.add(pin);
@@ -192,11 +194,12 @@ public class PinGroup {
      */
     public long getLongValue() {
         long result = 0;
-        for (int n = 0; n < pins.size(); n++) result += (long)pins.get(n).getInValue().asBit() << n;
+        for (int n = 0; n < pins.size(); n++) result += (long) pins.get(n).getInValue().asBit() << n;
         return result;
     }
+
     public int getValue() {
-        return (int)getLongValue();
+        return (int) getLongValue();
     }
 
     public boolean goodValue() {

@@ -18,7 +18,7 @@ public class VGround extends Discrete {
         this.fill = null;
         this.pin = this.addPin(new Pin(0, 0).up(15, false));
         this.name = "GND";
-        opposite=VSource.class.getSimpleName();
+        opposite = VSource.class.getSimpleName();
     }
 
     /**
@@ -30,8 +30,8 @@ public class VGround extends Discrete {
 
     public Part reversePolarity() {
         this.pin.transform.setToTranslation(0, 5);
-        this.pin.down(15,false);
-        VSource newPart = (VSource)super.reversePolarity();
+        this.pin.down(15, false);
+        VSource newPart = (VSource) super.reversePolarity();
         newPart.pin = pin;
         return newPart;
     }

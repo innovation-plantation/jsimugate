@@ -20,7 +20,7 @@ public class PullupResistor extends Discrete {
         this.pin = this.addPin(new Pin(0, 20));
         this.name = "PULLUP";
         setValue(Signal._H);
-        opposite=PulldownResistor.class.getSimpleName();
+        opposite = PulldownResistor.class.getSimpleName();
     }
 
     /**
@@ -78,10 +78,11 @@ public class PullupResistor extends Discrete {
         if (value != Signal._H) return value.toString();
         else return super.getDetails();
     }
+
     public Part reversePolarity() {
-        pin.transform.setToTranslation(0,-20);
+        pin.transform.setToTranslation(0, -20);
         this.setValue(value.opposite());
-        PulldownResistor newPart = (PulldownResistor)super.reversePolarity();
+        PulldownResistor newPart = (PulldownResistor) super.reversePolarity();
         newPart.pin = pin;
         return newPart;
     }

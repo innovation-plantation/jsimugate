@@ -11,7 +11,7 @@ import static jsimugate.Signal._Z;
  */
 public class Memory extends Box {
     Pin wClkIn, rdEnaIn;
-    private ConcurrentSkipListMap<Long,Integer> qSave = new ConcurrentSkipListMap<Long,Integer>();
+    private ConcurrentSkipListMap<Long, Integer> qSave = new ConcurrentSkipListMap<Long, Integer>();
     Signal prevClk = _X;
 
     /**
@@ -58,10 +58,9 @@ public class Memory extends Box {
         if (clk.hi && prevClk.lo) { // handle write pulse
             boolean goodInData = ePins.goodValue();
             if (selValid) {
-                if (goodInData) qSave.put(sel,ePins.getValue());
+                if (goodInData) qSave.put(sel, ePins.getValue());
                 else qSave.remove(sel);
-            }
-            else qSave.clear();
+            } else qSave.clear();
             Log.print("WR data " + (goodInData ? "+" : "*") + ePins.getValue());
             Log.println(" to " + (selValid ? "+" : "*") + sel);
         }
@@ -77,7 +76,7 @@ public class Memory extends Box {
      * Grow the address bus
      */
     public void increase() {
-        if (wPins.size()<63) addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
+        if (wPins.size() < 63) addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
         resize();
     }
 

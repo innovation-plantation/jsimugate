@@ -24,7 +24,7 @@ import static java.awt.event.KeyEvent.*;
  * User interface for circuit simulation. This could be an Applet by changing JPanel to JApplet or Applet, etc.
  */
 public class JSimuGate extends Panel implements MouseListener, MouseMotionListener, ComponentListener {
-    static String version = "jSimuGate 0.55";
+    static String version = "jSimuGate 0.56";
     private static final long serialVersionUID = 1L;
     Circuit circuit = new Circuit().withStandardBins();
     private Dimension size;
@@ -305,7 +305,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
         menuItem = new JMenuItem("About");
         menuItem.addActionListener(event -> {
-            JOptionPane.showMessageDialog(panel, version+ " by Dr. Ted Shaneyfelt 2019\nhttps://github.com/innovation-plantation/jsimugate");
+            JOptionPane.showMessageDialog(panel, version + " by Dr. Ted Shaneyfelt 2019\nhttps://github.com/innovation-plantation/jsimugate");
         });
         menu.add(menuItem);
 
@@ -321,6 +321,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         menu.add(menuItem);
         return menu;
     }
+
     /**
      * Create the file menu
      *
@@ -374,7 +375,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             choice.setFileFilter(new FileNameExtensionFilter("jSimuGate Circuits (.logic)", "logic"));
             if (choice.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
                 savedFile = choice.getSelectedFile();
-                saveMenuItem.setText("Save "+savedFile.getName());
+                saveMenuItem.setText("Save " + savedFile.getName());
                 if (savedFile.exists()) {
                     try {
                         Scanner scan = new Scanner(choice.getSelectedFile());
@@ -409,7 +410,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 savedFile = choice.getSelectedFile();
                 String filename = appendLogicToFilename(savedFile.getAbsolutePath());
                 savedFile = new File(filename);
-                saveMenuItem.setText("Save "+savedFile.getName());
+                saveMenuItem.setText("Save " + savedFile.getName());
                 try {
                     PrintWriter printWriter = new PrintWriter(savedFile, "UTF-8");
                     Numbered.renumber();
@@ -418,8 +419,6 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 } catch (FileNotFoundException | UnsupportedEncodingException ex) {
                     JOptionPane.showMessageDialog(panel, ex.getMessage());
                 }
-
-
 
 
             }
@@ -441,8 +440,6 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             } catch (FileNotFoundException | UnsupportedEncodingException ex) {
                 JOptionPane.showMessageDialog(panel, ex.getMessage());
             }
-
-
 
 
         });
@@ -793,7 +790,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
         if (topHit != null) {
             // if there was a hit with ctrl or shift down: toggle it
-            if (e.isControlDown() || e.isShiftDown()) {
+            if (e.isShiftDown()) {
                 topHit.setSelected(!topHit.isSelected());
             } else {
                 if (!topHit.isSelected()) {
