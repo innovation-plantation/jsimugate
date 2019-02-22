@@ -5,6 +5,7 @@ import jsimugate.Part.Tech;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -24,7 +25,7 @@ import static java.awt.event.KeyEvent.*;
  * User interface for circuit simulation. This could be an Applet by changing JPanel to JApplet or Applet, etc.
  */
 public class JSimuGate extends Panel implements MouseListener, MouseMotionListener, ComponentListener {
-    static String version = "jSimuGate 0.56";
+    static String version = "jSimuGate 0.57";
     private static final long serialVersionUID = 1L;
     Circuit circuit = new Circuit().withStandardBins();
     private Dimension size;
@@ -127,9 +128,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                                     }
                                 }
                                 break;
-                            case VK_DELETE:
-                                circuit.removeSelectedParts();
-                                break;
+
                             case VK_A: {
                                 if (e.isControlDown()) {
                                     for (Part part : circuit.parts) part.setSelected(true);
@@ -273,6 +272,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         JMenuBar bar = new JMenuBar();
         JMenu fileMenu = createFileMenu(panel);
         bar.add(fileMenu);
+        JMenu editMenu = createEditMenu(panel);
+        bar.add(editMenu);
         JMenu helpMenu = createHelpMenu(panel);
         bar.add(helpMenu);
         frame.setJMenuBar(bar);
@@ -298,6 +299,60 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         });
     }
 
+    static int nextPasteOffset = 0;
+
+    public static JMenu createEditMenu(JSimuGate panel) {
+        JMenu menu = new JMenu("Edit");
+        JMenuItem menuItem;
+
+        menuItem = new JMenuItem("Cut");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK));
+        menuItem.addActionListener(event -> {
+            nextPasteOffset = 0;
+            StringSelection text = new StringSelection(panel.copySelection());
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(text, text);
+            panel.circuit.removeSelectedParts();
+        });
+        menu.add(menuItem);
+
+
+        menuItem = new JMenuItem("Copy");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK));
+        menuItem.addActionListener(event -> {
+            nextPasteOffset = 1;
+            StringSelection text = new StringSelection(panel.copySelection());
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(text, text);
+        });
+        menu.add(menuItem);
+
+
+        menuItem = new JMenuItem("Paste");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK));
+        menuItem.addActionListener(event -> {
+
+            try {
+                Clipboard systemClipboard = getDefaultToolkit().getSystemClipboard();
+                Transferable data = systemClipboard.getContents(null);
+                String string = (String)data.getTransferData(DataFlavor.stringFlavor);
+                string = shiftSerializedPart(string,nextPasteOffset*50,nextPasteOffset*50);
+                nextPasteOffset++;
+                panel.unlselectAll();
+                panel.circuit.fromString(string);
+            } catch (IOException | UnsupportedFlavorException e) {}
+
+        });
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Delete");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+        menuItem.addActionListener(event -> {
+            panel.circuit.removeSelectedParts();
+        });
+        menu.add(menuItem);
+
+        return menu;
+    }
+
     public static JMenu createHelpMenu(JSimuGate panel) {
 
         JMenu menu = new JMenu("Help");
@@ -319,6 +374,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             }
         });
         menu.add(menuItem);
+
         return menu;
     }
 
@@ -339,6 +395,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         JMenuItem menuItem;
 
         menuItem = new JMenuItem("New");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
             if (0 != JOptionPane.showConfirmDialog(null, "Clear existing circuit?")) return;
             Net.nets.clear();
@@ -369,6 +426,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         fileMenu.add(menuItem);
 
         menuItem = new JMenuItem("Open... (replace existing circuit)");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
             JFileChooser choice = new JFileChooser(savedFile);
             choice.setSelectedFile(savedFile);
@@ -395,7 +453,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         fileMenu.add(menuItem);
 
         menuItem = new JMenuItem("Save as...");
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
             JFileChooser choice = new JFileChooser(savedFile);
             choice.setSelectedFile(savedFile);
@@ -426,6 +484,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         fileMenu.add(menuItem);
 
         menuItem = saveMenuItem = new JMenuItem("Save " + savedFile.getName());
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
             String filename = appendLogicToFilename(savedFile.getAbsolutePath());
             savedFile = new File(filename);
@@ -942,16 +1001,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
 
                 if (recentMouseEvent.isControlDown()) {
-                    // Copying
-                    String string = "";
-                    for (Part part : circuit.parts) {
-                        if (part.isSelected()) {
-                            string += part.toString();
-                            if (recentMouseEvent.isShiftDown()) part.selecting = true;
-                            part.setSelected(false);
-                        }
-                    }
-                    for (Wire wire : circuit.wires) string += wire.toString();
+                    String string = copySelection();
+                    unlselectAll();
                     circuit.fromString(string);
 
                 }
@@ -965,6 +1016,24 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         }
         repaint();
         recentMouseEvent = e;
+    }
+
+    private String copySelection() {
+        // Copying
+        String string = "";
+        for (Part part : circuit.parts) {
+            if (part.isSelected()) {
+                string += part.toString();
+                if (recentMouseEvent.isShiftDown()) part.selecting = true;
+
+            }
+        }
+        for (Wire wire : circuit.wires) string += wire.toString();
+        return string;
+    }
+
+    private void unlselectAll() {
+        for (Part part : circuit.parts) if (part.isSelected())  part.setSelected(false);
     }
 
     /**
@@ -982,4 +1051,23 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         return filename + ".logic";
     }
 
+    /**
+     * Takes a string, if it's a serialized part, shifts it by dx,dy
+     * @param string - Serialized part string
+     * @param dx - Amount to shift horizontally
+     * @param dy - Amount to shift vertically
+     * @return - String encoded with part shifted
+     */
+    static String shiftSerializedPart(String string,double dx,double dy) {
+        StringBuffer result=new StringBuffer();
+        Pattern pattern = Pattern.compile("(PART:\\[\\[[0-9. ]+,[0-9. ]+,)([0-9. ]+)(] *, *\\[[0-9. ]+,[0-9. ]+,)([0-9. ]+)(]])");
+        Matcher match = pattern.matcher(string);
+        while (match.find()) {
+            double x = Double.valueOf(match.group(2)) + dx;
+            double y = Double.valueOf(match.group(4)) + dy;
+            match.appendReplacement(result, match.group(1)+x+match.group(3)+y+match.group(5));
+        }
+        match.appendTail(result);
+        return result.toString();
+    }
 }
