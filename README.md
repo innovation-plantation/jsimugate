@@ -1,17 +1,21 @@
 # jsimugate
 
 Here's a digital logic circuit simulator I just threw together the last couple of weeks. 
-It is intended to be used for teaching and learning computer arcitecture.
+It is intended to be used for teaching and learning computer architecture.
 
 ![image](https://user-images.githubusercontent.com/26174810/51083679-11d2b980-16c2-11e9-988f-6ef0710f2336.png)
 
+Visit the Wiki at https://github.com/innovation-plantation/jsimugate/wiki
+
+or download and run at https://github.com/innovation-plantation/jsimugate/raw/master/jsimugate.jar
+
 Components are idealized,using augmented std_logic signals so a few details are unrealistic
-such as unbounded fanout, diodes having an unrealistic memory capability when connected in a loop, and there is
+such as unbounded fan-out, diodes having an unrealistic memory capability when connected in a loop, and there is
 a single time-unit delay for all parts without regard to their internal complexity. 
 
 A wide range of parts are supported from ALU & RAM for building processors down to transistors and diodes for building gates and PLAs.
-The agumented (extra weaker values added to) std_logic is specifically for demonstrating PLA design, as it requires a strong pullup 
-and a weak pulldown, and it was considered best not to alter the begavior of std_logic values to make H stronger than L. 
+The agumented (extra weaker values added to) std_logic is specifically for demonstrating PLA design, as it requires a strong pull-up
+and a weak pull-down, and it was considered best not to alter the behavior of std_logic values to make H stronger than L.
 So "Yes, No,and Maybe" values have been added as weaker variations of  "High, Low, and Weak".
 
 To create a part, drag it from its parts bin. To recycle it, drag selected parts back to any bin. To add or remove inversion bubbles,
@@ -40,8 +44,6 @@ You can also zoom and out in by holding the Ctrl key while pressing +/-, or whil
 Zooming is centered around the mouse, so panning can be done by zooming.
 To pan, zoom out with the mouse on one side of the screen, and zoom back in with the mouse on the opposite side of the screen.
 
-Simugate, written in Python served as a prototype for jSimugate.
+SimuGate, written in Python served as a prototype for jSimuGate.
 
-Visit the Wiki at https://github.com/innovation-plantation/jsimugate/wiki
 
-or download and run at https://github.com/innovation-plantation/jsimugate/raw/master/jsimugate.jar
