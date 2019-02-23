@@ -15,6 +15,7 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Scanner;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,7 +26,7 @@ import static java.awt.event.KeyEvent.*;
  * User interface for circuit simulation. This could be an Applet by changing JPanel to JApplet or Applet, etc.
  */
 public class JSimuGate extends Panel implements MouseListener, MouseMotionListener, ComponentListener {
-    static String version = "jSimuGate 0.57";
+    static String version = "jSimuGate 0.60";
     private static final long serialVersionUID = 1L;
     Circuit circuit = new Circuit().withStandardBins();
     private Dimension size;
@@ -44,6 +45,36 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
     static final AffineTransform identity = new AffineTransform();
     static double scaleUnit = Math.sqrt(Math.sqrt(Math.sqrt(2))), inverseScaleUnit = 1 / scaleUnit;
     static JMenuItem saveMenuItem = null;
+    Stack<String> undoStack = new Stack<String>();
+    Stack<String> redoStack = new Stack<String>();
+
+    public void snapshot() {
+        String s = circuit.toString();
+        if (undoStack.empty() || !undoStack.peek().equals(s)) undoStack.push(s);
+        redoStack.empty();
+        Log.println("U:"+undoStack.size());
+    }
+
+    public void undo() {
+        String s = undoStack.empty()?"":undoStack.pop();
+        if (!undoStack.empty() && s.equals(circuit.toString())) s=undoStack.pop(); // in case nothing changed since snap
+        redoStack.push(s);
+        PinGroup.pinGroups.clear();
+        circuit = new Circuit().withStandardBins();
+        circuit.startup(() -> repaint());
+        circuit.fromString(s);
+        repaint();
+    }
+
+    public void redo() {
+        String s = redoStack.empty()?"":redoStack.pop();
+        undoStack.push(s);
+        PinGroup.pinGroups.clear();
+        circuit = new Circuit().withStandardBins();
+        circuit.startup(() -> repaint());
+        circuit.fromString(s);
+        repaint();
+    }
 
     /**
      * Initialize the GUI. Turn on the event listeners and place the part bins on the display.
@@ -67,12 +98,14 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                     }
                 }
             }
+            snapshot();
         });
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
             if (!hasFocus()) return false;
             if (e.getID() == KeyEvent.KEY_PRESSED) {
                 switch (e.getKeyChar()) {
                     case '+':
+                        snapshot();
                         if (e.isControlDown()) {
                             int x = recentMouseEvent.getX(), y = recentMouseEvent.getY();
                             circuit.scale(scaleUnit, x, y);
@@ -85,6 +118,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                             }
                         break;
                     case '-':
+                        snapshot();
                         if (e.isControlDown()) {
                             int x = recentMouseEvent.getX(), y = recentMouseEvent.getY();
                             circuit.scale(inverseScaleUnit, x, y);
@@ -101,6 +135,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                         int step = 4;
                         switch (e.getKeyCode()) {
                             case VK_UP:
+                                snapshot();
                                 for (Part part : circuit.parts) {
                                     if (part.isSelected()) {
                                         part.transform.scale(1, -1);
@@ -108,6 +143,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                                 }
                                 break;
                             case VK_DOWN:
+                                snapshot();
                                 for (Part part : circuit.parts) {
                                     if (part.isSelected()) {
                                         part.transform.scale(-1, 1);
@@ -115,8 +151,10 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                                 }
                                 break;
                             case VK_LEFT:
+                                snapshot();
                                 step = -step; // fall-through
                             case VK_RIGHT:
+                                snapshot();
                                 if (e.isControlDown()) step *= 3;
                                 if (e.isShiftDown()) step /= 2;
                                 for (Part part : circuit.parts) {
@@ -139,6 +177,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 }
                 Log.println("key down " + e.getKeyChar());
                 if (!e.isAltDown() && !e.isControlDown()) {
+                    snapshot();
                     for (Part part : circuit.parts) {
                         if (part.isSelected()) part.processChar(Character.toUpperCase(e.getKeyChar()));
                     }
@@ -150,6 +189,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 }
             }
             repaint();
+
             return false;
         });
 
@@ -305,13 +345,23 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         JMenu menu = new JMenu("Edit");
         JMenuItem menuItem;
 
+        menuItem = new JMenuItem("Undo");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
+        menuItem.addActionListener(event -> {
+            panel.undo();
+        });
+        menu.add(menuItem);
+
+
         menuItem = new JMenuItem("Cut");
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
+            panel.snapshot();
             nextPasteOffset = 0;
             StringSelection text = new StringSelection(panel.copySelection());
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(text, text);
             panel.circuit.removeSelectedParts();
+            panel.snapshot();
         });
         menu.add(menuItem);
 
@@ -329,7 +379,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         menuItem = new JMenuItem("Paste");
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
-
+            panel.snapshot();
             try {
                 Clipboard systemClipboard = getDefaultToolkit().getSystemClipboard();
                 Transferable data = systemClipboard.getContents(null);
@@ -339,6 +389,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 panel.unlselectAll();
                 panel.circuit.fromString(string);
             } catch (IOException | UnsupportedFlavorException e) {}
+            panel.snapshot();
 
         });
         menu.add(menuItem);
@@ -346,7 +397,16 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         menuItem = new JMenuItem("Delete");
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
         menuItem.addActionListener(event -> {
+            panel.snapshot();
             panel.circuit.removeSelectedParts();
+            panel.snapshot();
+        });
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Redo");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK));
+        menuItem.addActionListener(event -> {
+            panel.redo();
         });
         menu.add(menuItem);
 
@@ -397,16 +457,19 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         menuItem = new JMenuItem("New");
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
+            panel.snapshot();
             if (0 != JOptionPane.showConfirmDialog(null, "Clear existing circuit?")) return;
             Net.nets.clear();
             PinGroup.pinGroups.clear();
             panel.circuit = new Circuit().withStandardBins();
             panel.circuit.startup(() -> panel.repaint());
+            panel.snapshot();
         });
         fileMenu.add(menuItem);
 
         menuItem = new JMenuItem("Load... (add to existing circuit)");
         menuItem.addActionListener(event -> {
+            panel.snapshot();
             JFileChooser choice = new JFileChooser(otherFile);
             choice.setSelectedFile(otherFile);
             choice.setFileFilter(new FileNameExtensionFilter("jSimuGate Circuits (.logic)", "logic"));
@@ -422,12 +485,14 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                     JOptionPane.showMessageDialog(panel, "File " + otherFile + " does not exist");
                 }
             }
+            panel.snapshot();
         });
         fileMenu.add(menuItem);
 
         menuItem = new JMenuItem("Open... (replace existing circuit)");
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
+            panel.snapshot();
             JFileChooser choice = new JFileChooser(savedFile);
             choice.setSelectedFile(savedFile);
             choice.setFileFilter(new FileNameExtensionFilter("jSimuGate Circuits (.logic)", "logic"));
@@ -449,6 +514,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                     JOptionPane.showMessageDialog(panel, "File " + savedFile + " does not exist");
                 }
             }
+            panel.snapshot();
         });
         fileMenu.add(menuItem);
 
@@ -560,187 +626,195 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
      */
     @Override
     public void mouseClicked(MouseEvent e) {
-        switch (e.getClickCount()) {
-            case 2:
-                for (Part part : circuit.parts) {
-                    for (Pin pin : part.pins) {
-                        if (pin.at(e.getPoint())) {
-                            if (recentSrc == null || recentDst == null) return;
-                            PinGroup src = PinGroup.groupOf(recentSrc);
-                            PinGroup dst = PinGroup.groupOf(recentDst);
-                            PinGroup target = PinGroup.groupOf(pin);
-                            if (target == null) return;
-                            int iTarget = target.pins.indexOf(pin);
-                            if (src == null && dst == null) return;
-                            // if one end is not a group, duplicate its part for each pin in group
-                            Part template = null;
-                            PinGroup group = null;
-                            Pin templatePin = null;
-                            if (src == null) {
-                                template = (Part) recentSrc.parent;
-                                group = dst;
-                                templatePin = recentDst;
-                            }
-                            if (dst == null) {
-                                template = (Part) recentDst.parent;
-                                group = src;
-                                templatePin = recentSrc;
-                            }
-                            if (template != null) {
-                                if (template.pins.size() != 1) return; // only duplicate single-pin parts.
-                                int i = group.pins.indexOf(templatePin);
-                                for (int j = i + 1; j <= iTarget && j < group.size(); j++) {
-                                    Pin jPin = group.pins.get(j);
-                                    if (Net.directConnections(jPin).size() > 0) continue;
-                                    Part newPart = replicatePart(template, templatePin.gTransform, jPin.gTransform);
-                                    addOrRemoveWire(jPin, newPart.pins.get(0));
+        snapshot();
+        try {
+            switch (e.getClickCount()) {
+                case 2:
+
+                    for (Part part : circuit.parts) {
+                        for (Pin pin : part.pins) {
+                            if (pin.at(e.getPoint())) {
+                                if (recentSrc == null || recentDst == null) return;
+                                PinGroup src = PinGroup.groupOf(recentSrc);
+                                PinGroup dst = PinGroup.groupOf(recentDst);
+                                PinGroup target = PinGroup.groupOf(pin);
+                                if (target == null) return;
+                                int iTarget = target.pins.indexOf(pin);
+                                if (src == null && dst == null) return;
+                                // if one end is not a group, duplicate its part for each pin in group
+                                Part template = null;
+                                PinGroup group = null;
+                                Pin templatePin = null;
+                                if (src == null) {
+                                    template = (Part) recentSrc.parent;
+                                    group = dst;
+                                    templatePin = recentDst;
                                 }
-                                for (int j = i - 1; j >= iTarget && j >= 0; j--) {
-                                    Pin jPin = group.pins.get(j);
-                                    if (Net.directConnections(jPin).size() > 0) continue;
-                                    Part newPart = replicatePart(template, templatePin.gTransform, jPin.gTransform);
-                                    addOrRemoveWire(jPin, newPart.pins.get(0));
+                                if (dst == null) {
+                                    template = (Part) recentDst.parent;
+                                    group = src;
+                                    templatePin = recentSrc;
+                                }
+                                if (template != null) {
+                                    if (template.pins.size() != 1) return; // only duplicate single-pin parts.
+                                    int i = group.pins.indexOf(templatePin);
+                                    for (int j = i + 1; j <= iTarget && j < group.size(); j++) {
+                                        Pin jPin = group.pins.get(j);
+                                        if (Net.directConnections(jPin).size() > 0) continue;
+                                        Part newPart = replicatePart(template, templatePin.gTransform, jPin.gTransform);
+                                        addOrRemoveWire(jPin, newPart.pins.get(0));
+                                    }
+                                    for (int j = i - 1; j >= iTarget && j >= 0; j--) {
+                                        Pin jPin = group.pins.get(j);
+                                        if (Net.directConnections(jPin).size() > 0) continue;
+                                        Part newPart = replicatePart(template, templatePin.gTransform, jPin.gTransform);
+                                        addOrRemoveWire(jPin, newPart.pins.get(0));
+                                    }
+                                    return;
+                                }
+                                int iSrc = src.pins.indexOf(recentSrc);
+                                int iDst = dst.pins.indexOf(recentDst);
+                                if (target == src) {
+                                    for (int i = iSrc + 1, j = iDst + 1; i <= iTarget && i < src.size() && j < dst.size(); i++, j++) {
+                                        addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
+                                    }
+                                    for (int i = iSrc - 1, j = iDst - 1; i >= iTarget && i >= 0 && j >= 0; i--, j--) {
+                                        addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
+                                    }
+                                } else if (target == dst) {
+                                    for (int i = iSrc + 1, j = iDst + 1; j <= iTarget && i < src.size() && j < dst.size(); i++, j++) {
+                                        addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
+                                    }
+                                    for (int i = iSrc - 1, j = iDst - 1; j >= iTarget && i >= 0 && j >= 0; i--, j--) {
+                                        addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
+                                    }
+
                                 }
                                 return;
                             }
-                            int iSrc = src.pins.indexOf(recentSrc);
-                            int iDst = dst.pins.indexOf(recentDst);
-                            if (target == src) {
-                                for (int i = iSrc + 1, j = iDst + 1; i <= iTarget && i < src.size() && j < dst.size(); i++, j++) {
-                                    addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
-                                }
-                                for (int i = iSrc - 1, j = iDst - 1; i >= iTarget && i >= 0 && j >= 0; i--, j--) {
-                                    addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
-                                }
-                            } else if (target == dst) {
-                                for (int i = iSrc + 1, j = iDst + 1; j <= iTarget && i < src.size() && j < dst.size(); i++, j++) {
-                                    addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
-                                }
-                                for (int i = iSrc - 1, j = iDst - 1; j >= iTarget && i >= 0 && j >= 0; i--, j--) {
-                                    addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
-                                }
+                        }
+                        if (part.at(e.getPoint())) {
+                            part.processDoubleClick();
+                        }
+                    }
+                    return;
 
-                            }
+                case 3:
+                    PinGroup src = PinGroup.groupOf(recentSrc);
+                    PinGroup dst = PinGroup.groupOf(recentDst);
+                    if (src == null && dst == null) return;
+                    // if one end is not a group, duplicate its part for each pin in group
+                    Part template = null;
+                    PinGroup group = null;
+                    Pin templatePin = null;
+                    if (src == null) {
+                        template = (Part) recentSrc.parent;
+                        group = dst;
+                        templatePin = recentDst;
+                    }
+                    if (dst == null) {
+                        template = (Part) recentDst.parent;
+                        group = src;
+                        templatePin = recentSrc;
+                    }
+                    if (template != null) {
+                        if (template.pins.size() != 1) return; // only duplicate single-pin parts.
+                        for (Pin p : group.pins) {  // wire each pin to corresponding duplicated part
+                            if (Net.directConnections(p).size() > 0) continue;
+                            addOrRemoveWire(p, replicatePart(template, templatePin.gTransform, p.gTransform).pins.get(0));
+                        }
+                        return;
+                    }
+                    int iSrc = src.pins.indexOf(recentSrc);
+                    int iDst = dst.pins.indexOf(recentDst);
+                    for (int i = iSrc + 1, j = iDst + 1; i < src.size() && j < dst.size(); i++, j++) {
+                        addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
+                    }
+                    for (int i = iSrc - 1, j = iDst - 1; i >= 0 && j >= 0; i--, j--) {
+                        addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
+                    }
+                    return;
+            }
+            // clicking on inverter should invert it
+            for (Part part : circuit.parts) {
+                for (Pin pin : part.pins) {
+                    if (pin.bubble != null) {
+                        if (pin.bubble.at(e.getPoint())) {
+                            pin.toggleInversion();
+                            repaint();
+
                             return;
                         }
                     }
-                    if (part.at(e.getPoint())) {
-                        part.processDoubleClick();
-                    }
-                }
-                return;
-            case 3:
-                PinGroup src = PinGroup.groupOf(recentSrc);
-                PinGroup dst = PinGroup.groupOf(recentDst);
-                if (src == null && dst == null) return;
-                // if one end is not a group, duplicate its part for each pin in group
-                Part template = null;
-                PinGroup group = null;
-                Pin templatePin = null;
-                if (src == null) {
-                    template = (Part) recentSrc.parent;
-                    group = dst;
-                    templatePin = recentDst;
-                }
-                if (dst == null) {
-                    template = (Part) recentDst.parent;
-                    group = src;
-                    templatePin = recentSrc;
-                }
-                if (template != null) {
-                    if (template.pins.size() != 1) return; // only duplicate single-pin parts.
-                    for (Pin p : group.pins) {  // wire each pin to corresponding duplicated part
-                        if (Net.directConnections(p).size() > 0) continue;
-                        addOrRemoveWire(p, replicatePart(template, templatePin.gTransform, p.gTransform).pins.get(0));
-                    }
-                    return;
-                }
-                int iSrc = src.pins.indexOf(recentSrc);
-                int iDst = dst.pins.indexOf(recentDst);
-                for (int i = iSrc + 1, j = iDst + 1; i < src.size() && j < dst.size(); i++, j++) {
-                    addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
-                }
-                for (int i = iSrc - 1, j = iDst - 1; i >= 0 && j >= 0; i--, j--) {
-                    addOrRemoveWire(src.pins.get(i), dst.pins.get(j));
-                }
-                return;
-        }
-        // clicking on inverter should invert it
-        for (Part part : circuit.parts) {
-            for (Pin pin : part.pins) {
-                if (pin.bubble != null) {
-                    if (pin.bubble.at(e.getPoint())) {
-                        pin.toggleInversion();
-                        repaint();
-                        return;
-                    }
                 }
             }
-        }
 
-        // clicking on something or nothing?
-        Part topHit = null;
-        for (Part part : circuit.parts) if (part.at(e.getPoint())) topHit = part;
+            // clicking on something or nothing?
+            Part topHit = null;
+            for (Part part : circuit.parts) if (part.at(e.getPoint())) topHit = part;
 
-        // RightClick?
-        if (e.getButton() == MouseEvent.BUTTON3) {
-            if (topHit != null) {
-                Component display = this;
-                JPopupMenu menu = new javax.swing.JPopupMenu("Part Menu");
-                if (topHit instanceof Gate)
-                    menu.add(new JMenuItem("Convert (DeMorgan)") {
-                        {
-                            addActionListener(e -> {
-                                for (Part part : circuit.parts) {
-                                    if (part.isSelected()) {
-                                        Part newPart = part.convert();
-                                        newPart.setSelected(true);
-                                        circuit.parts.set(circuit.parts.indexOf(part), newPart);
-
-                                    }
-                                }
-                                display.repaint();
-                            });
-                        }
-                    });
-                if (!(topHit instanceof Discrete || topHit instanceof Bus))
-                    for (Tech tech : Tech.values()) {
-                        menu.add(new JMenuItem(tech.description) {
+            // RightClick?
+            if (e.getButton() == MouseEvent.BUTTON3) {
+                if (topHit != null) {
+                    Component display = this;
+                    JPopupMenu menu = new javax.swing.JPopupMenu("Part Menu");
+                    if (topHit instanceof Gate)
+                        menu.add(new JMenuItem("Convert (DeMorgan)") {
                             {
                                 addActionListener(e -> {
                                     for (Part part : circuit.parts) {
                                         if (part.isSelected()) {
-                                            circuit.parts.set(circuit.parts.indexOf(part), part.asTech(tech));
+                                            Part newPart = part.convert();
+                                            newPart.setSelected(true);
+                                            circuit.parts.set(circuit.parts.indexOf(part), newPart);
+
                                         }
                                     }
                                     display.repaint();
                                 });
                             }
                         });
-                    }
-                if (topHit instanceof Discrete)
-                    menu.add(new JMenuItem("Reverse Polarity") {
-                        {
-                            addActionListener(e -> {
-                                for (Part part : circuit.parts) {
-                                    if (part.isSelected()) {
-                                        Part newPart = part.reversePolarity();
-                                        newPart.setSelected(true);
-                                        circuit.parts.set(circuit.parts.indexOf(part), newPart);
-                                    }
+                    if (!(topHit instanceof Discrete || topHit instanceof Bus))
+                        for (Tech tech : Tech.values()) {
+                            menu.add(new JMenuItem(tech.description) {
+                                {
+                                    addActionListener(e -> {
+                                        for (Part part : circuit.parts) {
+                                            if (part.isSelected()) {
+                                                circuit.parts.set(circuit.parts.indexOf(part), part.asTech(tech));
+                                            }
+                                        }
+                                        display.repaint();
+                                    });
                                 }
-                                display.repaint();
                             });
                         }
-                    });
-                menu.show(this, e.getX(), e.getY());
+                    if (topHit instanceof Discrete)
+                        menu.add(new JMenuItem("Reverse Polarity") {
+                            {
+                                addActionListener(e -> {
+                                    for (Part part : circuit.parts) {
+                                        if (part.isSelected()) {
+                                            Part newPart = part.reversePolarity();
+                                            newPart.setSelected(true);
+                                            circuit.parts.set(circuit.parts.indexOf(part), newPart);
+                                        }
+                                    }
+                                    display.repaint();
+                                });
+                            }
+                        });
+                    menu.show(this, e.getX(), e.getY());
+                }
             }
-        }
 
-        // clicking on nothing should deselect everything.
-        if (topHit == null) for (Part part : circuit.parts) part.setSelected(part.selecting = false);
-        repaint();
-        recentMouseEvent = e;
+            // clicking on nothing should deselect everything.
+            if (topHit == null) for (Part part : circuit.parts) part.setSelected(part.selecting = false);
+            repaint();
+            recentMouseEvent = e;
+        } finally {
+            snapshot();
+        }
     }
 
     /**
@@ -898,50 +972,53 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
      */
     @Override
     public void mouseReleased(MouseEvent e) {
-        // If landed on a pin, connect it
-        if (protoWire != null) {
-            Net.disconnect(protoWire);
-            for (Part part : circuit.parts) {
-                for (Pin pin : part.pins) {
-                    if (pin.at(e.getPoint())) {
-                        if (pin == protoWire.src) {
-                            // Don't connect pin to self
-                            break;
+        snapshot();
+        try {
+            // If landed on a pin, connect it
+            if (protoWire != null) {
+                Net.disconnect(protoWire);
+                for (Part part : circuit.parts) {
+                    for (Pin pin : part.pins) {
+                        if (pin.at(e.getPoint())) {
+                            if (pin == protoWire.src) {
+                                // Don't connect pin to self
+                                break;
+                            }
+                            // connect or disconnect
+                            addOrRemoveWire(recentSrc = protoWire.src, recentDst = pin);
                         }
-                        // connect or disconnect
-                        addOrRemoveWire(recentSrc = protoWire.src, recentDst = pin);
                     }
                 }
+                protoWire = null;
+                return;
             }
-            protoWire = null;
-            repaint();
-            recentMouseEvent = e;
-            return;
-        }
 
-        // Add whatever is in the lasso to the selection
-        if (lasso != null) {
-            for (Part part : circuit.parts) {
-                if (part.selecting) {
-                    part.setSelected(true);
-                    part.selecting = false;
+            // Add whatever is in the lasso to the selection
+            if (lasso != null) {
+                for (Part part : circuit.parts) {
+                    if (part.selecting) {
+                        part.setSelected(true);
+                        part.selecting = false;
+                    }
+                }
+                lasso = null;
+                lassoBegin = null;
+                return;
+            }
+
+            for (PartsBin bin : circuit.bins) {
+                if (bin.at(e.getPoint())) {
+                    circuit.removeSelectedParts();
+                    break;
                 }
             }
-            lasso = null;
-            lassoBegin = null;
+
+        }
+        finally {
+            snapshot();
             repaint();
             recentMouseEvent = e;
-            return;
         }
-
-        for (PartsBin bin : circuit.bins) {
-            if (bin.at(e.getPoint())) {
-                circuit.removeSelectedParts();
-                break;
-            }
-        }
-        repaint();
-        recentMouseEvent = e;
     }
 
 
