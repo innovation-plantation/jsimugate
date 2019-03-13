@@ -82,6 +82,9 @@ public class ROMemory extends Box {
                     addr = Long.parseUnsignedLong(scan.match().group(1), 16);
                     System.out.println("ADDR:" + addr);
                 }
+                else {
+                    System.out.println("Goofy ROM data at "+addr+": "+scan.next());
+                }
             }
         }
         System.out.println();
@@ -97,7 +100,7 @@ public class ROMemory extends Box {
         String result = "";
         for (long addr : qSave.keySet()) {
             if (qSave.get(addr) != null) {
-                if (nextAddr == null || addr != nextAddr) {
+                if (nextAddr == null || addr != nextAddr || (nextAddr&0xF)==0 ) {
                     result += " [" + Long.toHexString(addr) + "]";
                 }
                 result += " " + Integer.toHexString(qSave.get(addr));
@@ -111,11 +114,11 @@ public class ROMemory extends Box {
      * Edit the ROM program on double click
      */
     public void processDoubleClick() {
-        JTextArea textarea = new JTextArea(40, 80);
+        JTextArea textarea = new JTextArea(getDetails().replaceAll("\\[", "\n\\[")+"       \n\n\n\n");
         JPanel panel = new JPanel();
         JScrollPane scroller = new JScrollPane(textarea);
         panel.add(scroller);
-        textarea.setText(getDetails().replaceAll("\\[", "\n\\["));
+        textarea.setFont(new Font(Font.MONOSPACED,Font.PLAIN,12));
         if (JOptionPane.showConfirmDialog(null, panel, "ROM Program",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != 0) return;
 

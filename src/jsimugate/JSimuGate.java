@@ -26,7 +26,7 @@ import static java.awt.event.KeyEvent.*;
  * User interface for circuit simulation. This could be an Applet by changing JPanel to JApplet or Applet, etc.
  */
 public class JSimuGate extends Panel implements MouseListener, MouseMotionListener, ComponentListener {
-    static String version = "jSimuGate 0.60";
+    static String version = "jSimuGate 0.70";
     private static final long serialVersionUID = 1L;
     Circuit circuit = new Circuit().withStandardBins();
     private Dimension size;
@@ -476,7 +476,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             if (choice.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
                 if (choice.getSelectedFile().exists()) {
                     try {
-                        Scanner scan = new Scanner(choice.getSelectedFile());
+                        Scanner scan = new Scanner(choice.getSelectedFile(),"utf-8");
                         panel.circuit.fromScanner(scan);
                     } catch (FileNotFoundException ex) {
                         JOptionPane.showMessageDialog(panel, ex.getMessage());
@@ -501,7 +501,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 saveMenuItem.setText("Save " + savedFile.getName());
                 if (savedFile.exists()) {
                     try {
-                        Scanner scan = new Scanner(choice.getSelectedFile());
+                        Scanner scan = new Scanner(choice.getSelectedFile(),"utf-8");
                         Net.nets.clear();
                         PinGroup.pinGroups.clear();
                         panel.circuit = new Circuit().withStandardBins();
