@@ -24,15 +24,15 @@ public class Alu extends Adder {
         SUB(true, (a, b) -> a - b), ///////// 0 1 1 0
         SBB(true, (a, b) -> a - b - 1), ///// 0 1 1 1
 
-        SHL(true, (a, b) -> a << 1), //////// 0 0 0 0
-        RLC(true, (a, b) -> (a << 1) | 1), // 0 0 0 1
-        SHR(true, (a, b) -> a >> 1), //////// 0 0 1 0
-        NOT(false, (a, b) -> ~a), /////////// 0 0 1 1
+        SHL(true, (a, b) -> b << 1), //////// 0 0 0 0
+        RLC(true, (a, b) -> (b << 1) | 1), // 0 0 0 1
+        SHR(true, (a, b) -> b >> 1), //////// 0 0 1 0
+        NOT(false, (a, b) -> ~b), /////////// 0 0 1 1
 
-        INC(true, (a, b) -> a + 1), ///////// 0 1 0 0
-        NEG(true, (a, b) -> -a), //////////// 0 1 0 1
-        DEC(true, (a, b) -> a - 1), ///////// 0 1 1 0
-        XFER(false, (a, b) -> a), /////////// 1 1 1
+        INC(true, (a, b) -> b + 1), ///////// 0 1 0 0
+        NEG(true, (a, b) -> -b), //////////// 0 1 0 1
+        DEC(true, (a, b) -> b - 1), ///////// 0 1 1 0
+        XFER(false, (a, b) -> b), /////////// 1 1 1 1
         ;
 
         private final IntBinaryOperator fn;
