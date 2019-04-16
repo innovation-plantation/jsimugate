@@ -89,6 +89,20 @@ public class Circuit {
             bin.draw(g);
         }
     }
+    public void shutdown() {
+        System.err.println("Stop simulation");
+        if (timer != null) timer.stop();
+    }
+
+    public void pause() {
+        System.err.println("Pause simulation");
+        if (timer != null) timer.stop();
+    }
+
+    public void resume() {
+        System.err.println("Resume simulation");
+        if (timer != null) timer.restart();
+    }
 
     /**
      * Start the circuit running. With each tick, process all the wires and operate all the parts,
@@ -96,7 +110,7 @@ public class Circuit {
      *
      * @param repaint
      */
-    public void startup(Runnable repaint) {
+    public void startup(boolean start,Runnable repaint) {
         if (timer != null) timer.stop();
         timer = new javax.swing.Timer(10, e -> {
 
@@ -130,7 +144,7 @@ public class Circuit {
             }
             repaint.run();
         });
-        timer.start();
+        if (start) timer.start();
     }
 
     public void removeSelectedParts() {

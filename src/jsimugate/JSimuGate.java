@@ -26,7 +26,7 @@ import static java.awt.event.KeyEvent.*;
  * User interface for circuit simulation. This could be an Applet by changing JPanel to JApplet or Applet, etc.
  */
 public class JSimuGate extends Panel implements MouseListener, MouseMotionListener, ComponentListener {
-    static String version = "jSimuGate 0.80";
+    static String version = "jSimuGate 0.81";
     private static final long serialVersionUID = 1L;
     Circuit circuit = new Circuit().withStandardBins();
     private Dimension size;
@@ -50,30 +50,54 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
     public void snapshot() {
         String s = circuit.toString();
-        if (undoStack.empty() || !undoStack.peek().equals(s)) undoStack.push(s);
-        redoStack.empty();
-        Log.println("U:"+undoStack.size());
+        if (undoStack.empty() || !undoStack.peek().equals(s)) {
+            redoStack.empty();
+            undoStack.push(s);
+        }
     }
 
     public void undo() {
-        String s = undoStack.empty()?"":undoStack.pop();
-        if (!undoStack.empty() && s.equals(circuit.toString())) s=undoStack.pop(); // in case nothing changed since snap
-        redoStack.push(s);
+        System.gc();
+        Log.println("u:"+undoStack.size()+" R:"+redoStack.size()+"...");
+        String s1 = circuit.toString();
+        redoStack.push(s1);
+        String s="";
+        for (;;) {
+            s = "";
+            if (undoStack.isEmpty()) break;
+            s = undoStack.pop();
+            if (!s.equals(s1)) break;
+        }
+        if (s1.equals(s)) return;
+        Log.println("u:"+undoStack.size()+" R:"+redoStack.size());
         PinGroup.pinGroups.clear();
+        circuit.shutdown();
         circuit = new Circuit().withStandardBins();
-        circuit.startup(() -> repaint());
+        circuit.startup(false,() -> repaint());
         circuit.fromString(s);
         repaint();
+        System.gc();
     }
 
     public void redo() {
-        String s = redoStack.empty()?"":redoStack.pop();
-        undoStack.push(s);
+        System.gc();
+        Log.println("r:"+redoStack.size()+" u:"+undoStack.size()+"...");
+        String s0 = circuit.toString();
+        undoStack.push(s0);
+        String s="";
+        for (;;) {
+            if (redoStack.isEmpty()) return;
+            s = redoStack.pop();
+            if (!s.equals(s0)) break;
+        }
+        if (s0.equals(s)) return;
+        Log.println("r:"+redoStack.size()+" u:"+undoStack.size());
         PinGroup.pinGroups.clear();
         circuit = new Circuit().withStandardBins();
-        circuit.startup(() -> repaint());
+        circuit.startup(false,() -> repaint());
         circuit.fromString(s);
         repaint();
+        System.gc();
     }
 
     /**
@@ -134,22 +158,6 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                     default:
                         int step = 4;
                         switch (e.getKeyCode()) {
-                            case VK_UP:
-                                snapshot();
-                                for (Part part : circuit.parts) {
-                                    if (part.isSelected()) {
-                                        part.transform.scale(1, -1);
-                                    }
-                                }
-                                break;
-                            case VK_DOWN:
-                                snapshot();
-                                for (Part part : circuit.parts) {
-                                    if (part.isSelected()) {
-                                        part.transform.scale(-1, 1);
-                                    }
-                                }
-                                break;
                             case VK_LEFT:
                                 snapshot();
                                 step = -step; // fall-through
@@ -166,13 +174,6 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                                     }
                                 }
                                 break;
-
-                            case VK_A: {
-                                if (e.isControlDown()) {
-                                    for (Part part : circuit.parts) part.setSelected(true);
-                                }
-                                break;
-                            }
                         }
                 }
                 Log.println("key down " + e.getKeyChar());
@@ -198,7 +199,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         this.addComponentListener(this);
 
         updateImageSize();
-        circuit.startup(() -> repaint()); // repaint this component whenever the circuit is updated
+        circuit.startup(true,() -> repaint()); // repaint this component whenever the circuit is updated
         File spaceNavigator = new File("/dev/hidraw2");
         if (spaceNavigator.exists() && spaceNavigator.canRead()) {
             try {
@@ -226,6 +227,24 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             } catch (IOException ex) {
             }
 
+        }
+    }
+
+    private void flop_parts() {
+        snapshot();
+        for (Part part : circuit.parts) {
+            if (part.isSelected()) {
+                part.transform.scale(-1, 1);
+            }
+        }
+    }
+
+    private void flip_parts() {
+        snapshot();
+        for (Part part : circuit.parts) {
+            if (part.isSelected()) {
+                part.transform.scale(1, -1);
+            }
         }
     }
 
@@ -314,6 +333,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         bar.add(fileMenu);
         JMenu editMenu = createEditMenu(panel);
         bar.add(editMenu);
+        JMenu simMenu = createSimMenu(panel);
+        bar.add(simMenu);
         JMenu helpMenu = createHelpMenu(panel);
         bar.add(helpMenu);
         frame.setJMenuBar(bar);
@@ -349,6 +370,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
             panel.undo();
+            panel.unlselectAll();
         });
         menu.add(menuItem);
 
@@ -407,6 +429,49 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
             panel.redo();
+            panel.unlselectAll();
+        });
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Flip parts");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0));
+        menuItem.addActionListener(event -> {
+            panel.flip_parts();
+        });
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Flop parts");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
+        menuItem.addActionListener(event -> {
+            panel.flop_parts();
+        });
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Select All");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK));
+        menuItem.addActionListener(event -> {
+            for (Part part : panel.circuit.parts) part.setSelected(true);
+        });
+        menu.add(menuItem);
+
+
+        return menu;
+    }
+
+    public static JMenu createSimMenu(JSimuGate panel) {
+
+        JMenu menu = new JMenu("Simulation");
+        JMenuItem menuItem;
+
+        menuItem = new JMenuItem("Pause");
+        menuItem.addActionListener(event -> {
+            panel.circuit.pause();
+        });
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Run");
+        menuItem.addActionListener(event -> {
+            panel.circuit.resume();
         });
         menu.add(menuItem);
 
@@ -462,7 +527,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             Net.nets.clear();
             PinGroup.pinGroups.clear();
             panel.circuit = new Circuit().withStandardBins();
-            panel.circuit.startup(() -> panel.repaint());
+            panel.circuit.startup(true,() -> panel.repaint());
             panel.snapshot();
         });
         fileMenu.add(menuItem);
@@ -506,7 +571,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                         PinGroup.pinGroups.clear();
                         panel.circuit = new Circuit().withStandardBins();
                         panel.circuit.fromScanner(scan);
-                        panel.circuit.startup(() -> panel.repaint());
+                        panel.unlselectAll();
+                        panel.circuit.startup(true,() -> panel.repaint());
                     } catch (FileNotFoundException ex) {
                         JOptionPane.showMessageDialog(panel, ex.getMessage());
                     }
@@ -519,7 +585,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         fileMenu.add(menuItem);
 
         menuItem = new JMenuItem("Save as...");
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
             JFileChooser choice = new JFileChooser(savedFile);
             choice.setSelectedFile(savedFile);
