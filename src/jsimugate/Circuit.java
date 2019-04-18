@@ -185,6 +185,7 @@ public class Circuit {
                 yPos += 10;
                 continue;
             }
+            for (Pin pin:part.pins) pin.setOutValue(Signal._L);
             bins.add(new PartsBin(xPos, yPos, part));
             xPos += 50;
             if (xPos > 150) {

@@ -20,6 +20,7 @@ public class Gate extends Part {
         addPin(output = new Pin(80, 0).right(40));
         addInput();
         addInput();
+        output.setOutValue(Signal._U);
         setSelected(false);
     }
 
