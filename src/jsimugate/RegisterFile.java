@@ -67,7 +67,7 @@ public class RegisterFile extends Box {
             Integer value = qSave[sel];
             if (selValid) {
                 if (value != null) ePins.setValue(value);
-                else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(Signal._D);
+                else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(Signal._U);
             }
             else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_X);
         } else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_Z);

@@ -66,8 +66,10 @@ public class Memory extends Box {
         }
         if (rd.hi) {
             Integer value = qSave.get(sel);
-            if (selValid && value != null) ePins.setValue(value);
-            else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_X);
+            if (selValid) {
+                if (value != null) ePins.setValue(value);
+                else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(Signal._U);
+            } else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_X);
         } else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_Z);
         prevClk = clk;
     }

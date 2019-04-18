@@ -56,7 +56,7 @@ public class EdgeTrigD extends Box {
             else if (clk.hi && prevClk.lo) {
                 if (d.hi) qSave.set(i, _1);
                 else if (d.lo) qSave.set(i, _0);
-                else qSave.set(i, _X);
+                else qSave.set(i, d);
             }
             ePins.pins.get(i).setOutValue(qSave.get(i));
         }
