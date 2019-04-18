@@ -58,7 +58,7 @@ public class ROMemory extends Box {
         if (rd.hi) {
             Integer value = qSave.get(sel);
             if (selValid && value != null) ePins.setValue(value);
-            else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_X);
+            else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(Signal._U); // uninitialized
         } else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_Z);
     }
 
