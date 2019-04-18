@@ -57,8 +57,10 @@ public class ROMemory extends Box {
         boolean selValid = wPins.goodValue();
         if (rd.hi) {
             Integer value = qSave.get(sel);
-            if (selValid && value != null) ePins.setValue(value);
-            else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(Signal._U); // uninitialized
+            if (selValid) {
+                if (value != null) ePins.setValue(value);
+                else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(Signal._U); // read uninitialized rom
+            } else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(Signal._X);
         } else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_Z);
     }
 
