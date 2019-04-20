@@ -71,22 +71,21 @@ public class DMux extends Box {
      */
     public void operate() {
         Signal in = wPins.pins.get(0).getInValue();
-        if (in.bad) {
+        if (!sPins.goodValue()) {
             for (Pin out : ePins.pins) {
                 out.setOutValue(Signal._X);
             }
             return;
         }
-        for (Pin pin : sPins.pins) {
-            if (pin.getInValue().bad) {
-                for (Pin out : ePins.pins) {
-                    out.setOutValue(Signal._X);
-                }
-                return;
-            }
-        }
+
+        int sel =  sPins.getValue();
         for (int i = 0; i < ePins.size(); i++) {
-            ePins.pins.get(i).setOutValue(i == sPins.getValue() ? in : _0);
+            if (i != sel) {
+                ePins.pins.get(i).setOutValue(_0);
+                continue;
+            }
+            ePins.pins.get(i).setOutValue(in.good?in.not().not():in);
+
         }
     }
 }
