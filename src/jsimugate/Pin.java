@@ -163,6 +163,7 @@ public class Pin extends Symbol {
             line = (inverted = makeBubble) ? shortLine : longLine;
             bubble.setVisible(inverted);
             parent.updateLabel();
+            outValue = outValue.opposite();
         }
     }
 
