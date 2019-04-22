@@ -20,13 +20,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.awt.Toolkit.getDefaultToolkit;
-import static java.awt.event.KeyEvent.*;
+import static java.awt.event.KeyEvent.VK_LEFT;
+import static java.awt.event.KeyEvent.VK_RIGHT;
 
 /**
  * User interface for circuit simulation. This could be an Applet by changing JPanel to JApplet or Applet, etc.
  */
 public class JSimuGate extends Panel implements MouseListener, MouseMotionListener, ComponentListener {
-    static String version = "jSimuGate 0.88";
+    static String version = "jSimuGate 0.90";
     private static final long serialVersionUID = 1L;
     Circuit circuit = new Circuit().withStandardBins();
     private Dimension size;
@@ -58,22 +59,22 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
     public void undo() {
         System.gc();
-        Log.println("u:"+undoStack.size()+" R:"+redoStack.size()+"...");
+        Log.println("u:" + undoStack.size() + " R:" + redoStack.size() + "...");
         String s1 = circuit.toString();
         redoStack.push(s1);
-        String s="";
-        for (;;) {
+        String s = "";
+        for (; ; ) {
             s = "";
             if (undoStack.isEmpty()) break;
             s = undoStack.pop();
             if (!s.equals(s1)) break;
         }
         if (s1.equals(s)) return;
-        Log.println("u:"+undoStack.size()+" R:"+redoStack.size());
+        Log.println("u:" + undoStack.size() + " R:" + redoStack.size());
         PinGroup.pinGroups.clear();
         circuit.shutdown();
         circuit = new Circuit().withStandardBins();
-        circuit.startup(false,() -> repaint());
+        circuit.startup(false, () -> repaint());
         circuit.fromString(s);
         repaint();
         System.gc();
@@ -81,20 +82,20 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
     public void redo() {
         System.gc();
-        Log.println("r:"+redoStack.size()+" u:"+undoStack.size()+"...");
+        Log.println("r:" + redoStack.size() + " u:" + undoStack.size() + "...");
         String s0 = circuit.toString();
         undoStack.push(s0);
-        String s="";
-        for (;;) {
+        String s = "";
+        for (; ; ) {
             if (redoStack.isEmpty()) return;
             s = redoStack.pop();
             if (!s.equals(s0)) break;
         }
         if (s0.equals(s)) return;
-        Log.println("r:"+redoStack.size()+" u:"+undoStack.size());
+        Log.println("r:" + redoStack.size() + " u:" + undoStack.size());
         PinGroup.pinGroups.clear();
         circuit = new Circuit().withStandardBins();
-        circuit.startup(false,() -> repaint());
+        circuit.startup(false, () -> repaint());
         circuit.fromString(s);
         repaint();
         System.gc();
@@ -199,7 +200,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         this.addComponentListener(this);
 
         updateImageSize();
-        circuit.startup(true,() -> repaint()); // repaint this component whenever the circuit is updated
+        circuit.startup(true, () -> repaint()); // repaint this component whenever the circuit is updated
         File spaceNavigator = new File("/dev/hidraw2");
         if (spaceNavigator.exists() && spaceNavigator.canRead()) {
             try {
@@ -405,12 +406,13 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             try {
                 Clipboard systemClipboard = getDefaultToolkit().getSystemClipboard();
                 Transferable data = systemClipboard.getContents(null);
-                String string = (String)data.getTransferData(DataFlavor.stringFlavor);
-                string = shiftSerializedPart(string,nextPasteOffset*50,nextPasteOffset*50);
+                String string = (String) data.getTransferData(DataFlavor.stringFlavor);
+                string = shiftSerializedPart(string, nextPasteOffset * 50, nextPasteOffset * 50);
                 nextPasteOffset++;
                 panel.unlselectAll();
                 panel.circuit.fromString(string);
-            } catch (IOException | UnsupportedFlavorException e) {}
+            } catch (IOException | UnsupportedFlavorException e) {
+            }
             panel.snapshot();
 
         });
@@ -527,7 +529,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             Net.nets.clear();
             PinGroup.pinGroups.clear();
             panel.circuit = new Circuit().withStandardBins();
-            panel.circuit.startup(true,() -> panel.repaint());
+            panel.circuit.startup(true, () -> panel.repaint());
             panel.snapshot();
         });
         fileMenu.add(menuItem);
@@ -541,7 +543,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             if (choice.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
                 if (choice.getSelectedFile().exists()) {
                     try {
-                        Scanner scan = new Scanner(choice.getSelectedFile(),"utf-8");
+                        Scanner scan = new Scanner(choice.getSelectedFile(), "utf-8");
                         panel.circuit.fromScanner(scan);
                     } catch (FileNotFoundException ex) {
                         JOptionPane.showMessageDialog(panel, ex.getMessage());
@@ -566,13 +568,13 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 saveMenuItem.setText("Save " + savedFile.getName());
                 if (savedFile.exists()) {
                     try {
-                        Scanner scan = new Scanner(choice.getSelectedFile(),"utf-8");
+                        Scanner scan = new Scanner(choice.getSelectedFile(), "utf-8");
                         Net.nets.clear();
                         PinGroup.pinGroups.clear();
                         panel.circuit = new Circuit().withStandardBins();
                         panel.circuit.fromScanner(scan);
                         panel.unlselectAll();
-                        panel.circuit.startup(true,() -> panel.repaint());
+                        panel.circuit.startup(true, () -> panel.repaint());
                     } catch (FileNotFoundException ex) {
                         JOptionPane.showMessageDialog(panel, ex.getMessage());
                     }
@@ -585,7 +587,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         fileMenu.add(menuItem);
 
         menuItem = new JMenuItem("Save as...");
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK));
         menuItem.addActionListener(event -> {
             JFileChooser choice = new JFileChooser(savedFile);
             choice.setSelectedFile(savedFile);
@@ -824,6 +826,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 if (topHit != null) {
                     Component display = this;
                     JPopupMenu menu = new javax.swing.JPopupMenu("Part Menu");
+
                     if (topHit instanceof Gate)
                         menu.add(new JMenuItem("Convert (DeMorgan)") {
                             {
@@ -840,6 +843,20 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                                 });
                             }
                         });
+                    menu.add(new JMenuItem("Reverse Polarity") {
+                        {
+                            addActionListener(e -> {
+                                for (Part part : circuit.parts) {
+                                    if (part.isSelected()) {
+                                        Part newPart = part.reversePolarity();
+                                        newPart.setSelected(true);
+                                        circuit.parts.set(circuit.parts.indexOf(part), newPart);
+                                    }
+                                }
+                                display.repaint();
+                            });
+                        }
+                    });
                     if (!(topHit instanceof Discrete || topHit instanceof Bus))
                         for (Tech tech : Tech.values()) {
                             menu.add(new JMenuItem(tech.description) {
@@ -855,21 +872,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                                 }
                             });
                         }
-                    if (topHit instanceof Discrete)
-                        menu.add(new JMenuItem("Reverse Polarity") {
-                            {
-                                addActionListener(e -> {
-                                    for (Part part : circuit.parts) {
-                                        if (part.isSelected()) {
-                                            Part newPart = part.reversePolarity();
-                                            newPart.setSelected(true);
-                                            circuit.parts.set(circuit.parts.indexOf(part), newPart);
-                                        }
-                                    }
-                                    display.repaint();
-                                });
-                            }
-                        });
+
+
                     menu.show(this, e.getX(), e.getY());
                 }
             }
@@ -1079,8 +1083,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 }
             }
 
-        }
-        finally {
+        } finally {
             snapshot();
             repaint();
             recentMouseEvent = e;
@@ -1176,7 +1179,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
     }
 
     private void unlselectAll() {
-        for (Part part : circuit.parts) if (part.isSelected())  part.setSelected(false);
+        for (Part part : circuit.parts) if (part.isSelected()) part.setSelected(false);
     }
 
     /**
@@ -1196,19 +1199,20 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
 
     /**
      * Takes a string, if it's a serialized part, shifts it by dx,dy
+     *
      * @param string - Serialized part string
-     * @param dx - Amount to shift horizontally
-     * @param dy - Amount to shift vertically
+     * @param dx     - Amount to shift horizontally
+     * @param dy     - Amount to shift vertically
      * @return - String encoded with part shifted
      */
-    static String shiftSerializedPart(String string,double dx,double dy) {
-        StringBuffer result=new StringBuffer();
+    static String shiftSerializedPart(String string, double dx, double dy) {
+        StringBuffer result = new StringBuffer();
         Pattern pattern = Pattern.compile("(PART:\\[\\[[0-9. ]+,[0-9. ]+,)([0-9. ]+)(] *, *\\[[0-9. ]+,[0-9. ]+,)([0-9. ]+)(]])");
         Matcher match = pattern.matcher(string);
         while (match.find()) {
             double x = Double.valueOf(match.group(2)) + dx;
             double y = Double.valueOf(match.group(4)) + dy;
-            match.appendReplacement(result, match.group(1)+x+match.group(3)+y+match.group(5));
+            match.appendReplacement(result, match.group(1) + x + match.group(3) + y + match.group(5));
         }
         match.appendTail(result);
         return result.toString();

@@ -28,4 +28,9 @@ public class OutConnector extends Discrete {
         label = "OUTPUT=" + value.getChar();
         color = value.fgColor;
     }
+
+    public Part reversePolarity() {
+        pin.toggleInversion();
+        return this;
+    }
 }

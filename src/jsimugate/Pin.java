@@ -200,7 +200,7 @@ public class Pin extends Symbol {
      * @param newValue
      */
     void setOutValue(Signal newValue) {
-        outValue = inverted ? newValue.not() : newValue;
+        outValue = inverted ? newValue.opposite() : newValue;
         Part.Tech tech = ((Part) parent).tech;
         if (outValue == tech.changeFrom) outValue = tech.changeTo;
     }
@@ -211,8 +211,10 @@ public class Pin extends Symbol {
      * @return the input value to the part
      */
     Signal getInValue() {
-        return inverted ? inValue.not() : inValue;
+        if (inValue.bad) return inValue;
+        return inverted ? inValue.opposite() : inValue;
     }
+
 
     /**
      * Set the value from the wire going to the part.

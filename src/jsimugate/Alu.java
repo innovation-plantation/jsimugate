@@ -11,35 +11,33 @@ public class Alu extends Adder {
 
     /**
      * Operations supported by the ALU
-     * Carry: true if this operation affects the carry
+     * Organization: Unary bit , Arithmetic Bit , Down Bit , Carry Bit
      */
     enum AluOp {
-        CLR(true, (a, b) -> 0), ///////////// 0 0 0 0
-        AND(false, (a, b) -> a & b), //////// 0 0 0 1
-        XOR(false, (a, b) -> a ^ b), //////// 0 0 1 0
-        OR(false, (a, b) -> a | b), ///////// 0 0 1 1
+        CLR((a, b) -> 0), //////////// 0 0 0 0
+        AND((a, b) -> a & b), //////// 0 0 0 1
+        XOR((a, b) -> a ^ b), //////// 0 0 1 0
+        OR((a, b) -> a | b), ///////// 0 0 1 1
 
-        ADD(true, (a, b) -> a + b), ///////// 0 1 0 0
-        ADC(true, (a, b) -> a + b + 1), ///// 0 1 0 1
-        SUB(true, (a, b) -> a - b), ///////// 0 1 1 0
-        SBB(true, (a, b) -> a - b - 1), ///// 0 1 1 1
+        ADD((a, b) -> a + b), ///////// 0 1 0 0
+        ADC((a, b) -> a + b + 1), ///// 0 1 0 1
+        SUB((a, b) -> a - b), ///////// 0 1 1 0
+        SBB((a, b) -> a - b - 1), ///// 0 1 1 1
 
-        SHL(true, (a, b) -> b << 1), //////// 0 0 0 0
-        RLC(true, (a, b) -> (b << 1) | 1), // 0 0 0 1
-        SHR(true, (a, b) -> b >> 1), //////// 0 0 1 0
-        NOT(false, (a, b) -> ~b), /////////// 0 0 1 1
+        SHL((a, b) -> b << 1), //////// 0 0 0 0
+        RLC((a, b) -> (b << 1) | 1), // 0 0 0 1
+        SHR((a, b) -> b >> 1), //////// 0 0 1 0
+        NOT((a, b) -> ~b), //////////// 0 0 1 1
 
-        INC(true, (a, b) -> b + 1), ///////// 0 1 0 0
-        NEG(true, (a, b) -> -b), //////////// 0 1 0 1
-        DEC(true, (a, b) -> b - 1), ///////// 0 1 1 0
-        XFER(false, (a, b) -> b), /////////// 1 1 1 1
+        INC((a, b) -> b + 1), ///////// 0 1 0 0
+        NEG((a, b) -> -b), //////////// 0 1 0 1
+        DEC((a, b) -> b - 1), ///////// 0 1 1 0
+        XFER((a, b) -> b), //////////// 1 1 1 1
         ;
 
         private final IntBinaryOperator fn;
-        private final boolean carry;
 
-        AluOp(boolean carry, IntBinaryOperator f) {
-            this.carry = carry;
+        AluOp(IntBinaryOperator f) {
             this.fn = f;
         }
 
@@ -76,8 +74,7 @@ public class Alu extends Adder {
         AluOp op = AluOp.values()[fn];
         result = op.perform(a, b);
         int cy = result & 0x100;
-        if (op.carry) cOut.setOutValue(old_c = Signal.fromBit(cy));
-        else cOut.setOutValue(old_c);
+        cOut.setOutValue(old_c = Signal.fromBit(cy));
         label = op.toString();
         putResult();
     }

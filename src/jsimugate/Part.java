@@ -259,6 +259,7 @@ public class Part extends Symbol {
      * Convert to an equivalent symbol such by DeMorganizing
      */
     public Part reversePolarity() {
+        for (Pin pin:pins) pin.toggleInversion();
         return this;
     }
 

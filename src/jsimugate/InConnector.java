@@ -76,7 +76,8 @@ public class InConnector extends Discrete {
     }
 
     public Part reversePolarity() {
-        setValue(value.opposite());
+        pin.toggleInversion();
         return this;
     }
+
 }
