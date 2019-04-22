@@ -38,7 +38,7 @@ public class MajorityGate extends Gate {
         }
         if (hi > lo) output.setOutValue(Signal._1);
         else if (lo > hi) output.setOutValue(Signal._0);
-        else output.setOutValue(Signal._X);
+        else output.setOutValue(Signal._D);
     }
 
     /**

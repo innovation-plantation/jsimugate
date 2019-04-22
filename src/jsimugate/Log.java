@@ -4,7 +4,7 @@ package jsimugate;
  * Output stream that can be disabled by turning off debug.
  */
 public class Log {
-    public static boolean debug = true; // turns on System.out.print... for log... calls.
+    public static boolean debug = false; // turns on System.out.print... for log... calls.
 
     /**
      * Print a blank line if debugging.

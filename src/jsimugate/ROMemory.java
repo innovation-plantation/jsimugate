@@ -76,20 +76,20 @@ public class ROMemory extends Box {
             if (scan.hasNextInt(16)) {
                 scan.findInLine(" *\\ *([0-9A-Fa-f][0-9A-Fa-f]?) *");
                 int data = Integer.parseInt(scan.match().group(1), 16);
-                System.out.println("Addr: " + addr + "  data:" + data);
+                Log.println("Addr: " + addr + "  data:" + data);
                 qSave.put(addr, data);
                 addr++;
             } else {
                 if (scan.findInLine(" *\\[ *([0-9A-Fa-f]+) *\\]") != null) {
                     addr = Long.parseUnsignedLong(scan.match().group(1), 16);
-                    System.out.println("ADDR:" + addr);
+                    Log.println("ADDR:" + addr);
                 }
                 else {
-                    System.out.println("Goofy ROM data at "+addr+": "+scan.next());
+                    Log.println("Goofy ROM data at "+addr+": "+scan.next());
                 }
             }
         }
-        System.out.println();
+        Log.println();
     }
 
     /**

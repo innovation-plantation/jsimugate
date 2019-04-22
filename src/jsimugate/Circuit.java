@@ -73,6 +73,13 @@ public class Circuit {
      * @param g
      */
     public void render(Graphics2D g) {
+        if (timer==null) {
+            g.setColor(Color.red);
+            g.drawString("STOPPED",20,20);
+        } else if (!timer.isRunning()) {
+            g.setColor(Color.red);
+            g.drawString("Paused (Simulation Run to continue)",20,20);
+        }
 
         for (Part part : parts) {
             part.draw(g);
@@ -90,17 +97,17 @@ public class Circuit {
         }
     }
     public void shutdown() {
-        System.err.println("Stop simulation");
+        System.err.println("Simulation stopped");
         if (timer != null) timer.stop();
     }
 
     public void pause() {
-        System.err.println("Pause simulation");
+        System.err.println("Simulation stopped");
         if (timer != null) timer.stop();
     }
 
     public void resume() {
-        System.err.println("Resume simulation");
+        System.err.println("Simulation started");
         if (timer != null) timer.restart();
     }
 

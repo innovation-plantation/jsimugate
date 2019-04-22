@@ -27,11 +27,12 @@ public class Gate extends Part {
     /**
      * Add a pin to the gate
      */
-    protected void addInput() {
+    Pin addInput() {
         Pin pin = inputs.addPinVertically().translate(-70, 0).left(30);
         addPin(pin);
         reshape(inputs.size());
         updateLabel();
+        return pin;
     }
 
     /**
@@ -119,4 +120,5 @@ public class Gate extends Part {
         for (Pin pin : pins) pin.toggleInversion();
         return that;
     }
+
 }

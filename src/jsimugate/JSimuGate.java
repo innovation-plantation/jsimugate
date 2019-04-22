@@ -27,7 +27,7 @@ import static java.awt.event.KeyEvent.VK_RIGHT;
  * User interface for circuit simulation. This could be an Applet by changing JPanel to JApplet or Applet, etc.
  */
 public class JSimuGate extends Panel implements MouseListener, MouseMotionListener, ComponentListener {
-    static String version = "jSimuGate 0.90";
+    static String version = "jSimuGate 0.901";
     private static final long serialVersionUID = 1L;
     Circuit circuit = new Circuit().withStandardBins();
     private Dimension size;
@@ -118,6 +118,13 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             } else if (e.isShiftDown()) {
                 for (Part part : circuit.parts) {
                     if (part.isSelected()) {
+                        for (int i = 0; i < e.getWheelRotation(); i++) part.decrease();
+                        for (int j = 0; j > e.getWheelRotation(); j--) part.increase();
+                    }
+                }
+            } else {
+                for (Part part:circuit.parts) {
+                    if (part.at(e.getPoint())) {
                         for (int i = 0; i < e.getWheelRotation(); i++) part.decrease();
                         for (int j = 0; j > e.getWheelRotation(); j--) part.increase();
                     }
@@ -948,7 +955,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
      * For now: There's no ESC functionality, and lassoing always adds to the
      * selection. This might be just fine.
      * <p>
-     * Ultimately, we'd like to try it this ways: Press:: - No keys when starting:
+     * Ultimately, we'd like to try it this ways: Press:: - No keys whewhen starting:
      * set selection - Ctrl or Shift: toggle selection, but select again upon drag -
      * Miss: start lasso Release:: - Add lasso to selection Drag:: - If Lasso --
      * Shift or Ctrl+Shift: toggle selection -- Ctrl: add to selection -- No keys
@@ -1047,6 +1054,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             // If landed on a pin, connect it
             if (protoWire != null) {
                 Net.disconnect(protoWire);
+                boolean hit=false;
                 for (Part part : circuit.parts) {
                     for (Pin pin : part.pins) {
                         if (pin.at(e.getPoint())) {
@@ -1055,7 +1063,19 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                                 break;
                             }
                             // connect or disconnect
+                            hit=true;
                             addOrRemoveWire(recentSrc = protoWire.src, recentDst = pin);
+                        }
+                    }
+                }
+                if (!hit) {
+                    for (Part part : circuit.parts) {
+                        if (part instanceof Gate) {
+                            if (part.at(e.getPoint())) {
+                                recentSrc = protoWire.src;
+                                recentDst = ((Gate) part).addInput();
+                                addOrRemoveWire(recentSrc, recentDst);
+                            }
                         }
                     }
                 }
