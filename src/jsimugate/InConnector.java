@@ -42,7 +42,12 @@ public class InConnector extends Discrete {
     public void processChar(char ch) {
 
         for (Signal s : Signal.values()) if (ch == s.getChar()) setValue(s);
-        if (ch == ' ' || ch == '?' && Math.random() < .5) reversePolarity();
+        if (ch == ' ' || ch == '?' && Math.random() < .5) setValue(value.opposite());
+        if (ch == '\t') {
+            setValue(value.opposite());
+            pin.setOutValue(value);
+            pin.toggleInversion();
+        }
     }
 
     /**
