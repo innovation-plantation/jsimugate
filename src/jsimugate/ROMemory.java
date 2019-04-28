@@ -19,15 +19,10 @@ public class ROMemory extends Box {
      */
     public ROMemory() {
         name = "ROM";
-        rdEnaIn = addPin(sPins.addPinHorizontally()).down(30).translate(0, height + 30);
-        resize();
-        for (int i = 0; i < 8; i++) {
-            addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
-        }
-        for (int i = 0; i < 8; i++) {
-            addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
-        }
-        resize();
+        resize(1, 8);
+        rdEnaIn = addPinS();
+        addPinsE(8);
+        addPinsW(8);
     }
 
     public ROMemory(String data) {
@@ -83,9 +78,8 @@ public class ROMemory extends Box {
                 if (scan.findInLine(" *\\[ *([0-9A-Fa-f]+) *\\]") != null) {
                     addr = Long.parseUnsignedLong(scan.match().group(1), 16);
                     Log.println("ADDR:" + addr);
-                }
-                else {
-                    Log.println("Goofy ROM data at "+addr+": "+scan.next());
+                } else {
+                    Log.println("Goofy ROM data at " + addr + ": " + scan.next());
                 }
             }
         }
@@ -102,7 +96,7 @@ public class ROMemory extends Box {
         String result = "";
         for (long addr : qSave.keySet()) {
             if (qSave.get(addr) != null) {
-                if (nextAddr == null || addr != nextAddr || (nextAddr&0xF)==0 ) {
+                if (nextAddr == null || addr != nextAddr || (nextAddr & 0xF) == 0) {
                     result += " [" + Long.toHexString(addr) + "]";
                 }
                 result += " " + Integer.toHexString(qSave.get(addr));
@@ -116,11 +110,11 @@ public class ROMemory extends Box {
      * Edit the ROM program on double click
      */
     public void processDoubleClick() {
-        JTextArea textarea = new JTextArea(getDetails().replaceAll("\\[", "\n\\[")+"       \n\n\n\n");
+        JTextArea textarea = new JTextArea(getDetails().replaceAll("\\[", "\n\\[") + "       \n\n\n\n");
         JPanel panel = new JPanel();
         JScrollPane scroller = new JScrollPane(textarea);
         panel.add(scroller);
-        textarea.setFont(new Font(Font.MONOSPACED,Font.PLAIN,12));
+        textarea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         if (JOptionPane.showConfirmDialog(null, panel, "ROM Program",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != 0) return;
 
@@ -134,7 +128,7 @@ public class ROMemory extends Box {
      * Grow the address bus
      */
     public void increase() {
-        if (wPins.size() < 63) addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
+        if (wPins.size() < 63) addPinW();
         resize();
     }
 

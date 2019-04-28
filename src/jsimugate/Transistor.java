@@ -79,11 +79,11 @@ public class Transistor extends Discrete {
         Signal value = tt[e.getInValue().ordinal()][b.getInValue().ordinal()];
         this.c.setOutValue(value);
         if (b.getInValue().bad) {
-            c.recovery=true;
+            c.recovery = true;
             if (c.getInValue().hi && e.getInValue().hi) c.setOutValue(Signal._Z);
             if (c.getInValue().lo && e.getInValue().lo) c.setOutValue(Signal._Z);
         } else {
-            c.recovery=false;
+            c.recovery = false;
         }
     }
 

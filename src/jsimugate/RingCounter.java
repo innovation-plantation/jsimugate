@@ -17,8 +17,8 @@ public class RingCounter extends Box {
      */
     public RingCounter() {
         label = "RING";
-        rst = addPin(sPins.addPinHorizontally()).translate(0, 40).down(30);
-        clk = addPin(sPins.addPinHorizontally()).translate(0, 40).down(30);
+        rst = addPinS();
+        clk = addPinS();
         resize();
         increase();
         increase();
@@ -30,7 +30,7 @@ public class RingCounter extends Box {
      * Add another pin
      */
     public void increase() {
-        addPin(ePins.addPinVertically()).translate(width + 30, 0).right(30);
+        addPinE();
         resize();
     }
 

@@ -16,9 +16,9 @@ public class Counter extends Box {
     public Counter() {
         label = "CTR";
 
-        rst = addPin(sPins.addPinHorizontally()).translate(0, 40).down(30);
-        clk = addPin(sPins.addPinHorizontally()).translate(0, 40).down(30);
-        ld = addPin(sPins.addPinHorizontally()).translate(0, 40).down(30);
+        rst = addPinS();//addPin(sPins.addPinHorizontally()).translate(0, 40).down(30);
+        clk = addPinS();//addPin(sPins.addPinHorizontally()).translate(0, 40).down(30);
+        ld = addPinS();//addPin(sPins.addPinHorizontally()).translate(0, 40).down(30);
         resize();
         for (int i = 0; i < 8; i++) increase();
     }
@@ -28,8 +28,8 @@ public class Counter extends Box {
      */
     public void increase() {
         if (ePins.size() > 30) return;
-        addPin(ePins.addPinVertically()).translate(width + 30, 0).right(30);
-        addPin(wPins.addPinVertically()).translate(-width - 30, 0).left(30);
+        addPinE();// addPin(ePins.addPinVertically()).translate(width + 30, 0).right(30);
+        addPinW();//addPin(wPins.addPinVertically()).translate(-width - 30, 0).left(30);
         resize();
     }
 

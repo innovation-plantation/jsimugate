@@ -123,7 +123,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                     }
                 }
             } else {
-                for (Part part:circuit.parts) {
+                for (Part part : circuit.parts) {
                     if (part.at(e.getPoint())) {
                         for (int i = 0; i < e.getWheelRotation(); i++) part.decrease();
                         for (int j = 0; j > e.getWheelRotation(); j--) part.increase();
@@ -1054,7 +1054,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
             // If landed on a pin, connect it
             if (protoWire != null) {
                 Net.disconnect(protoWire);
-                boolean hit=false;
+                boolean hit = false;
                 for (Part part : circuit.parts) {
                     for (Pin pin : part.pins) {
                         if (pin.at(e.getPoint())) {
@@ -1063,7 +1063,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                                 break;
                             }
                             // connect or disconnect
-                            hit=true;
+                            hit = true;
                             addOrRemoveWire(recentSrc = protoWire.src, recentDst = pin);
                         }
                     }

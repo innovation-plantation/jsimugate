@@ -19,17 +19,11 @@ public class RegisterFile extends Box {
 
     public RegisterFile() {
         label = "REG FILE";
-
         resize(7, 8);
-        for (int i = 0; i < 8; i++) {
-            addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
-            addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
-        }
-        for (int i = 0; i < 3; i++) {
-            addPin(sPins.addPinHorizontally()).down(30).translate(0, height + 30);
-        }
-        wClkIn = addPin(new Pin(-width + 20, height + 30).down(30));
-        rdEnaIn = addPin(new Pin(width - 20, height + 30).down(30));
+        addPinsWE(8);
+        addPinsS(3);
+        wClkIn = addAuxPinS(-width + 20);
+        rdEnaIn = addAuxPinS(width - 20);
     }
 
     /**
@@ -68,8 +62,7 @@ public class RegisterFile extends Box {
             if (selValid) {
                 if (value != null) ePins.setValue(value);
                 else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(Signal._U);
-            }
-            else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_X);
+            } else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_X);
         } else for (int i = 0; i < 8; i++) ePins.pins.get(i).setOutValue(_Z);
         prevClk = clk;
         if (selValid = sPins.goodValue()) sel = sPins.getValue();

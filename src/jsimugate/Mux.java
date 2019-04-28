@@ -9,9 +9,8 @@ import java.awt.geom.AffineTransform;
 public class Mux extends Box {
     public Mux() {
         label = "MUX";
-        addPin(ePins.addPinVertically()).translate(width + 30, 0).right(30);
-        addPin(wPins.addPinVertically()).translate(-width - 30, 0).left(30);
-
+        addPinE();
+        addPinW();
         increase();
         increase();
     }
@@ -24,8 +23,7 @@ public class Mux extends Box {
         if (sPins.size() >= 8) return;
         addPin(sPins.addPinHorizontally()).translate(0, height + 30).down(30);
         resize();
-        int n = wPins.size();
-        for (int i = 0; i < n; i++) addPin(wPins.addPinVertically()).translate(-width - 30, 0).left(30);
+        addPinsW(wPins.size());
         resize();
     }
 

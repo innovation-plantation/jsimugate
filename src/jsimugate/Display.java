@@ -1,7 +1,6 @@
 package jsimugate;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 
 public class Display extends Box {
     Pin clkIn;
@@ -10,12 +9,9 @@ public class Display extends Box {
 
     public Display() {
         name = "DISP";
-        for (int i = 0; i < 7; i++) {
-            addPin(nPins.addPinHorizontally()).up(30).translate(0, -height - 30);
-            addPin(sPins.addPinHorizontally()).down(30).translate(0, height + 30);
-        }
+        addPinsNS(7);
         resizeWithPadding(1, 6);
-        clkIn = addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
+        clkIn = addPinW();// (wPins.addPinVertically()).left(30).translate(-width - 30, 0);
         fill = Color.darkGray;
     }
 

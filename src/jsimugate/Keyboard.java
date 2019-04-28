@@ -15,10 +15,12 @@ public class Keyboard extends Box {
      */
     public Keyboard() {
         label = "KBD";
-        for (int i = 0; i < 7; i++) {
-            addPin(nPins.addPinHorizontally()).up(30).translate(0, -height - 30);
-        }
-        addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
+        addPinsN(7);
+//        for (int i = 0; i < 7; i++) {
+//            addPin(nPins.addPinHorizontally()).up(30).translate(0, -height - 30);
+//        }
+        addPinE();
+        //addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
         resizeWithPadding(-1, 0);
     }
 

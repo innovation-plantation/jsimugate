@@ -9,13 +9,8 @@ public class SevenSegmentDecoder extends Box {
 
     public SevenSegmentDecoder() {
         label = "7DEC";
-        for (int i = 0; i < 4; i++) {
-            addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
-        }
-        resize();
-        for (int i = 0; i < 7; i++) {
-            addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
-        }
+        addPinsW(4);
+        addPinsE(7);
         resizeWithPadding(2, 0);
     }
 

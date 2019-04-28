@@ -79,7 +79,7 @@ public class PinGroup {
                 addPin(pin);
                 return pin;
         }
-        shiftPinsVertically(10);//for (Pin i : pins) i.translate(0, 10);
+        shiftPinsVertically(10);
         addPin(pin);
         return pin;
     }
@@ -117,7 +117,7 @@ public class PinGroup {
                 addPin(pin);
                 return pin;
         }
-        shiftPinsHorizontally(10);// for (Pin i : pins) i.translate(10, 0);
+        shiftPinsHorizontally(10);
         addPin(pin);
         return pin;
     }
@@ -155,7 +155,7 @@ public class PinGroup {
                 pins.get(1).translate(0, -20);
                 return victim;
         }
-        shiftPinsVertically(-10);//for (Pin i : pins) i.translate(0, -10);
+        shiftPinsVertically(-10);
         return victim;
     }
 
@@ -181,7 +181,7 @@ public class PinGroup {
                 pins.get(1).translate(-20, 0);
                 return victim;
         }
-        shiftPinsHorizontally(-10);  //for (Pin i : pins) i.translate(-10, 0);
+        shiftPinsHorizontally(-10);
         return victim;
     }
 

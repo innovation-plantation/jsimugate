@@ -17,9 +17,7 @@ public class SevenSegmentLED extends Box {
 
     public SevenSegmentLED() {
         name = "7SEG";
-        for (int i = 0; i < 7; i++) {
-            addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
-        }
+        addPinsW(7);
         resizeWithPadding(3, -1);
         fill = Color.darkGray;
     }

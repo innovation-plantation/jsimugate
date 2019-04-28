@@ -1,6 +1,5 @@
 package jsimugate;
 
-import java.awt.geom.Rectangle2D;
 import java.util.Scanner;
 
 /**
@@ -9,9 +8,9 @@ import java.util.Scanner;
  * halving the frequency down to 64 second period with the decrease() function.
  * The schematic label is kept updated according to the frequency.
  */
-public class Clk extends Part {
+public class Clk extends Box {
 
-    static final Rectangle2D rect = new Rectangle2D.Double(-40, -20, 60, 40);
+    //static final Rectangle2D rect = new Rectangle2D.Double(-40, -20, 60, 40);
     private Pin pin;
     Signal value = Signal._0;
     private javax.swing.Timer timer;
@@ -22,9 +21,11 @@ public class Clk extends Part {
      */
     public Clk() {
         super();
-        setShape(rect);
+        //setShape(rect);
         label = "CLK";
-        addPin(pin = new Pin(45, 0).right(25));
+        pin = addPinE();
+        resizeWithPadding(2, 0);
+        //addPin(pin = new Pin(45, 0).right(25));
         timer = new javax.swing.Timer(500, e -> {
             value = value == Signal._0 ? Signal._1 : Signal._0;
         });

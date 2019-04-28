@@ -18,11 +18,12 @@ public class EdgeTrigD extends Box {
      */
     public EdgeTrigD() {
         name = "D EDGE";
-        clkIn = addPin(sPins.addPinHorizontally()).down(30).translate(0, 40);
-        rstIn = addPin(sPins.addPinHorizontally()).down(30).translate(0, 40);
+        clkIn = addPinS();// addPin(sPins.addPinHorizontally()).down(30).translate(0, 40);
+        rstIn = addPinS();// addPin(sPins.addPinHorizontally()).down(30).translate(0, 40);
         resize(); // must resize between adding horizontally and vertically.
-        addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
-        addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
+        addPinsWE(1);
+        //addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
+        //addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
         dSave.add(_X);
         qSave.add(_X);
         resize();
@@ -67,8 +68,9 @@ public class EdgeTrigD extends Box {
      * Adding pins turns a single flip flop into a multi-bit latch.
      */
     public void increase() {
-        addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
-        addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
+        addPinsWE(1);
+        //addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
+        //addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
         dSave.add(_X);
         qSave.add(_X);
         resize();

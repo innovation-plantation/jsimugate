@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 import static jsimugate.Signal._0;
-import static jsimugate.Signal._1;
 
 /**
  * Demultiplexer implementation.
@@ -12,9 +11,7 @@ import static jsimugate.Signal._1;
 public class DMux extends Box {
     public DMux() {
         label = "DMUX";
-        addPin(wPins.addPinVertically()).translate(-width - 30, 0).left(30);
-        addPin(ePins.addPinVertically()).translate(width + 30, 0).right(30);
-
+        addPinsWE(1);
         increase();
         increase();
     }
@@ -24,10 +21,9 @@ public class DMux extends Box {
      */
     public void increase() {
         if (sPins.size() >= 8) return;
-        addPin(sPins.addPinHorizontally()).translate(0, height + 30).down(30);
+        addPinS();
         resize();
-        int n = ePins.size();
-        for (int i = 0; i < n; i++) addPin(ePins.addPinVertically()).translate(width + 30, 0).right(30);
+        addPinsE(ePins.size());
         resize();
     }
 
@@ -78,13 +74,13 @@ public class DMux extends Box {
             return;
         }
 
-        int sel =  sPins.getValue();
+        int sel = sPins.getValue();
         for (int i = 0; i < ePins.size(); i++) {
             if (i != sel) {
                 ePins.pins.get(i).setOutValue(_0);
                 continue;
             }
-            ePins.pins.get(i).setOutValue(in.good?in.not().not():in);
+            ePins.pins.get(i).setOutValue(in.good ? in.not().not() : in);
 
         }
     }

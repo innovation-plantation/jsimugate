@@ -15,8 +15,8 @@ public class ThreeState extends Box {
     public ThreeState() {
         this.name = "3STATE";
         ena = this.addPin(this.sPins.addPinHorizontally().translate(0, 40).down(30));
-        this.addPin(this.wPins.addPinVertically().left(30).translate(-60, 0));
-        this.addPin(this.ePins.addPinVertically().right(30).translate(60, 0));
+        addPinW().translate(-20, 0);
+        addPinE().translate(20, 0);
         resize();
         setShape(Artwork.triangleShape());
     }
@@ -31,8 +31,7 @@ public class ThreeState extends Box {
             this.wPins.pins.get(0).translate(20, 0);
             this.ePins.pins.get(0).translate(-20, 0);
         }
-        this.addPin(wPins.addPinVertically().left(30).translate(-50, 0));
-        this.addPin(ePins.addPinVertically().right(30).translate(50, 0));
+        this.addPinsWE(1);
         resize();
     }
 

@@ -73,12 +73,12 @@ public class Circuit {
      * @param g
      */
     public void render(Graphics2D g) {
-        if (timer==null) {
+        if (timer == null) {
             g.setColor(Color.red);
-            g.drawString("STOPPED",20,20);
+            g.drawString("STOPPED", 20, 20);
         } else if (!timer.isRunning()) {
             g.setColor(Color.red);
-            g.drawString("Paused (Simulation Run to continue)",20,20);
+            g.drawString("Paused (Simulation Run to continue)", 20, 20);
         }
 
         for (Part part : parts) {
@@ -96,6 +96,7 @@ public class Circuit {
             bin.draw(g);
         }
     }
+
     public void shutdown() {
         System.err.println("Simulation stopped");
         if (timer != null) timer.stop();
@@ -117,7 +118,7 @@ public class Circuit {
      *
      * @param repaint
      */
-    public void startup(boolean start,Runnable repaint) {
+    public void startup(boolean start, Runnable repaint) {
         if (timer != null) timer.stop();
         timer = new javax.swing.Timer(10, e -> {
 
@@ -186,13 +187,14 @@ public class Circuit {
                 new SevenSegmentLED(),
                 null,
                 new TextLabel(),
+                new PortServer()
 
         }) {
             if (part == null) {
                 yPos += 10;
                 continue;
             }
-            for (Pin pin:part.pins) pin.setOutValue(Signal._L);
+            for (Pin pin : part.pins) pin.setOutValue(Signal._L);
             bins.add(new PartsBin(xPos, yPos, part));
             xPos += 50;
             if (xPos > 150) {

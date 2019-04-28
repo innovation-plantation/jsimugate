@@ -19,15 +19,11 @@ public class Memory extends Box {
      */
     public Memory() {
         name = "RAM";
-        rdEnaIn = addPin(sPins.addPinHorizontally()).down(30).translate(0, height + 30);
-        wClkIn = addPin(sPins.addPinHorizontally()).down(30).translate(0, height + 30);
+        rdEnaIn = addPinS();
+        wClkIn = addPinS();
         resize();
-        for (int i = 0; i < 8; i++) {
-            addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
-        }
-        for (int i = 0; i < 8; i++) {
-            addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
-        }
+        addPinsE(8);
+        addPinsW(8);
         resize();
     }
 
@@ -78,7 +74,7 @@ public class Memory extends Box {
      * Grow the address bus
      */
     public void increase() {
-        if (wPins.size() < 63) addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
+        if (wPins.size() < 63) addPinW();
         resize();
     }
 

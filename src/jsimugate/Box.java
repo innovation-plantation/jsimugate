@@ -70,4 +70,75 @@ public class Box extends Part {
         int h = Math.max(ePins.size(), wPins.size());
         return resize(w + horizontal_pad, h + vertical_pad);
     }
+
+    public Pin addAuxPinS(int offset, int length) {
+        return addPin(new Pin(offset, height + length).down(length));
+    }
+
+    public Pin addAuxPinS(int offset) {
+        return addAuxPinS(offset, 30);
+    }
+
+    public Pin addPinN(int length) {
+        return addPin(nPins.addPinHorizontally()).translate(0, -height - length).up(length);
+    }
+
+    public Pin addPinS(int length) {
+        return addPin(sPins.addPinHorizontally()).translate(0, height + length).down(length);
+    }
+
+    public Pin addPinE(int length) {
+        return addPin(ePins.addPinVertically()).translate(width + length, 0).right(length);
+    }
+
+    public Pin addPinW(int length) {
+        return addPin(wPins.addPinVertically()).translate(-width - length, 0).left(length);
+    }
+
+    public Pin addPinN() {
+        return addPinN(30);
+    }
+
+    public Pin addPinS() {
+        return addPinS(30);
+    }
+
+    public Pin addPinE() {
+        return addPinE(30);
+    }
+
+    public Pin addPinW() {
+        return addPinW(30);
+    }
+
+    public void addPinsN(int n) {
+        for (int i = 0; i < n; i++) addPinN();
+    }
+
+    public void addPinsS(int n) {
+        for (int i = 0; i < n; i++) addPinS();
+    }
+
+    public void addPinsE(int n) {
+        for (int i = 0; i < n; i++) addPinE();
+    }
+
+    public void addPinsW(int n) {
+        for (int i = 0; i < n; i++) addPinW();
+    }
+
+    public void addPinsWE(int n) {
+        for (int i = 0; i < n; i++) {
+            addPinW();
+            addPinE();
+        }
+    }
+
+    public void addPinsNS(int n) {
+        for (int i = 0; i < n; i++) {
+            addPinN();
+            addPinS();
+        }
+    }
 }
+
