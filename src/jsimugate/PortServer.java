@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 import static jsimugate.Signal.*;
 
@@ -132,6 +133,7 @@ public class PortServer extends Box {
 
     public PortServer() {
         super();
+        this.label="TCP/IP";
         this.port = 0;
         rdyPin = addPinN();
         rx = addPinS();
@@ -167,7 +169,9 @@ public class PortServer extends Box {
     }
 
     public void setDetails(String details) {
-        label = details;
+        Scanner scan = new Scanner(details);
+        port = scan.nextInt();
+        label = (port==0?"TCP/IP":details);
     }
 
 
