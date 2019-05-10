@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.regex.MatchResult;
 
 import static jsimugate.Signal.*;
 
@@ -22,6 +23,9 @@ public class PortServer extends Box {
     Exception prevException;
     Pin rx, tx, rdyPin;
     Signal oldRx=_U,oldTx=_U;
+    String destAddr = null;
+    private String host=null;
+    private String portLabel=null;
 
     private boolean logException(Exception e) {
         if (prevException.equals(e)) return false;
@@ -32,44 +36,55 @@ public class PortServer extends Box {
 
     private boolean portIsOpen() {
         if (port == 0 || acquiring) return false;
-        if (ss == null) {
-            try {
-                ss = new ServerSocket(port);
-            } catch (IOException e) {
-                return logException(e);
-            }
-        }
-        if (ss.getLocalPort() != port) { /* change port */
-            try {
-                if (sock != null) sock.close();
-            } catch (IOException e) {
-                logException(e);
-            } finally {
-                sock = null;
-            }
-            try {
-                if (ss != null) ss.close();
-            } catch (IOException e) {
-                logException(e);
-            } finally {
-                ss = null;
-            }
-            return false;
-        }
-        if (acquiring) return false;
-        if (sock == null) {
-            is = null;
-            Thread thread = new Thread(() -> {
-                acquiring = true;
+
+        if (host==null) {
+            if (ss == null) {
                 try {
-                    sock = ss.accept();
+                    ss = new ServerSocket(port);
+                } catch (IOException e) {
+                    return logException(e);
+                }
+            }
+            if (ss.getLocalPort() != port) { /* change port */
+                try {
+                    if (sock != null) sock.close();
                 } catch (IOException e) {
                     logException(e);
                 } finally {
-                    acquiring = false;
+                    sock = null;
                 }
-            });
-            thread.start();
+                try {
+                    if (ss != null) ss.close();
+                } catch (IOException e) {
+                    logException(e);
+                } finally {
+                    ss = null;
+                }
+                return false;
+            }
+            if (acquiring) return false;
+            if (sock == null) {
+                is = null;
+                Thread thread = new Thread(() -> {
+                    acquiring = true;
+                    try {
+                        sock = ss.accept();
+                    } catch (IOException e) {
+                        logException(e);
+                    } finally {
+                        acquiring = false;
+                    }
+                });
+                thread.start();
+            }
+        } else { // client
+            if (sock==null) {
+                try {
+                    sock = new Socket(host,port);
+                } catch (IOException e) {
+                    logException(e);
+                };
+            }
         }
         if (sock == null) return false;
         if (!sock.isConnected()) {
@@ -132,15 +147,14 @@ public class PortServer extends Box {
     }
 
     public PortServer() {
-        super();
-        this.label="TCP/IP";
-        this.port = 0;
+        super();;
         rdyPin = addPinN();
         rx = addPinS();
         tx = addPinS();
         resize();
         addPinsWE(8);
         resize();
+        this.setDetails("0");
     }
 
     /**
@@ -155,12 +169,7 @@ public class PortServer extends Box {
     public void processDoubleClick() {
         String newPort = JOptionPane.showInputDialog(null, "Enter new port:",
                 "Port number", 1);
-
-        if (newPort == null || !newPort.matches("[0-9]{1,5}")) return;
-        int newPortNumber = Integer.parseInt(newPort);
-        if (newPortNumber > 65535) return;
-        port = newPortNumber;
-        label = "Port "+newPort;
+        updateConnection(newPort);
     }
 
 
@@ -169,9 +178,35 @@ public class PortServer extends Box {
     }
 
     public void setDetails(String details) {
-        Scanner scan = new Scanner(details);
-        port = scan.nextInt();
-        label = (port==0?"TCP/IP":details);
+        updateConnection(details);
+    }
+
+    private void updateConnection(String newPort) {
+        if (newPort == null) return;
+        Scanner scan = new Scanner(newPort);
+        int newPortNumber=0;
+        String destAddr=null;
+        if (newPort.matches("[0-9]{1,5}")) {
+            newPortNumber = Integer.parseInt(newPort);
+        }
+        else if (newPort.matches(".*:[0-9]{1,5}")) {
+            scan.findInLine("(.*):([0-9]{1,5})");
+            MatchResult result = scan.match();
+            destAddr = result.group(1);
+            newPortNumber = Integer.parseInt(result.group(2));
+        }
+        else  return;
+        System.out.println(newPortNumber);
+        if (newPortNumber > 65535) return;
+        port = newPortNumber;
+        portLabel = newPort;
+        if (port==0) {
+            label="TCP/IP";
+            host = null;
+            return;
+        }
+        label = "";
+        host = destAddr;
     }
 
 
@@ -193,4 +228,11 @@ public class PortServer extends Box {
         oldTx=newTx;
     }
 
+    public void drawAtOrigin(java.awt.Graphics2D g) {
+        super.drawAtOrigin(g);
+        g.rotate(Math.PI*.5);
+        if (port==0) return;
+        g.drawString(host!=null?"TCP/IP Host Port":"TCP/IP Client Port",-50,0);
+        g.drawString(portLabel,-50,15);
+    }
 }
