@@ -214,7 +214,7 @@ public class Symbol extends Numbered {
         }
         if (label != null) {
             g.setColor(Color.black);
-            g.drawString(label, -25, sublabel == null ? 5 : 0);
+            if (!JSimuGate.illustration) g.drawString(label, -25, sublabel == null ? 5 : 0);
         }
         if (sublabel != null) {
             AffineTransform restoreT = g.getTransform();

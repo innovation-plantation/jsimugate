@@ -28,7 +28,7 @@ public class PortServer extends Box {
     private String portLabel=null;
 
     private boolean logException(Exception e) {
-        if (prevException.equals(e)) return false;
+        if (e.equals(prevException)) return false;
         prevException = e;
         System.err.println(e.getMessage());
         return false;
@@ -172,14 +172,6 @@ public class PortServer extends Box {
         updateConnection(newPort);
     }
 
-
-    public String getDetails() {
-        return Integer.toString(port);
-    }
-
-    public void setDetails(String details) {
-        updateConnection(details);
-    }
 
     private void updateConnection(String newPort) {
         if (newPort == null) return;
