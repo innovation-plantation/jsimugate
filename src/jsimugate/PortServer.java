@@ -222,8 +222,17 @@ public class PortServer extends Box {
 
     public void drawAtOrigin(java.awt.Graphics2D g) {
         super.drawAtOrigin(g);
-        g.rotate(Math.PI*.5);
-        if (port==0) return;
+        g.drawString("DSR",-10,-75);
+        g.drawString("TX",-17,78);
+        g.drawString("RX",5,78);
+        g.rotate(Math.PI);
+        g.drawString("V",6,-82);
+        g.drawString("V",-15,-82);
+        g.rotate(-Math.PI*.5);
+        if (port==0) {
+            g.drawString("TCP/IP Port", -50, 0);
+            return;
+        }
         g.drawString(host!=null?"TCP/IP Host Port":"TCP/IP Client Port",-50,0);
         g.drawString(portLabel,-50,15);
     }
