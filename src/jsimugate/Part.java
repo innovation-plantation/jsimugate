@@ -38,6 +38,16 @@ public class Part extends Symbol {
         Stroke stroke = getDefaultStroke();
         Color color = Color.black;
 
+        Tech opposite() {
+            switch(this) {
+                case TTL: return TTL_PNP;
+                case TTL_PNP: return TTL;
+                case OC: return OC_PNP;
+                case OC_PNP: return OC;
+                default: return PUSH_PULL;
+            }
+        }
+
         Tech(String description, Stroke stroke, Color color, Signal changeFrom, Signal changeTo, String mark) {
             this.description = description;
             this.changeFrom = changeFrom;
@@ -45,6 +55,7 @@ public class Part extends Symbol {
             this.mark = mark;
             this.stroke = stroke;
             this.color = color;
+
         }
 
         Tech(String description, Stroke stroke, Color color, Signal changeFrom, Signal changeTo) {
@@ -260,7 +271,7 @@ public class Part extends Symbol {
      */
     public Part reversePolarity() {
         for (Pin pin : pins) pin.toggleInversion();
-        return this;
+        return  this.asTech(this.tech.opposite());
     }
 
     /**
