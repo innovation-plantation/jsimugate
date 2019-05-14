@@ -7,6 +7,9 @@ public class SevenSegmentDecoder extends Box {
             119, 124, 57, 94, 121, 113 // a-f
     };
 
+    /**
+     * Create the part with 4 inputs on the west, and 7 outputs on the east side
+     */
     public SevenSegmentDecoder() {
         label = "7DEC";
         addPinsW(4);

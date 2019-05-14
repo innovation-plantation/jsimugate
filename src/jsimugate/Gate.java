@@ -7,7 +7,6 @@ import java.util.Scanner;
  */
 public class Gate extends Part {
 
-    //List<Pin> inputs = new ArrayList<Pin>();
     PinGroup inputs = new PinGroup(true);
     Pin output;
 

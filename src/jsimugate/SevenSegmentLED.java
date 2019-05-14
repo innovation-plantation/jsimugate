@@ -15,6 +15,9 @@ public class SevenSegmentLED extends Box {
 
     };
 
+    /**
+     * Create the part with 7 pins
+     */
     public SevenSegmentLED() {
         name = "7SEG";
         addPinsW(7);

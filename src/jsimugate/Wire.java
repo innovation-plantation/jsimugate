@@ -97,7 +97,7 @@ public class Wire {
         int a = Integer.parseInt(result.group(1));
         int b = Integer.parseInt(result.group(2));
         Log.println("WIRE pin" + a + " to pin" + b);
-        scan.nextLine();
+        if (scan.hasNextLine()) scan.nextLine();
         Pin pinA = pinMap.get(a);
         Pin pinB = pinMap.get(b);
         return new Wire(pinA, pinB);

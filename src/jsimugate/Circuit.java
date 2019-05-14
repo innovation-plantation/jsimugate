@@ -174,7 +174,6 @@ public class Circuit {
                 new XorGate(), new Bus(), new ThreeState(),
                 new InConnector(), new Diode(), new OutConnector(),
                 new VGround(), new NPNTransistor(), new PullupResistor(),
-                //new VSource(), new PNPTransistor(), new PulldownResistor(),
                 null,
                 new Decoder(), new Mux(), new DMux(),
                 new Clk(), new RingCounter(), new Counter(),

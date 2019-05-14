@@ -150,10 +150,9 @@ public class Pin extends Symbol {
     public void drawAtOrigin(Graphics2D g) {
         if (line != null) {
             if (JSimuGate.illustration) {
-                Signal._L.trace(g,line);
+                Signal._L.trace(g, line);
                 super.drawAtOrigin(g);
-            }
-            else if (outValue != Signal._Z) outValue.trace(g, line);
+            } else if (outValue != Signal._Z) outValue.trace(g, line);
             else inValue.trace(g, line);
 
         }

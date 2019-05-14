@@ -18,12 +18,10 @@ public class EdgeTrigD extends Box {
      */
     public EdgeTrigD() {
         name = "D EDGE";
-        clkIn = addPinS();// addPin(sPins.addPinHorizontally()).down(30).translate(0, 40);
-        rstIn = addPinS();// addPin(sPins.addPinHorizontally()).down(30).translate(0, 40);
+        clkIn = addPinS();
+        rstIn = addPinS();
         resize(); // must resize between adding horizontally and vertically.
         addPinsWE(1);
-        //addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
-        //addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
         dSave.add(_X);
         qSave.add(_X);
         resize();
@@ -69,8 +67,6 @@ public class EdgeTrigD extends Box {
      */
     public void increase() {
         addPinsWE(1);
-        //addPin(wPins.addPinVertically()).left(30).translate(-width - 30, 0);
-        //addPin(ePins.addPinVertically()).right(30).translate(width + 30, 0);
         dSave.add(_X);
         qSave.add(_X);
         resize();

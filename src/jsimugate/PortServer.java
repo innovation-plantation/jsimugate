@@ -22,10 +22,10 @@ public class PortServer extends Box {
     boolean acquiring = false;
     Exception prevException;
     Pin rx, tx, rdyPin;
-    Signal oldRx=_U,oldTx=_U;
+    Signal oldRx = _U, oldTx = _U;
     String destAddr = null;
-    private String host=null;
-    private String portLabel=null;
+    private String host = null;
+    private String portLabel = null;
 
     private boolean logException(Exception e) {
         if (e.equals(prevException)) return false;
@@ -37,7 +37,7 @@ public class PortServer extends Box {
     private boolean portIsOpen() {
         if (port == 0 || acquiring) return false;
 
-        if (host==null) {
+        if (host == null) {
             if (ss == null) {
                 try {
                     ss = new ServerSocket(port);
@@ -78,12 +78,13 @@ public class PortServer extends Box {
                 thread.start();
             }
         } else { // client
-            if (sock==null) {
+            if (sock == null) {
                 try {
-                    sock = new Socket(host,port);
+                    sock = new Socket(host, port);
                 } catch (IOException e) {
                     logException(e);
-                };
+                }
+                ;
             }
         }
         if (sock == null) return false;
@@ -108,7 +109,7 @@ public class PortServer extends Box {
             return false;
         }
         try {
-            if (is.available() == 0 ) return false;
+            if (is.available() == 0) return false;
         } catch (IOException e) {
             logException(e);
             return false;
@@ -147,7 +148,8 @@ public class PortServer extends Box {
     }
 
     public PortServer() {
-        super();;
+        super();
+        ;
         rdyPin = addPinN();
         rx = addPinS();
         tx = addPinS();
@@ -161,7 +163,7 @@ public class PortServer extends Box {
      * Upon double-clicking, accept new port for the device
      * This device listens as a server if the input is of the form of a simple port number in the range 0-65535.
      * ToDo: if input is of the form time.nist.gov:13 then parse it and open a client socket.
-     *
+     * <p>
      * The bytes on the left pins are strobed into the part with the bottom left control signal.
      * The bytes on the right pins are strobed out of the part with the bottom right control signal.
      * The top control signal indicates when data is ready to be strobed out.
@@ -176,24 +178,22 @@ public class PortServer extends Box {
     private void updateConnection(String newPort) {
         if (newPort == null) return;
         Scanner scan = new Scanner(newPort);
-        int newPortNumber=0;
-        String destAddr=null;
+        int newPortNumber = 0;
+        String destAddr = null;
         if (newPort.matches("[0-9]{1,5}")) {
             newPortNumber = Integer.parseInt(newPort);
-        }
-        else if (newPort.matches(".*:[0-9]{1,5}")) {
+        } else if (newPort.matches(".*:[0-9]{1,5}")) {
             scan.findInLine("(.*):([0-9]{1,5})");
             MatchResult result = scan.match();
             destAddr = result.group(1);
             newPortNumber = Integer.parseInt(result.group(2));
-        }
-        else  return;
+        } else return;
         System.out.println(newPortNumber);
         if (newPortNumber > 65535) return;
         port = newPortNumber;
         portLabel = newPort;
-        if (port==0) {
-            label="TCP/IP";
+        if (port == 0) {
+            label = "TCP/IP";
             host = null;
             return;
         }
@@ -203,37 +203,37 @@ public class PortServer extends Box {
 
 
     public void operate() {
-        Signal newRx=rx.getInValue();
-        Signal newTx=tx.getInValue();
+        Signal newRx = rx.getInValue();
+        Signal newTx = tx.getInValue();
         boolean avail = readyToRead();
-        rdyPin.setOutValue(avail?_1:_0);
+        rdyPin.setOutValue(avail ? _1 : _0);
         if (oldRx.lo && newRx.hi) {
             Integer value = read();
             if (value != null) ePins.setValue(value);
             else ePins.setValue(0);
         }
         if (oldTx.lo && newTx.hi) {
-            int value=wPins.getValue();
+            int value = wPins.getValue();
             write(value);
         }
-        oldRx=newRx;
-        oldTx=newTx;
+        oldRx = newRx;
+        oldTx = newTx;
     }
 
     public void drawAtOrigin(java.awt.Graphics2D g) {
         super.drawAtOrigin(g);
-        g.drawString("DSR",-10,-75);
-        g.drawString("TX",-17,78);
-        g.drawString("RX",5,78);
+        g.drawString("DSR", -10, -75);
+        g.drawString("TX", -17, 78);
+        g.drawString("RX", 5, 78);
         g.rotate(Math.PI);
-        g.drawString("V",6,-82);
-        g.drawString("V",-15,-82);
-        g.rotate(-Math.PI*.5);
-        if (port==0) {
+        g.drawString("V", 6, -82);
+        g.drawString("V", -15, -82);
+        g.rotate(-Math.PI * .5);
+        if (port == 0) {
             g.drawString("TCP/IP Port", -50, 0);
             return;
         }
-        g.drawString(host!=null?"TCP/IP Host Port":"TCP/IP Client Port",-50,0);
-        g.drawString(portLabel,-50,15);
+        g.drawString(host != null ? "TCP/IP Host Port" : "TCP/IP Client Port", -50, 0);
+        g.drawString(portLabel, -50, 15);
     }
 }

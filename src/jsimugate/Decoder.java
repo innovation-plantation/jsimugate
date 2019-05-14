@@ -15,7 +15,7 @@ public class Decoder extends Box {
      */
     public Decoder() {
         label = "DEC";
-        addPinE(); // addPin(ePins.addPinVertically()).translate(width + 30, 0).right(30);
+        addPinE();
         increase();
         increase();
     }
@@ -25,10 +25,10 @@ public class Decoder extends Box {
      */
     public void increase() {
         if (sPins.size() >= 8) return;
-        addPinS();//addPin(sPins.addPinHorizontally()).translate(0, height + 30).down(30);
+        addPinS();
         resize();
         int n = ePins.size();
-        for (int i = 0; i < n; i++) addPinE();// addPin(ePins.addPinVertically()).translate(width + 30, 0).right(30);
+        for (int i = 0; i < n; i++) addPinE();
         resize();
     }
 

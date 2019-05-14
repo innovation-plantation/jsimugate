@@ -20,10 +20,10 @@ public class LevelTrigSR extends Box {
         name = "SR";
         wPins.gap = ePins.gap = true;
         resize();
-        rIn = addPinW();//this.wPins.addPinVertically().left(30).translate(-40, 0);
-        sIn = addPinW();//this.wPins.addPinVertically().left(30).translate(-40, 0);
-        qBar = addPinE();//this.ePins.addPinVertically().right(30).translate(40, 0);
-        qOut = addPinE();//this.ePins.addPinVertically().right(30).translate(40, 0);
+        rIn = addPinW();
+        sIn = addPinW();
+        qBar = addPinE();
+        qOut = addPinE();
         addPin(sIn);
         addPin(rIn);
         addPin(qOut);

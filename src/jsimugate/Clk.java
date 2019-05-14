@@ -10,7 +10,6 @@ import java.util.Scanner;
  */
 public class Clk extends Box {
 
-    //static final Rectangle2D rect = new Rectangle2D.Double(-40, -20, 60, 40);
     private Pin pin;
     Signal value = Signal._0;
     private javax.swing.Timer timer;
@@ -21,11 +20,9 @@ public class Clk extends Box {
      */
     public Clk() {
         super();
-        //setShape(rect);
         label = "CLK";
         pin = addPinE();
         resizeWithPadding(2, 0);
-        //addPin(pin = new Pin(45, 0).right(25));
         timer = new javax.swing.Timer(500, e -> {
             value = value == Signal._0 ? Signal._1 : Signal._0;
         });

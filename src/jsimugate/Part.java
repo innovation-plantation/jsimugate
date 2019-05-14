@@ -26,44 +26,53 @@ public class Part extends Symbol {
      * one of those specific technologies.
      */
     enum Tech {
-        PUSH_PULL("Push-Pull (like CMOS)"), // strong 1 and 0 push-pull like values (typically CMOS)
-        TTL("Standard TTL (NPN)", getThinStroke(), Color.black, _1, _H), // weak when 1 like standard TTL
-        OC("Standard Open Collector (NPN)", getThinStroke(), Color.black, _1, _Z, "\u2390"), // floating when 1 like TTL OC
-        TTL_PNP("Nonstandard TTL (PNP)", getThinStroke(), Color.blue, _0, _L), // weak when 0 rare dual of standard TTL
-        OC_PNP("Nonstandard Open Collector (PNP)", getThinStroke(), Color.blue, _0, _Z, "\u238F"); // floating when 0 rare in some PLC
+        PUSH_PULL("Complementary (push-pull like CMOS)"), // strong 1 and 0 push-pull like values (typically CMOS)
+        TTL("TTL", getThinStroke(), false, _1, _H,"\u2392"), // weak when 1 like standard TTL
+        OC("Open Collector", getThinStroke(), false, _1, _Z, "\u2390"), // floating when 1 like TTL OC
+        TTL_PNP("PNP TTL (nonstandard)", getThinStroke(), true, _0, _L,"\u2391"), // weak when 0 rare dual of standard TTL
+        OC_PNP("PNP Open Collector (nonstandard)", getThinStroke(), true, _0, _Z, "\u238F"); // floating when 0 rare in some PLC
         String mark;
         Signal changeFrom = Signal._Z;
         Signal changeTo = Signal._Z;
         String description;
         Stroke stroke = getDefaultStroke();
         Color color = Color.black;
+        boolean isNonStandard;
 
         Tech opposite() {
-            switch(this) {
-                case TTL: return TTL_PNP;
-                case TTL_PNP: return TTL;
-                case OC: return OC_PNP;
-                case OC_PNP: return OC;
-                default: return PUSH_PULL;
+            switch (this) {
+                case TTL:
+                    return TTL_PNP;
+                case TTL_PNP:
+                    return TTL;
+                case OC:
+                    return OC_PNP;
+                case OC_PNP:
+                    return OC;
+                default:
+                    return PUSH_PULL;
             }
         }
 
-        Tech(String description, Stroke stroke, Color color, Signal changeFrom, Signal changeTo, String mark) {
+        Tech(String description, Stroke stroke, boolean isNonStandard, Signal changeFrom, Signal changeTo, String mark) {
             this.description = description;
             this.changeFrom = changeFrom;
             this.changeTo = changeTo;
             this.mark = mark;
             this.stroke = stroke;
-            this.color = color;
+            this.isNonStandard = isNonStandard;
+            this.color = isNonStandard?Color.blue:Color.black;
+
 
         }
 
-        Tech(String description, Stroke stroke, Color color, Signal changeFrom, Signal changeTo) {
+        Tech(String description, Stroke stroke, boolean isNonStandard, Signal changeFrom, Signal changeTo) {
             this.description = description;
             this.changeFrom = changeFrom;
             this.changeTo = changeTo;
             this.stroke = stroke;
-            this.color = color;
+            this.isNonStandard = isNonStandard;
+            this.color = isNonStandard?Color.blue:Color.black;
         }
 
         Tech(String description) {
@@ -208,8 +217,15 @@ public class Part extends Symbol {
                 Log.println("jsimugate." + partName);
                 newPart = (Part) Class.forName("jsimugate." + partName).getConstructor().newInstance();
                 newPart.transform.setTransform(t);
-                while (newPart.pins.size() > pinCount) newPart.decrease();
-                while (newPart.pins.size() < pinCount) newPart.increase();
+                int oldPinCount = -1;
+                for (int i=0;i<10000;i++) {
+                    int newPinCount = newPart.pins.size();
+                    if (newPinCount == pinCount) break; // correct size - no need to grow or shrink
+                    if (oldPinCount == newPinCount) break; // not making progresss
+                    if (newPinCount<pinCount) newPart.increase();
+                    if (newPinCount>pinCount) newPart.decrease();
+                    oldPinCount = newPinCount;
+                }
 
                 Log.print(partName + partNumber + " with " + pinCount + " pins:");
 
@@ -271,7 +287,7 @@ public class Part extends Symbol {
      */
     public Part reversePolarity() {
         for (Pin pin : pins) pin.toggleInversion();
-        return  this.asTech(this.tech.opposite());
+        return this.asTech(this.tech.opposite());
     }
 
     /**

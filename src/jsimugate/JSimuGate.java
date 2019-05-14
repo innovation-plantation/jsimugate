@@ -239,6 +239,9 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         }
     }
 
+    /**
+     * reflection of parts like looking at one's self in a mirror
+     */
     private void flop_parts() {
         snapshot();
         for (Part part : circuit.parts) {
@@ -248,6 +251,9 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         }
     }
 
+    /**
+     * reflection of parts like looking at a reflection of a landscape on water
+     */
     private void flip_parts() {
         snapshot();
         for (Part part : circuit.parts) {
@@ -866,7 +872,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                         }
                     });
                     if (!(topHit instanceof Discrete || topHit instanceof Bus))
-                        for (Tech tech : Tech.values()) {
+                        for (Tech tech : Tech.values()) if (!tech.isNonStandard) {
                             menu.add(new JMenuItem(tech.description) {
                                 {
                                     addActionListener(e -> {

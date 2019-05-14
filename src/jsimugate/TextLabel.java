@@ -46,10 +46,19 @@ public class TextLabel extends Part {
         shape = defaultShape; // trigger recalculating the new shape within the graphics context
     }
 
+    /**
+     * Override setDetails serialize extra information
+     * beyond the transform, type, pins, and technology.
+     * @param details
+     */
     public void setDetails(String details) {
         label = details;
     }
 
+    /**
+     * Override getDetails deserialize extra information
+     * beyond the transform, type, pins, and technology.
+     */
     public String getDetails() {
         return label;
     }

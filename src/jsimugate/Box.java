@@ -14,6 +14,7 @@ public class Box extends Part {
 
     PinGroup ePins = new PinGroup();
     PinGroup sPins = new PinGroup();
+    PinGroup sExtraPins = new PinGroup();
     PinGroup wPins = new PinGroup();
     PinGroup nPins = new PinGroup();
 
@@ -86,6 +87,9 @@ public class Box extends Part {
     public Pin addPinS(int length) {
         return addPin(sPins.addPinHorizontally()).translate(0, height + length).down(length);
     }
+    public Pin addExtraPinS(int length) {
+        return addPin(sExtraPins.addPinHorizontally()).translate(0, height + length).down(length);
+    }
 
     public Pin addPinE(int length) {
         return addPin(ePins.addPinVertically()).translate(width + length, 0).right(length);
@@ -102,6 +106,9 @@ public class Box extends Part {
     public Pin addPinS() {
         return addPinS(30);
     }
+    public Pin addExtraPinS() {
+        return addExtraPinS(30);
+    }
 
     public Pin addPinE() {
         return addPinE(30);
@@ -117,6 +124,10 @@ public class Box extends Part {
 
     public void addPinsS(int n) {
         for (int i = 0; i < n; i++) addPinS();
+    }
+
+    public void addExtraPinsS(int n) {
+        for (int i = 0; i < n; i++) addExtraPinS();
     }
 
     public void addPinsE(int n) {

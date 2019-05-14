@@ -11,7 +11,7 @@ public class Display extends Box {
         name = "DISP";
         addPinsNS(7);
         resizeWithPadding(1, 6);
-        clkIn = addPinW();// (wPins.addPinVertically()).left(30).translate(-width - 30, 0);
+        clkIn = addPinW();
         fill = Color.darkGray;
     }
 

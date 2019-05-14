@@ -18,11 +18,9 @@ public class LevelTrigD extends Box {
      */
     public LevelTrigD() {
         name = "D LEV";
-        clkIn = addPinS();//addPin(sPins.addPinHorizontally()).down(30).translate(0, 40);
+        clkIn = addPinS();
         resize();
         addPinsWE(1);
-//        addPin(wPins.addPinVertically()).left(30).translate(-50, 0);
-//        addPin(ePins.addPinVertically()).right(30).translate(50, 0);
         qSave.add(_X);
         resize();
     }
@@ -61,8 +59,6 @@ public class LevelTrigD extends Box {
      */
     public void increase() {
         addPinsWE(1);
-        //addPin(wPins.addPinVertically()).left(30).translate(-50, 0);
-        //addPin(ePins.addPinVertically()).right(30).translate(50, 0);
         qSave.add(_X);
         resize();
     }

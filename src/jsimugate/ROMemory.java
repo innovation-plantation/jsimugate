@@ -25,6 +25,10 @@ public class ROMemory extends Box {
         addPinsW(8);
     }
 
+    /**
+     * Allow the part to be constructed with pre-programmed ROM data
+     * @param data
+     */
     public ROMemory(String data) {
         this();
         this.setDetails(data);

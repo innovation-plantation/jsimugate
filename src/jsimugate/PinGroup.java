@@ -84,7 +84,6 @@ public class PinGroup {
         return pin;
     }
 
-
     /**
      * Add and return a pin to the group, shifting the other pins over as necessary to make room
      * These pins are stacked vertically, with new pins on top
