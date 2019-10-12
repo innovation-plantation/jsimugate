@@ -40,6 +40,7 @@ public class Symbol extends Numbered {
     Stroke hilightStroke = defaultHighlightStroke;
     Color highlightColor = defaultHighlightColor;
     String label, sublabel;
+    int labelOffset = -25;
 
     AffineTransform gTransform = new AffineTransform();
 
@@ -214,7 +215,7 @@ public class Symbol extends Numbered {
         }
         if (label != null) {
             g.setColor(Color.black);
-            if (!JSimuGate.illustration) g.drawString(label, -25, sublabel == null ? 5 : 0);
+            if (!JSimuGate.illustration) g.drawString(label, labelOffset, sublabel == null ? 5 : 0);
         }
         if (sublabel != null) {
             AffineTransform restoreT = g.getTransform();

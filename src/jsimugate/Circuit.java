@@ -186,7 +186,9 @@ public class Circuit {
                 new SevenSegmentLED(),
                 null,
                 new TextLabel(),
-                new PortServer()
+                // experimental stuff:
+               // new PortServer(),
+               // new NetReference(),
 
         }) {
             if (part == null) {

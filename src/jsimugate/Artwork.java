@@ -190,6 +190,20 @@ public class Artwork {
     }
 
     /**
+     * Shape of a net reference - implied connection between points at different areas of the schematic
+     * @return the shape
+     */
+    public static Shape ReferenceShape () {
+        GeneralPath shape = new GeneralPath();
+        shape.moveTo(5, 0);
+        shape.lineTo(15, 0);
+        shape.moveTo(5, -5);
+        shape.lineTo(15,0);
+        shape.lineTo(5,5);
+        return shape;
+    }
+
+    /**
      * Shape of a voltage/logic ground schematic symbol
      *
      * @return the shape

@@ -17,6 +17,7 @@ public class Wire {
     Signal value = Signal._Z;
     static final Point2D.Double origin = new Point2D.Double();
     Pin src, dst;
+    private boolean hidden=false;
 
     /**
      * Create a one-ended wire while the pin for the second end has not yet been selected.
@@ -69,7 +70,8 @@ public class Wire {
         GeneralPath line = new GeneralPath();
         line.moveTo(p0.getX(), p0.getY());
         line.curveTo(p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY());
-        value.trace(g, line);
+        if (isHidden()) Signal._D.trace(g,line); /// TODO: MAKE INVISIBLE
+        else value.trace(g, line);
     }
 
     /**
@@ -101,5 +103,16 @@ public class Wire {
         Pin pinA = pinMap.get(a);
         Pin pinB = pinMap.get(b);
         return new Wire(pinA, pinB);
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+    public void setHidden() {
+        setHidden(true);
     }
 }
