@@ -187,7 +187,7 @@ public class Circuit {
                 null,
                 new TextLabel(),
                 // experimental stuff:
-               // new PortServer(),
+                new PortServer(),
                // new NetReference(),
 
         }) {

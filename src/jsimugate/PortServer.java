@@ -11,7 +11,6 @@ import java.util.regex.MatchResult;
 
 import static jsimugate.Signal.*;
 
-
 public class PortServer extends Box {
     Thread thread;
     Socket sock;
@@ -20,9 +19,10 @@ public class PortServer extends Box {
     OutputStream os;
     int port;
     boolean acquiring = false;
+    boolean lost = true;  // TODO: This should go true when connection is lost. Fix it.
     Exception prevException;
-    Pin rx, tx, rdyPin;
-    Signal oldRx = _U, oldTx = _U;
+    Pin rx, tx, connPin, lostPin, rdyPin;
+    Signal oldRx = _U, oldTx = _U, oldConn = _U;
     String destAddr = null;
     private String host = null;
     private String portLabel = null;
@@ -33,28 +33,64 @@ public class PortServer extends Box {
         System.err.println(e.getMessage());
         return false;
     }
+    final long SECOND = 1000000000;
+    long MIN_TIMEOUT = SECOND*5;  // less than 5 seconds gets you kicked out of https://tf.nist.gov/tf-cgi/servers.cgi
+    long MAX_TIMEOUT = SECOND*20; // time-a-wwv.nist.gov:13
+    long timeout = MIN_TIMEOUT;
+    long expiration=0;
 
+    void setExpiration() {
+        expiration = System.nanoTime()+timeout;
+    }
+    boolean expired() {
+        return System.nanoTime() > expiration;
+    }
+    void increaseTimeout() {
+        timeout <<=1;
+        if (timeout > MAX_TIMEOUT) timeout=MAX_TIMEOUT;
+    }
+    void  decreaseTimeout() {
+        timeout >>=1;
+        if (timeout < MIN_TIMEOUT) timeout=MIN_TIMEOUT ;
+    }
+
+    /**
+     * Intended that this be called upon failure that needs increasing timeouts,
+     * returns true if need to wait longer for timeout. Increases timeout for next time if expired.
+     */
+    boolean failDelay() {
+        if (!expired()) return true;
+        increaseTimeout();
+        return false;
+    }
     private boolean portIsOpen() {
         if (port == 0 || acquiring) return false;
-
         if (host == null) {
             if (ss == null) {
+                if (lost) return false;
                 try {
                     ss = new ServerSocket(port);
                 } catch (IOException e) {
+                    setLost(true);
                     return logException(e);
                 }
             }
             if (ss.getLocalPort() != port) { /* change port */
                 try {
-                    if (sock != null) sock.close();
+                    if (sock != null) {
+                        sock.close();
+                    }
                 } catch (IOException e) {
                     logException(e);
                 } finally {
                     sock = null;
+                    setLost(true);
                 }
                 try {
-                    if (ss != null) ss.close();
+                    if (ss != null)  {
+                        ss.close();
+                        setLost(true);
+                    }
                 } catch (IOException e) {
                     logException(e);
                 } finally {
@@ -79,6 +115,7 @@ public class PortServer extends Box {
             }
         } else { // client
             if (sock == null) {
+                if (lost || failDelay()) return false;
                 try {
                     sock = new Socket(host, port);
                 } catch (IOException e) {
@@ -89,6 +126,7 @@ public class PortServer extends Box {
         }
         if (sock == null) return false;
         if (!sock.isConnected()) {
+            setLost(true);
             try {
                 sock.close();
             } catch (IOException e) {
@@ -99,7 +137,10 @@ public class PortServer extends Box {
         }
         return true;
     }
-
+    private void setLost(boolean newValue){
+        lost = newValue;
+        lostPin.setOutValue(lost?_1:_0);
+    }
     private boolean readyToRead() {
         if (!portIsOpen()) return false;
         if (is == null) try {
@@ -131,6 +172,7 @@ public class PortServer extends Box {
     private Integer read() {
         if (!readyToRead()) return null;
         try {
+            decreaseTimeout();
             return is.read();
         } catch (IOException e) {
             logException(e);
@@ -141,6 +183,7 @@ public class PortServer extends Box {
     private void write(int value) {
         if (!readyToWrite()) return;
         try {
+            decreaseTimeout();
             os.write(value);
         } catch (IOException e) {
             logException(e);
@@ -149,9 +192,10 @@ public class PortServer extends Box {
 
     public PortServer() {
         super();
-        ;
         rdyPin = addPinN();
+        lostPin = addPinN();
         rx = addPinS();
+        connPin = addPinS();
         tx = addPinS();
         resize();
         addPinsWE(8);
@@ -188,6 +232,7 @@ public class PortServer extends Box {
             destAddr = result.group(1);
             newPortNumber = Integer.parseInt(result.group(2));
         } else return;
+        System.out.println("New Port Number");
         System.out.println(newPortNumber);
         if (newPortNumber > 65535) return;
         port = newPortNumber;
@@ -205,8 +250,10 @@ public class PortServer extends Box {
     public void operate() {
         Signal newRx = rx.getInValue();
         Signal newTx = tx.getInValue();
+        Signal newConn = connPin.getInValue();
         boolean avail = readyToRead();
         rdyPin.setOutValue(avail ? _1 : _0);
+        lostPin.setOutValue(lost ? _1:_0);
         if (oldRx.lo && newRx.hi) {
             Integer value = read();
             if (value != null) ePins.setValue(value);
@@ -216,18 +263,25 @@ public class PortServer extends Box {
             int value = wPins.getValue();
             write(value);
         }
+        if (oldConn.lo && newConn.hi) {
+            setLost(false);
+        }
         oldRx = newRx;
         oldTx = newTx;
+        oldConn = newConn;
     }
 
     public void drawAtOrigin(java.awt.Graphics2D g) {
         super.drawAtOrigin(g);
-        g.drawString("DSR", -10, -75);
-        g.drawString("TX", -17, 78);
-        g.drawString("RX", 5, 78);
+        g.drawString("LOST", -35, -75);
+        g.drawString("AVAIL", 5, -75);
+        g.drawString("SES", -12, 78);
+        g.drawString("TX", -30, 78);
+        g.drawString("RX", 15, 78);
         g.rotate(Math.PI);
-        g.drawString("V", 6, -82);
-        g.drawString("V", -15, -82);
+        g.drawString("V", 17, -82);
+        g.drawString("V", -3, -82);
+        g.drawString("V", -23, -82);
         g.rotate(-Math.PI * .5);
         if (port == 0) {
             g.drawString("TCP/IP Port", -50, 0);
@@ -235,5 +289,8 @@ public class PortServer extends Box {
         }
         g.drawString(host != null ? "TCP/IP Host Port" : "TCP/IP Client Port", -50, 0);
         g.drawString(portLabel, -50, 15);
+        if (sock!=null) {
+            g.drawString("= "+sock.getRemoteSocketAddress().toString(),-50,25);
+        }
     }
 }
