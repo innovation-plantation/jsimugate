@@ -4,11 +4,17 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * A structure of parts and their wires along with the parts bins.
  */
 public class Circuit {
+    public static Circuit circuit;
+    public Circuit() {
+        circuit = this;
+    }
+
     public List<Part> parts = new ArrayList<Part>();
     public List<PartsBin> bins = new ArrayList<PartsBin>();
     public ArrayList<Wire> wires = new ArrayList<Wire>();
@@ -155,6 +161,15 @@ public class Circuit {
         if (start) timer.start();
     }
 
+    public void removeHiddenWiresFromPin(Pin pin) {
+        {
+            for (Wire wire : wires) {
+                if (wire.isHidden() && (wire.src == pin || wire.dst == pin)) Net.disconnect(wire);
+            }
+            wires.removeIf(wire -> wire.isHidden() && (wire.src == pin || wire.dst == pin));
+        }
+    }
+
     public void removeSelectedParts() {
         for (Part part : parts) {
             if (part.isSelected()) for (Pin pin : part.pins) {
@@ -187,8 +202,8 @@ public class Circuit {
                 null,
                 new TextLabel(),
                 // experimental stuff:
-                new PortServer(),
-               // new NetReference(),
+                // new PortServer(),  // TODO: Debug PortServer ("lost connection" status doesn't work)
+                new NetReference(),
 
         }) {
             if (part == null) {

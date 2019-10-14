@@ -27,7 +27,7 @@ import static java.awt.event.KeyEvent.VK_RIGHT;
  * User interface for circuit simulation. This could be an Applet by changing JPanel to JApplet or Applet, etc.
  */
 public class JSimuGate extends Panel implements MouseListener, MouseMotionListener, ComponentListener {
-    static String version = "jSimuGate 0.916";
+    static String version = "jSimuGate 0.920";
     static boolean illustration=false;
     private static final long serialVersionUID = 1L;
     Circuit circuit = new Circuit().withStandardBins();

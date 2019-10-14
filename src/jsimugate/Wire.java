@@ -53,6 +53,11 @@ public class Wire {
         Net.connect(this);
     }
 
+    public Wire asHidden() {
+        this.setHidden();
+        return this;
+    }
+
     /**
      * Draw the wire
      *
@@ -70,8 +75,7 @@ public class Wire {
         GeneralPath line = new GeneralPath();
         line.moveTo(p0.getX(), p0.getY());
         line.curveTo(p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY());
-        if (isHidden()) Signal._D.trace(g,line); /// TODO: MAKE INVISIBLE
-        else value.trace(g, line);
+        if (!isHidden()) value.trace(g, line);
     }
 
     /**

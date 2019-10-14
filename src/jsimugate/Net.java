@@ -97,7 +97,7 @@ public class Net {
 
     /**
      * Returns the wire that connects the src and dst pins, ignores order of
-     * parameters
+     * parameters. Finds wires that are not hidden only
      *
      * @param src one end of the connection,
      * @param dst other end of the connection
@@ -109,6 +109,7 @@ public class Net {
             if (net.pins.contains(src)) {
                 if (net.pins.contains(dst)) {
                     for (Wire wire : net.wires) {
+                        if (wire.isHidden()) continue; // don't find hidden wires
                         if (wire.src == src && wire.dst == dst) {
                             Log.println("SD " + src + " " + dst);
                             return wire;
