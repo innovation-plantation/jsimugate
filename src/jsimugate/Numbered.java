@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  */
 public class Numbered {
 
-    static Map<String, String> idList = new HashMap<String, String>();
+    public static Map<String, String> idList = new HashMap<String, String>();
     static Pattern id_pattern = Pattern.compile("([A-Za-z0-9_.]+)@[0-9a-f]{8}");
 
     public String sn(String name) {

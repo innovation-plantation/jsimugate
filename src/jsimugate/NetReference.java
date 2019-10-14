@@ -87,4 +87,9 @@ public class NetReference extends Part {
     public String getDetails() {
         return label;
     }
+
+    public void operate() {
+        super.operate();
+        setColor(pins.get(0).color);
+    }
 }

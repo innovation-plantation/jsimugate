@@ -84,6 +84,7 @@ public class Wire {
      * @return
      */
     public String toString() {
+        if (isHidden()) return "";
         if (src == null) return "WIRE: " + src + " to " + dst;
         return "WIRE: " + src.sn() + " - " + dst.sn() + "\n";
     }

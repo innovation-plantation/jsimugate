@@ -58,6 +58,16 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         }
     }
 
+    /**
+     * remove everything from all containers except the history
+     */
+    public static void obliterate() {
+        PinGroup.pinGroups.clear();
+        Net.nets.clear();
+        NetReference.refs.clear();
+        Numbered.idList.clear();
+    }
+
     public void undo() {
         System.gc();
         Log.println("u:" + undoStack.size() + " R:" + redoStack.size() + "...");
@@ -72,13 +82,14 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         }
         if (s1.equals(s)) return;
         Log.println("u:" + undoStack.size() + " R:" + redoStack.size());
-        PinGroup.pinGroups.clear();
+        obliterate();// PinGroup.pinGroups.clear();
         circuit.shutdown();
         circuit = new Circuit().withStandardBins();
         circuit.startup(false, () -> repaint());
         circuit.fromString(s);
         repaint();
         System.gc();
+        Circuit.circuit.resume();
     }
 
     public void redo() {
@@ -94,12 +105,13 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         }
         if (s0.equals(s)) return;
         Log.println("r:" + redoStack.size() + " u:" + undoStack.size());
-        PinGroup.pinGroups.clear();
+        obliterate();// PinGroup.pinGroups.clear();
         circuit = new Circuit().withStandardBins();
         circuit.startup(false, () -> repaint());
         circuit.fromString(s);
         repaint();
         System.gc();
+        Circuit.circuit.resume();
     }
 
     /**
@@ -540,8 +552,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         menuItem.addActionListener(event -> {
             panel.snapshot();
             if (0 != JOptionPane.showConfirmDialog(null, "Clear existing circuit?")) return;
-            Net.nets.clear();
-            PinGroup.pinGroups.clear();
+            //Net.nets.clear();
+            obliterate();// PinGroup.pinGroups.clear();
             panel.circuit = new Circuit().withStandardBins();
             panel.circuit.startup(true, () -> panel.repaint());
             panel.snapshot();
@@ -583,8 +595,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 if (savedFile.exists()) {
                     try {
                         Scanner scan = new Scanner(choice.getSelectedFile(), "utf-8");
-                        Net.nets.clear();
-                        PinGroup.pinGroups.clear();
+                        //Net.nets.clear();
+                        obliterate();// PinGroup.pinGroups.clear();
                         panel.circuit = new Circuit().withStandardBins();
                         panel.circuit.fromScanner(scan);
                         panel.unlselectAll();
