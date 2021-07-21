@@ -1,4 +1,4 @@
-# jSimugate
+# jSimuGate
 
 Here's a digital logic circuit simulator I just threw together the last couple of weeks. 
 It is intended to be used for teaching and learning computer architecture.
