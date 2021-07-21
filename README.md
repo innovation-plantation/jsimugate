@@ -9,6 +9,8 @@ Visit the Wiki at https://github.com/innovation-plantation/jsimugate/wiki
 
 or download and run at https://github.com/innovation-plantation/jsimugate/raw/master/jsimugate.jar
 
+To run jSimuGate, you may need to install Java from https://www.java.com/en/download/ if it's not already on your computer.
+
 Components are idealized,using augmented std_logic signals so a few details are unrealistic
 such as unbounded fan-out, diodes having an unrealistic memory capability when connected in a loop, and there is
 a single time-unit delay for all parts without regard to their internal complexity. 
