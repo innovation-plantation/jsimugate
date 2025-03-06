@@ -45,7 +45,7 @@ public class PinGroup {
         return null;
     }
 
-    private void addPin(Pin pin) {
+    void addPin(Pin pin) {
         if (pins.isEmpty()) pinGroups.add(this);
         pins.add(pin);
     }
@@ -90,7 +90,6 @@ public class PinGroup {
      */
     public Pin addPinVertically() {
         int n = pins.size();
-        Pin pin;
         if (gap) switch (n) {
             case 1:
                 return addPinVertically(new Pin(0, -20));
@@ -184,7 +183,18 @@ public class PinGroup {
         return victim;
     }
 
-
+    /**
+     * Remove the last pin if it's not connected to anything
+     */
+    protected Pin removePin() {
+        int n = pins.size();
+        if (n < 1) return null;
+        Pin victim = pins.get(n - 1);
+        // if wires attached return now without removing victim.
+        if (Net.directConnections(victim).size() > 0) return null;
+        removePin(victim);
+        return victim;
+    }
     /**
      * Read the binary value from the pins.
      * Invalid bits are interpreted as zero.

@@ -14,6 +14,9 @@ public class Circuit {
     public Circuit() {
         circuit = this;
     }
+    public static void replacePart(Part oldPart, Part newPart) {
+    	circuit.parts.set(circuit.parts.indexOf(oldPart), newPart);
+    }
 
     public List<Part> parts = new ArrayList<Part>();
     public List<PartsBin> bins = new ArrayList<PartsBin>();

@@ -141,6 +141,13 @@ public class Pin extends Symbol {
         if (invertible) addChild(bubble = new Inversion(0, dy - 10));
         return this;
     }
+    Pin nondirectional() {
+        control = null;
+        longLine = null;
+        shortLine = null;
+        line = null;
+    	return this;
+    }
 
     /**
      * Draw the pin onto the graphics context

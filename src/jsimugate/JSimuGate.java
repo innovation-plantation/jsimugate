@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.datatransfer.*;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -407,8 +408,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         menuItem.addActionListener(event -> {
             panel.snapshot();
             nextPasteOffset = 0;
-            StringSelection text = new StringSelection(panel.copySelection());
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(text, text);
+            Transferable text = new StringSelection(panel.copySelection());
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(text, null);
             panel.circuit.removeSelectedParts();
             panel.snapshot();
         });
@@ -420,7 +421,7 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
         menuItem.addActionListener(event -> {
             nextPasteOffset = 1;
             StringSelection text = new StringSelection(panel.copySelection());
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(text, text);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(text, null);
         });
         menu.add(menuItem);
 
