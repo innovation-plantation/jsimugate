@@ -25,7 +25,7 @@ public class Part extends Symbol {
      * PUSH_PULL is the default for use in most cases when there is no need to weaken signal to simulate
      * one of those specific technologies.
      */
-    enum Tech {
+    public enum Tech {
         PUSH_PULL("Complementary (push-pull like CMOS)"), // strong 1 and 0 push-pull like values (typically CMOS)
         TTL("TTL", getThinStroke(), false, _1, _H,"\u2392"), // weak when 1 like standard TTL
         OC("Open Collector", getThinStroke(), false, _1, _Z, "\u2390"), // floating when 1 like TTL OC

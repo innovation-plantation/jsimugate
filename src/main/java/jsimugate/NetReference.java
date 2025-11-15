@@ -20,6 +20,11 @@ public class NetReference extends Part {
         this.addPin(new Pin(0,0));
     }
 
+    @Override
+    public Part asTech(Tech technology) {
+        return this;
+    }
+
     /**
      * When the label changes to the new name, the wire is associated with all other points that have the same new name.
      * @param newName
