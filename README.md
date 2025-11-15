@@ -49,3 +49,12 @@ To pan, zoom out with the mouse on one side of the screen, and zoom back in with
 SimuGate, written in Python served as a prototype for jSimuGate.
 
 The project is not abandoned, it just lacks significant bugs to fix.
+
+## Project maintenance
+
+To create a release:
+
+```shell
+git tag v1.0.0
+git push origin v1.0.0
+```

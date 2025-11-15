@@ -3,6 +3,8 @@ name: Maven Build
 on:
   push:
     branches: [ "master", "main", "add-maven" ]
+    tags:
+      - 'v*'
   pull_request:
     branches: [ "master", "main", "add-maven" ]
 
@@ -29,3 +31,11 @@ jobs:
       with:
         name: maven-build-artifacts
         path: target/
+
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: target/*.jar
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
