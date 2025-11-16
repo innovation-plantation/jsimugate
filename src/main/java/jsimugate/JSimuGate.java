@@ -13,6 +13,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.*;
 import java.net.URI;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Scanner;
@@ -349,8 +350,8 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 System.exit(0);
             }
         });
-        // Change the icon image
-        ImageIcon img = new ImageIcon("classes/artifacts/jsimugate_jar/innovation-plantation.png");
+        URL imgURL = JSimuGate.class.getResource("/innovation-plantation.png");
+        ImageIcon img = new ImageIcon(imgURL);
         frame.setIconImage(img.getImage());
         frame.setSize(1280, 1024);
         frame.add(panel);
