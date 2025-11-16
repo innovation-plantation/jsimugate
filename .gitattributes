@@ -1,0 +1,12 @@
+# Auto-detect text files and use CRLF in working tree
+* text=auto eol=crlf
+# Exceptions for known binary file types
+*.jar binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.class binary
+*.exe binary
+*.so binary
+*.zip binary
+*.tar.gz binary
