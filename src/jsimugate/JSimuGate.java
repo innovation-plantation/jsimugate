@@ -15,7 +15,10 @@ import java.io.*;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +31,7 @@ import static java.awt.event.KeyEvent.VK_RIGHT;
  * User interface for circuit simulation. This could be an Applet by changing JPanel to JApplet or Applet, etc.
  */
 public class JSimuGate extends Panel implements MouseListener, MouseMotionListener, ComponentListener {
-    static String version = "jSimuGate 0.990";
+    static String version = "jSimuGate 0.999";
     static boolean illustration=false;
     private static final long serialVersionUID = 1L;
     Circuit circuit = new Circuit().withStandardBins();
@@ -835,9 +838,39 @@ public class JSimuGate extends Panel implements MouseListener, MouseMotionListen
                 for (Pin pin : part.pins) {
                     if (pin.bubble != null) {
                         if (pin.bubble.at(e.getPoint())) {
-                            pin.toggleInversion();
-                            repaint();
-
+                        	switch (e.getButton()) {
+                        	case MouseEvent.BUTTON3: //XXX
+                        		// TODO:  First check if it's valid to migrate
+                				Net chosen = null;
+                        		for (Net candidate:Net.nets) {
+                        			if (candidate.pins.contains(pin)) { chosen = candidate; break;}
+                        		}
+                        		final Net net=chosen;
+                        		Pin outPin = null;
+                        				
+								for (Pin p : net.pins) {
+									if (p.bubble == null) { outPin = null; break; } // all pins must be invertible
+									if (p.getOutValue() == Signal._Z) continue; // any number of inputs allowed
+									if (outPin != null) { outPin = null; break; } // only one output allowed
+									outPin = p; // this is the output pin
+								}
+                        		if (outPin==null) break;
+                        		JPopupMenu menu = new javax.swing.JPopupMenu("Part Menu");
+                        		menu.add(new JMenuItem("Migrate Inversion") {
+                                    {
+                                        addActionListener(e -> {
+                                        	for (Pin p:net.pins) {
+                                        		p.toggleInversion();
+                                        	}
+                                        });
+                                    }
+                                });
+                        		menu.show(this, e.getX(), e.getY());
+                        		break;
+                        	default:
+                                pin.toggleInversion();
+                                repaint();                        		
+                        	}
                             return;
                         }
                     }
