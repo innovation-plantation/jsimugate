@@ -49,3 +49,5 @@ To pan, zoom out with the mouse on one side of the screen, and zoom back in with
 SimuGate, written in Python served as a prototype for jSimuGate.
 
 The project is not abandoned, it just lacks significant bugs to fix.
+
+To create a jsimugate.jar file with a splash screen when using Eclipse IDE, double-click the addsplash.jardesc file.
