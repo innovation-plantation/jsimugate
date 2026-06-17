@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: jsimugate.JSimuGate
+Class-Path: .
+SplashScreen-Image: innovation-plantation.png
